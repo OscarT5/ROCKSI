@@ -5,6 +5,8 @@
       xmlns:p="http://primefaces.org/ui">
 <h:head>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <!--Hoja de estilo que edita los perfiles predefinidos del diseno de los componentes de primefaces - -->
+    <!-- y en general -->
     <style>
         .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close,
         .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-hover,
@@ -109,12 +111,13 @@
 <h:body>
 
     <h:form id="formPrincipal">
-
+        <!--Boton de la pagina principal que al hacer clic en el abre el modal-->
         <p:commandButton value="Agregar Cliente"
                          icon="pi pi-user-plus"
                          onclick="PF('dlgAgregarCliente').show();"
                          type="button"/>
 
+        <!--Titulo y configuracion del modal modal-->
         <p:dialog header="Nuevo cliente"
                   widgetVar="dlgAgregarCliente"
                   modal="true"
@@ -123,8 +126,10 @@
                   draggable="false"
                   width="400">
 
+            <!--Mensajes-->
             <p:messages id="msgs" showDetail="true" closable="true"/>
 
+            <!--Campo para ingresar nombre-->
             <div class="form-group">
                 <h:outputLabel for="nombre" value="Nombre"/>
                 <p:inputText id="nombre"
@@ -135,6 +140,7 @@
                              requiredMessage="El campo Nombre es obligatorio"/>
             </div>
 
+            <!--Campo para ingresar apellidos-->
             <div class="form-group">
                 <h:outputLabel for="apellido" value="Apellidos"/>
                 <p:inputText id="apellido"
@@ -145,6 +151,7 @@
                              requiredMessage="El campo Apellidos es obligatorio"/>
             </div>
 
+            <!--Campo para ingresar telefono (solo admite los digitos exactos)-->
             <div class="form-group">
                 <h:outputLabel for="telefono" value="Teléfono"/>
                 <p:inputMask id="telefono"
@@ -156,6 +163,7 @@
                              requiredMessage="El campo Telefono es obligatorio"/>
             </div>
 
+            <!--Boton de registrar el cliente que dispara la accion definida-->
             <p:commandButton id="registrarBtn"
                              value="Registrar al cliente"
                              action="#{altaCliBeanUI.altaCliente}"
