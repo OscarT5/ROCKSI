@@ -9,9 +9,8 @@ import java.util.*;
 public class Cliente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_Cliente")
-    private int idCliente;
+    @Column(name = "ID_Cliente", length = 45)
+    private String idCliente;
 
     @Column(name = "nombreCompleto", nullable = false, length = 100)
     private String nombreCompleto;
@@ -23,37 +22,50 @@ public class Cliente {
     @Column(name = "fechaRegistro")
     private Date fechaRegistro;
 
+    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_Membresia")
-    private Membresia idMembresia;
+    private Membresia membresia;
+    */
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pago> historialCompras;
+     /*
+     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Pago> historialPagos = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Clase> clases;
+    @ManyToMany
+    @JoinTable( //Aqui se hace un join para realizar la tabla puente de estainscrito dentro de la BD
+            name = "estainscrito",
+            joinColumns = @JoinColumn(name = "ID_Cliente"),
+            inverseJoinColumns = @JoinColumn(name = "ID_Clase")
+    )
+    private List<Clase> clases = new ArrayList<>();
+      */
+
+
 
     @Column(name = "credito")
     private double credito;
 
     //constructores
-    public Cliente() {}
+    public Cliente() {
+        this.idCliente = UUID.randomUUID().toString();//Esto asigna un id aleatorio, MODIFICAR DESPUES
+        this.fechaRegistro = new Date();//Asigna el dia de hoy
+    }
 
-    public Cliente(String nombreCompleto, String telefono, Date fechaRegistro,
-                   Membresia idMembresia, double credito) {
+    public Cliente(String nombreCompleto, String telefono, Date fechaRegistro, double credito) {
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
-        this.idMembresia = idMembresia;
+        //this.membresia = membresia;
         this.credito = credito;
     }
 
     //getters y setters
-    public int getIdCliente() {
+    public String getIdCliente() {
         return idCliente;
     }
 
-    public void setIdCliente(int idCliente) {
+    public void setIdCliente(String idCliente) {
         this.idCliente = idCliente;
     }
 
@@ -81,20 +93,21 @@ public class Cliente {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Membresia getIdMembresia() {
-        return idMembresia;
+    /*
+    public Membresia getMembresia() {
+        return membresia;
     }
 
-    public void setIdMembresia(Membresia idMembresia) {
-        this.idMembresia = idMembresia;
+    public void setMembresia(Membresia membresia) {
+        this.membresia = membresia;
     }
 
-    public List<Compra> getHistorialCompras() {
-        return historialCompras;
+    public List<Pago> getHistorialPagos() {//Se cambio el nombre de la clase a "Pagos"
+        return historialPagos;
     }
 
-    public void setHistorialCompras(List<Compra> historialCompras) {
-        this.historialCompras = historialCompras;
+    public void setHistorialPagos(List<Pago> historialPagos) {
+        this.historialPagos = historialPagos;
     }
 
     public List<Clase> getClases() {
@@ -104,6 +117,7 @@ public class Cliente {
     public void setClases(List<Clase> clases) {
         this.clases = clases;
     }
+     */
 
     public double getCredito() {
         return credito;

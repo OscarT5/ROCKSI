@@ -9,8 +9,6 @@
 
         <!-- Declaración manual de entidades -->
         <class>mx.desarollo.entity.Cliente</class>
-        <class>mx.desarollo.entity.Usuario</class>
-
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
