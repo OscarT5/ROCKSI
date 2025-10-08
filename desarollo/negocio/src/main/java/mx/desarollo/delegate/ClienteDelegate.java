@@ -5,42 +5,54 @@ import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Cliente;
 
 import java.util.Date;
-import java.util.List;
 
 public class ClienteDelegate {
 
-    private final ClienteDAO clienteDAO;
+    private final ClienteDAO clienteDAO; // DAO usado por el delegate
 
-    public ClienteDelegate() {
-        this.clienteDAO = ServiceLocator.getInstanceClienteDAO();
+    public ClienteDelegate() { // constructor del delegate
+        this.clienteDAO = ServiceLocator.getInstanceClienteDAO(); // obtiene el DAP desde el service locator
     }
 
-    public void registrarCliente(Cliente cliente) throws Exception {
-        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
-            throw new Exception("El nombre no puede estar vacio.");
+    public void registrarCliente(Cliente cliente) throws Exception { // metodo para validar y crear cliente
+        //validar que el nombre no este vacio
+        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) { // si no hay nombre
+            throw new Exception("el nombre no puede estar vacio."); // lanza excepcion con mensaje simple
         }
 
-        if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
-            throw new Exception("El telefono no puede estar vacio.");
+        //validar que el telefono no este vacio
+        if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) { // si no hay telefono
+            throw new Exception("el telefono no puede estar vacio."); // lanza excepcion con mensaje simple
         }
 
-        cliente.setFechaRegistro(new Date());
+        //validar el formato del nombre
+        if (!cliente.getNombreCompleto().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) { // si el nombre contiene caracteres no permitidos
+            throw new Exception("el nombre solo puede contener letras y espacios."); // lanza error indicando el formato
+        }
 
-        clienteDAO.save(cliente);
+        //validar el formato del telefono opcionalmente con + o espacios
+        if (!cliente.getTelefono().matches("^[0-9]+$")) { // si el telefono no es solo numeros
+            throw new Exception("el telefono solo puede contener numeros."); // lanza error indicando el formato
+        }
+
+        //registrar fecha y guardar
+        cliente.setFechaRegistro(new Date()); // asigna la fecha actual como fecha de registro
+        clienteDAO.crear(cliente); // llama al dao para persistir el cliente
     }
+
 
     /*public Cliente obtenerCliente(int id) {
-        return clienteDAO.find(id).orElse(null);
+        return clienteDAO.buscarPorId(id).orElse(null);
     }
 
     public List<Cliente> listarClientes() {
-        return clienteDAO.findAll();
+        return clienteDAO.listarTodos();
     }
 
     public void eliminarCliente(int id) {
         Cliente cliente = clienteDAO.find(id).orElse(null);
         if (cliente != null) {
-            clienteDAO.delete(cliente);
+            clienteDAO.eliminar(cliente);
         }
     }
 
@@ -49,6 +61,6 @@ public class ClienteDelegate {
             throw new Exception("El nombre no puede estar vacio.");
         }
 
-        clienteDAO.update(cliente);
+        clienteDAO.actualizar(cliente);
     }*/
 }
