@@ -12,4 +12,21 @@ public class ClienteHelper implements Serializable {
     public void AltaCliente(Cliente cli) throws Exception {
         ServiceFacadeLocator.getInstanceClienteFacade().registrarCliente(cli);
     }
+    public void eliminarCliente(String idCliente) throws Exception {
+        ServiceFacadeLocator.getInstanceClienteFacade().eliminarCliente(idCliente);
+    }
+
+    //COdigo de prueba para eliminar un cliente
+
+    public void pruebaEliminarCliente() {
+        try {
+            String id = "123";
+            eliminarCliente(id);
+            System.out.println("Cliente eliminado");
+        } catch (Exception e) {
+            System.err.println("rror al eliminar cliente: " +e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }

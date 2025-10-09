@@ -29,26 +29,13 @@ public class ClienteDelegate {
         clienteDAO.save(cliente);
     }
 
-    /*public Cliente obtenerCliente(int id) {
-        return clienteDAO.find(id).orElse(null);
-    }
-
-    public List<Cliente> listarClientes() {
-        return clienteDAO.findAll();
-    }
-
-    public void eliminarCliente(int id) {
-        Cliente cliente = clienteDAO.find(id).orElse(null);
-        if (cliente != null) {
-            clienteDAO.delete(cliente);
-        }
-    }
-
-    public void actualizarCliente(Cliente cliente) throws Exception {
-        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
-            throw new Exception("El nombre no puede estar vacio.");
+    //Este metodo llama a la funcion de eliminar cliente del DAO
+    public void eliminarCliente(String idCliente) throws Exception {
+        if (idCliente == null || idCliente.trim().isEmpty()) {
+            throw new Exception("El id del cliente esta vacio");
         }
 
-        clienteDAO.update(cliente);
-    }*/
+        clienteDAO.eliminarCliente(idCliente);
+    }
+
 }

@@ -18,15 +18,7 @@ public class AltaClienteBeanUI implements Serializable {
     private String apellido; //String que se llenara de acuerdo a lo que la vista obtenga
     private String telefono; //String que se llenara de acuerdo a lo que la vista obtenga
 
-    /**
-     * Realiza un alta de cliente
-     * Obtiene los datos ingresados de la vista y los guarda en las variables correspondientes
-     * dichas variables se utilizan para darle identidad al objeto cliente
-     * con el objeto de tipo Helper se manda llamara la funcion Alta cliente que recibe al cliente con identidad
-     * @Throws Si la alta no se realiza con exito
-     * @return Alta exitosa, si se registra el cliente correctamente en la base de datos
-     * @return Alta invalida, si la base de datos rechaza el registro
-     */
+    //Se llama a este metodo para crear el objeto de cliente y mandarselo a las otras capas
     public void altaCliente() {
         try {
             this.cliente.setNombreCompleto(this.nombre + " " + this.apellido);
@@ -39,7 +31,6 @@ public class AltaClienteBeanUI implements Serializable {
 
     }
 
-    //Getters y Setters
     public String getNombre() {
         return this.nombre;
     }
