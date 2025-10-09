@@ -1,59 +1,50 @@
 package mx.desarollo.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import java.util.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "cliente")
 public class Cliente {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_Cliente")
-    private int idCliente;
+    @Size(max = 45)
+    @Column(name = "ID_Cliente", nullable = false, length = 45)
+    private String idCliente;
 
+    @Size(max = 100)
+    @NotNull
     @Column(name = "nombreCompleto", nullable = false, length = 100)
     private String nombreCompleto;
 
-    @Column(name = "telefono", nullable = false, unique = true, length = 15)
+    @Size(max = 15)
+    @NotNull
+    @Column(name = "telefono", nullable = false, length = 15)
     private String telefono;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fechaRegistro")
-    private Date fechaRegistro;
+    @NotNull
+    @Column(name = "credito", nullable = false)
+    private Long credito;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_Membresia")
-    private Membresia idMembresia;
+    @NotNull
+    @Column(name = "fechaRegistro", nullable = false)
+    private LocalDate fechaRegistro;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pago> historialCompras;
+    @Size(max = 45)
+    @NotNull
+    @Column(name = "ID_Membresia", nullable = false, length = 45)
+    private String idMembresia;
 
-    @ManyToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Clase> clases;
-
-    @Column(name = "credito")
-    private double credito;
-
-    //constructores
-    public Cliente() {}
-
-    public Cliente(String nombreCompleto, String telefono, Date fechaRegistro,
-                   Membresia idMembresia, double credito) {
-        this.nombreCompleto = nombreCompleto;
-        this.telefono = telefono;
-        this.fechaRegistro = fechaRegistro;
-        this.idMembresia = idMembresia;
-        this.credito = credito;
-    }
-
-    //getters y setters
-    public int getIdCliente() {
+    public String getIdCliente() {
         return idCliente;
     }
 
-    public void setIdCliente(int idCliente) {
+    public void setIdCliente(String idCliente) {
         this.idCliente = idCliente;
     }
 
@@ -73,43 +64,28 @@ public class Cliente {
         this.telefono = telefono;
     }
 
-    public Date getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(Date fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
-    public Membresia getIdMembresia() {
-        return idMembresia;
-    }
-
-    public void setIdMembresia(Membresia idMembresia) {
-        this.idMembresia = idMembresia;
-    }
-
-    public List<Compra> getHistorialCompras() {
-        return historialCompras;
-    }
-
-    public void setHistorialCompras(List<Compra> historialCompras) {
-        this.historialCompras = historialCompras;
-    }
-
-    public List<Clase> getClases() {
-        return clases;
-    }
-
-    public void setClases(List<Clase> clases) {
-        this.clases = clases;
-    }
-
-    public double getCredito() {
+    public Long getCredito() {
         return credito;
     }
 
-    public void setCredito(double credito) {
+    public void setCredito(Long credito) {
         this.credito = credito;
     }
+
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    public String getIdMembresia() {
+        return idMembresia;
+    }
+
+    public void setIdMembresia(String idMembresia) {
+        this.idMembresia = idMembresia;
+    }
+
 }

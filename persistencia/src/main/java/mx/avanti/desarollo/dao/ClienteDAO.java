@@ -25,7 +25,7 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         save(cliente);
     }
 
-    /*public Cliente buscarPorId(int id) {
+    public Cliente buscarPorId(int id) {
         Optional<Cliente> opt = find(id);
         return opt.orElse(null);
     }
@@ -48,5 +48,5 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
                 .setParameter("Telefono", Telefono)
                 .getResultList();
         return resultados.isEmpty() ? null : resultados.get(0);
-    }*/
+    }
 }

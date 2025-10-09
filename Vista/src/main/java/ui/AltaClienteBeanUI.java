@@ -4,8 +4,9 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import java.io.Serializable;
 import mx.desarollo.entity.Cliente;
+
+import java.io.Serializable;
 
 //Nombre del Bean
 @Named("altaCliBeanUI")

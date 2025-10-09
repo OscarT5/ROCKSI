@@ -24,15 +24,20 @@ public class ClienteDelegate {
             throw new Exception("El telefono no puede estar vacio.");
         }
 
-        cliente.setFechaRegistro(new Date());
+        //cliente.setFechaRegistro(new Date());
 
-        clienteDAO.save(cliente);
+        clienteDAO.crear(cliente);
     }
 
-    /*public Cliente obtenerCliente(int id) {
+    public Cliente obtenerCliente(int id) {
         return clienteDAO.find(id).orElse(null);
     }
 
+    /**
+     * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteDAO
+     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
+     * @return Una lista de clientes que contendra todos los clientes de la base de datos
+     */
     public List<Cliente> listarClientes() {
         return clienteDAO.findAll();
     }
@@ -50,5 +55,5 @@ public class ClienteDelegate {
         }
 
         clienteDAO.update(cliente);
-    }*/
+    }
 }
