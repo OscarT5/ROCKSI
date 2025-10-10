@@ -1,5 +1,6 @@
 package helper;
 import java.io.Serializable;
+import java.util.List;
 
 import mx.desarollo.entity.Cliente;
 import mx.desarollo.integration.ServiceFacadeLocator;
@@ -17,9 +18,10 @@ import mx.desarollo.integration.ServiceFacadeLocator;
      * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteFacade
      * @Throws Si la base de datos rechaza la peticion de selec * from tabla
      * @Param Objeto de tipo Cliente
+     * @return Una lista de clientes
      */
-    public void ObtenerClientes(Cliente cli) throws Exception {
-        ServiceFacadeLocator.getInstanceClienteFacade().listarClientes();
+    public List<Cliente> ObtenerClientes() throws Exception {
+        return ServiceFacadeLocator.getInstanceClienteFacade().listarClientes();
     }
 
 }

@@ -7,16 +7,20 @@ import java.util.List;
 import mx.desarollo.entity.Cliente;
 import helper.ClienteHelper;
 
+import jakarta.faces.view.ViewScoped;
+import java.io.Serializable;
+
 @Named("clienteBeanUI")
-@RequestScoped
-public class ClienteBeanUI {
+@ViewScoped
+public class ClienteBeanUI implements Serializable {
     private List<Cliente> listaClientes;
     private ClienteHelper clienteHelper = new ClienteHelper();
 
     @PostConstruct
     public void init() {
         try {
-            //listaClientes = clienteHelper.obtenerClientes(); // método en el helper que llama al DAO
+            listaClientes = clienteHelper.ObtenerClientes();
+            System.out.println("Clientes cargados: " + (listaClientes != null ? listaClientes.size() : 0));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -26,4 +30,5 @@ public class ClienteBeanUI {
         return listaClientes;
     }
 }
+
 
