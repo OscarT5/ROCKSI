@@ -269,6 +269,7 @@
             <div class="action-buttons">
                 <p:commandButton value="Registrar Cliente"
                                  icon="pi pi-user-plus"
+                                 action="GCLI-US1"
                                  styleClass="btn-registrar"/>
                 <p:commandButton value="Modificar Cliente"
                                  icon="pi pi-user-edit"
@@ -285,27 +286,25 @@
                          styleClass="clientes-tabla"
                          paginatorPosition="bottom">
 
-                <p:column headerText="ID" sortBy="#{cli.idCliente}">
+                <p:column headerText="ID Cliente" sortBy="#{cli.idCliente}">
                     <h:outputText value="#{cli.idCliente}" />
                 </p:column>
 
-                <p:column headerText="Nombre" sortBy="#{cli.nombre}">
-                    <h:outputText value="#{cli.nombre}" />
+                <p:column headerText="Nombre" sortBy="#{cli.nombreCompleto}">
+                    <h:outputText value="#{cli.nombreCompleto.split(' ')[0]}" />
                 </p:column>
 
                 <p:column headerText="Apellidos" sortBy="#{cli.apellido}">
                     <h:outputText value="#{cli.apellido}" />
                 </p:column>
 
-                <p:column headerText="Vencimiento de membresía" sortBy="#{cli.vencimientoMembresia}">
-                    <h:outputText value="#{cli.vencimientoMembresia}">
-                        <f:convertDateTime pattern="dd-MM-yyyy"/>
-                    </h:outputText>
+                <p:column headerText="Teléfono" sortBy="#{cli.telefono}">
+                    <h:outputText value="#{cli.telefono}" />
                 </p:column>
 
-                <p:column headerText="Fecha de registro" sortBy="#{cli.fechaRegistro}">
+                <p:column headerText="Fecha de Registro" sortBy="#{cli.fechaRegistro}">
                     <h:outputText value="#{cli.fechaRegistro}">
-                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        <f:convertDateTime pattern="dd-MM-yyyy" />
                     </h:outputText>
                 </p:column>
 
