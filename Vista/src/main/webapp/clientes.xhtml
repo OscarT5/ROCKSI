@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Clientes - Rock On</title>
+    <meta charset="UTF-8"/>
+    <style>
+
+        body {
+            margin: 0;
+            font-family: "Poppins", Arial, sans-serif;
+            background-color: #f8f9fb;
+        }
+
+        /* BARRA LATERAL */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #007bcb;
+            color: white;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Menú principal dentro de la barra lateral */
+        .sidebar .menu {
+            width: 100%;
+            padding-top: 30px;
+        }
+
+        /* Enlaces del menú  */
+        .sidebar a,
+        .sidebar h\:commandLink {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white !important;
+            text-decoration: none !important;
+            padding: 10px 20px;
+            font-size: 15px;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 10px;
+        }
+
+        /* Hover y estado activo */
+        .sidebar a:hover,
+        .sidebar h\:commandLink:hover,
+        .sidebar .active {
+            background: #0061a6 !important;
+            border-radius: 6px;
+        }
+
+        /* Ícono dentro del menú */
+        .menu-icon {
+            width: 22px;
+            height: 22px;
+            filter: brightness(0) invert(1); /* blanco */
+            transition: transform 0.2s ease;
+        }
+
+        /* Animación de ícono al pasar el mouse */
+        .sidebar h\:commandLink:hover .menu-icon {
+            transform: scale(1.15);
+        }
+
+        /* Logo inferior */
+        .sidebar .logo-bottom {
+            padding: 25px 0;
+        }
+
+        .sidebar .logo-bottom img {
+            width: 130px;
+            border-radius: 50%;
+        }
+
+        /* ESTILOS GENERALES */
+        body {
+            margin: 0;
+            font-family: "Poppins", Arial, sans-serif;
+            background-color: #f8f9fb;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-content {
+            margin-left: 220px; /* espacio para la barra lateral */
+            padding: 30px 40px;
+        }
+
+        /* Encabezado de la página (título "Clientes") */
+        .header-clientes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #007bcb;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .header-clientes h1 {
+            font-size: 26px;
+            color: #000;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        /* TARJETA CONTENEDORA */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* BOTONES DE ACCIÓN */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .action-buttons .ui-button {
+            border: none !important;
+            border-radius: 20px !important;
+            font-weight: 600 !important;
+            padding: 6px 16px !important;
+            font-size: 14px !important;
+        }
+
+        .btn-registrar {
+            background: #007bcb !important;
+            color: #fff !important;
+        }
+
+        .btn-modificar {
+            background: #007bcb !important;
+            color: #fff !important;
+        }
+
+        .btn-baja {
+            background: #007bcb !important;
+            color: #fff !important;
+        }
+
+        /* TABLA DE CLIENTES */
+
+        /* Tabla general */
+        .ui-datatable {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: none !important;
+            margin-top: 5px;
+        }
+
+        /* Encabezados */
+        .ui-datatable thead th {
+            background-color: #007bcb !important;
+            color: white !important;
+            text-align: left !important;
+            font-weight: 600 !important;
+            padding: 10px 12px !important;
+            border: none !important;
+            font-size: 14px !important;
+        }
+
+        /* Filas del cuerpo */
+        .ui-datatable tbody td {
+            padding: 10px 12px !important;
+            font-size: 14px !important;
+            color: #222;
+            border: none !important;
+        }
+
+        /* Filas alternadas (para efecto de zebra) */
+        .ui-datatable tr:nth-child(even) {
+            background-color: #f9f9f9 !important;
+        }
+
+        .ui-datatable tr:nth-child(odd) {
+            background-color: #fff !important;
+        }
+
+        /* Hover sobre fila */
+        .ui-datatable tr:hover {
+            background-color: #eef7ff !important;
+        }
+
+        /* Contenedor inferior redondeado */
+        .ui-datatable-tablewrapper {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+
+    </style>
+
+</h:head>
+
+<h:body>
+
+    <!-- Barra lateral -->
+    <div class="sidebar">
+        <div class="menu">
+            <h:form>
+                <!-- HOME -->
+                <h:commandLink action="home.xhtml?faces-redirect=true"
+                               actionListener="#{menuBeanUI.setActivePage('home')}"
+                               styleClass="#{menuBeanUI.activePage eq 'home' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/home.png" alt="Home Icon" class="menu-icon"/>
+                    <span>Home</span>
+                </h:commandLink>
+
+                <!-- CLIENTES -->
+                <h:commandLink action="clientes.xhtml?faces-redirect=true"
+                               actionListener="#{menuBeanUI.setActivePage('clientes')}"
+                               styleClass="#{menuBeanUI.activePage eq 'clientes' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/clientes.png" alt="Clientes Icon" class="menu-icon"/>
+                    <span>Clientes</span>
+                </h:commandLink>
+
+                <!-- TIENDA -->
+                <h:commandLink action="tienda.xhtml?faces-redirect=true"
+                               actionListener="#{menuBeanUI.setActivePage('tienda')}"
+                               styleClass="#{menuBeanUI.activePage eq 'tienda' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/tienda.png" alt="Tienda Icon" class="menu-icon"/>
+                    <span>Tienda</span>
+                </h:commandLink>
+
+                <!-- CLASES -->
+                <h:commandLink action="clases.xhtml?faces-redirect=true"
+                               actionListener="#{menuBeanUI.setActivePage('clases')}"
+                               styleClass="#{menuBeanUI.activePage eq 'clases' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/clases.png" alt="Clases Icon" class="menu-icon"/>
+                    <span>Clases</span>
+                </h:commandLink>
+
+                <!-- PAGOS -->
+                <h:commandLink action="pagos.xhtml?faces-redirect=true"
+                               actionListener="#{menuBeanUI.setActivePage('pagos')}"
+                               styleClass="#{menuBeanUI.activePage eq 'pagos' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/pagos.png" alt="Pagos Icon" class="menu-icon"/>
+                    <span>Pagos</span>
+                </h:commandLink>
+            </h:form>
+        </div>
+
+        <!-- Logo inferior -->
+        <div class="logo-bottom">
+            <img src="resources-20250903T164359Z-1-001/resources/rockon-icon.png" alt="Rock On Logo"/>
+        </div>
+    </div>
+
+
+    <!-- Contenido principal -->
+
+    <div class="main-content">
+
+        <div class="card">
+            <!-- Botones de acción -->
+            <h1>Clientes</h1>
+
+            <div class="action-buttons">
+                <p:commandButton value="Registrar Cliente"
+                                 icon="pi pi-user-plus"
+                                 styleClass="btn-registrar"/>
+                <p:commandButton value="Modificar Cliente"
+                                 icon="pi pi-user-edit"
+                                 styleClass="btn-modificar"/>
+                <p:commandButton value="Baja de Cliente"
+                                 icon="pi pi-user-minus"
+                                 styleClass="btn-baja"/>
+            </div>
+
+            <!-- Tabla de clientes -->
+            <p:dataTable value="#{clienteBeanUI.listaClientes}" var="cli"
+                         paginator="true" rows="5"
+                         emptyMessage="No hay clientes registrados"
+                         styleClass="clientes-tabla"
+                         paginatorPosition="bottom">
+
+                <p:column headerText="ID" sortBy="#{cli.idCliente}">
+                    <h:outputText value="#{cli.idCliente}" />
+                </p:column>
+
+                <p:column headerText="Nombre" sortBy="#{cli.nombre}">
+                    <h:outputText value="#{cli.nombre}" />
+                </p:column>
+
+                <p:column headerText="Apellidos" sortBy="#{cli.apellido}">
+                    <h:outputText value="#{cli.apellido}" />
+                </p:column>
+
+                <p:column headerText="Vencimiento de membresía" sortBy="#{cli.vencimientoMembresia}">
+                    <h:outputText value="#{cli.vencimientoMembresia}">
+                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Fecha de registro" sortBy="#{cli.fechaRegistro}">
+                    <h:outputText value="#{cli.fechaRegistro}">
+                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Crédito" sortBy="#{cli.credito}">
+                    <h:outputText value="#{cli.credito}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </div>
+
+</h:body>
+</html>
