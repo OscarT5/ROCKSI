@@ -23,25 +23,32 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         save(cliente);
     }
 
-    public void eliminarCliente(String idCliente) {
+    //Metodo para eliminar el cliente
+    public boolean eliminarCliente(String idCliente) {
         EntityTransaction et = null;
+        boolean eliminado = false;
 
         try {
-            et = entityManager.getTransaction();
-            et.begin();//Se crea la transaccion de datos con la base de datos
+            et = entityManager.getTransaction();//Aqui se abre la transaccion necesaria hacia la BD
+            et.begin();
 
-            Cliente cliente = entityManager.find(Cliente.class, idCliente); //Busca el cliente dentro de la BD
+            Cliente cliente = entityManager.find(Cliente.class, idCliente);//Encuentra el id del cliente
+
             if (cliente != null) {
-                entityManager.remove(cliente);//Prepara la eliminacion del cliente, la cual se hara proximamente
+                if (!entityManager.contains(cliente)) {
+                    cliente = entityManager.merge(cliente);
+                }
+                entityManager.remove(cliente);
+                eliminado = true;
             }
-            et.commit();//Aqui se realiza la accion de eliminacion, siempre y cuando si sea encontrado
+
+            et.commit();//Realiza los cambios
+            return eliminado;
         } catch (Exception e) {
             if (et != null && et.isActive()) et.rollback();
             e.printStackTrace();
-        } finally {
-            if (entityManager.isOpen()) {
-                entityManager.close();
-            }
         }
+
+        return eliminado;
     }
 }

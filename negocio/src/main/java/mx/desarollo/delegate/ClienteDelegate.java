@@ -3,9 +3,7 @@ package mx.desarollo.delegate;
 import mx.avanti.desarollo.dao.ClienteDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Cliente;
-
 import java.util.Date;
-import java.util.List;
 
 public class ClienteDelegate {
 
@@ -25,17 +23,15 @@ public class ClienteDelegate {
         }
 
         cliente.setFechaRegistro(new Date());
-
         clienteDAO.save(cliente);
     }
 
-    //Este metodo llama a la funcion de eliminar cliente del DAO
-    public void eliminarCliente(String idCliente) throws Exception {
+    //Metodo para eliminar el cliente
+    public boolean eliminarCliente(String idCliente) throws Exception {
         if (idCliente == null || idCliente.trim().isEmpty()) {
             throw new Exception("El id del cliente esta vacio");
         }
 
-        clienteDAO.eliminarCliente(idCliente);
+        return clienteDAO.eliminarCliente(idCliente);
     }
-
 }
