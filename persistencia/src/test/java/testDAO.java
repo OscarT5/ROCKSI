@@ -13,6 +13,8 @@ public class testDAO {
     public static void main(String[] args) {
         ClienteDAO ClienteDAO = new ClienteDAO(HibernateUtil.getEntityManager());
 
+
+
         for (Cliente Cliente : ClienteDAO.listarTodos()) {
             System.out.println(Cliente + "|| id [" + Cliente.getIdCliente()+ "]");
         }

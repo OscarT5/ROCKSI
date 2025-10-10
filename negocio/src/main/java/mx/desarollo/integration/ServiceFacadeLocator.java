@@ -1,6 +1,7 @@
 package mx.desarollo.integration;
 
 import mx.desarollo.facade.ClienteFacade;
+import mx.desarollo.facade.FacadeUsuario;
 
 public class ServiceFacadeLocator {
 

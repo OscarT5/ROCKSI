@@ -13,8 +13,7 @@ import java.time.LocalDate;
 @Table(name = "cliente")
 public class Cliente {
     @Id
-    @Size(max = 45)
-    @Column(name = "ID_Cliente", nullable = false, length = 45)
+    @Column(name = "ID_Cliente", length = 45)
     private String idCliente;
 
     @Size(max = 100)
@@ -30,6 +29,30 @@ public class Cliente {
     @NotNull
     @Column(name = "credito", nullable = false)
     private Long credito;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fechaRegistro")
+    private Date fechaRegistro;
+
+    /*
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_Membresia")
+    private Membresia membresia;
+    */
+
+     /*
+     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Pago> historialPagos = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable( //Aqui se hace un join para realizar la tabla puente de estainscrito dentro de la BD
+            name = "estainscrito",
+            joinColumns = @JoinColumn(name = "ID_Cliente"),
+            inverseJoinColumns = @JoinColumn(name = "ID_Clase")
+    )
+    private List<Clase> clases = new ArrayList<>();
+      */
+
+
 
     @NotNull
     @Column(name = "fechaRegistro", nullable = false)
@@ -39,7 +62,28 @@ public class Cliente {
     @NotNull
     @Column(name = "ID_Membresia", nullable = false, length = 45)
     private String idMembresia;
+    //constructores
+    public Cliente() {
+        this.idCliente = UUID.randomUUID().toString();//Esto asigna un id aleatorio, MODIFICAR DESPUES
+        this.fechaRegistro = new Date();//Asigna el dia de hoy
+    }
 
+    @Column(name = "credito")
+    private double credito;
+
+    //constructores
+    public Cliente() {}
+
+    public Cliente(String nombreCompleto, String telefono, Date fechaRegistro,
+                   Membresia idMembresia, double credito) {
+        this.nombreCompleto = nombreCompleto;
+        this.telefono = telefono;
+        this.fechaRegistro = fechaRegistro;
+        //this.membresia = membresia;
+        this.credito = credito;
+    }
+
+    //getters y setters
     public String getIdCliente() {
         return idCliente;
     }
