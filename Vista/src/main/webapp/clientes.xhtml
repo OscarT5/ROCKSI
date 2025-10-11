@@ -398,75 +398,173 @@
                                 delay="300" />
                     </p:inputText>
 
+                    <p:commandButton value="Actualizar Tabla"
+                                     icon="pi pi-refresh"
+                                     action="#{clienteBeanUI.init}"
+                                     update="tablaClientes"
+                                     process="@this"
+                                     delay="300"
+                                     styleClass="btn-registrar"/>
                     <p:commandButton value="Registrar Cliente"
                                      icon="pi pi-user-plus"
                                      onclick="PF('dlgAgregarCliente').show();"
                                      styleClass="btn-registrar" />
                     <p:commandButton value="Modificar Cliente"
                                      icon="pi pi-user-edit"
+                                     onclick="PF('dlgAskId').show();"
                                      styleClass="btn-modificar" />
                     <p:commandButton value="Baja de Cliente"
                                      icon="pi pi-user-minus"
                                      styleClass="btn-baja" />
                 </div>
 
-                    <!--Titulo y configuracion del modal modal Alta de Cliente-->
-                    <p:dialog header="Nuevo cliente"
-                              widgetVar="dlgAgregarCliente"
-                              modal="true"
-                              resizable="false"
-                              closable="true"
-                              draggable="false"
-                              width="400">
+                <!--Titulo y configuracion del modal modal Alta de Cliente-->
+                <p:dialog header="Nuevo cliente"
+                          widgetVar="dlgAgregarCliente"
+                          modal="true"
+                          resizable="false"
+                          closable="true"
+                          draggable="false"
+                          width="360">
 
-                        <!--Mensajes-->
-                        <p:messages id="msgs" showDetail="true" closable="true"/>
+                    <!-- Mensajes -->
+                    <p:messages id="msgsAlta" showDetail="true" closable="true"/>
 
-                        <!--Campo para ingresar nombre-->
-                        <div class="form-group">
-                            <h:outputLabel for="nombre" value="Nombre"/>
-                            <p:inputText id="nombre"
-                                         value="#{altaCliBeanUI.nombre}"
-                                         placeholder="Nombre"
-                                         class="form-control"
-                                         required="true"
-                                         requiredMessage="El campo Nombre es obligatorio"/>
-                        </div>
+                    <!-- Campo para ingresar nombre -->
+                    <div class="form-group">
+                        <h:outputLabel for="nombreAlta" value="Nombre"/>
+                        <p:inputText id="nombreAlta"
+                                     value="#{altaCliBeanUI.nombre}"
+                                     placeholder="Nombre"
+                                     class="form-control"
+                                     required="true"
+                                     requiredMessage="El campo Nombre es obligatorio"/>
+                    </div>
 
-                        <!--Campo para ingresar apellidos-->
-                        <div class="form-group">
-                            <h:outputLabel for="apellido" value="Apellidos"/>
-                            <p:inputText id="apellido"
-                                         value="#{altaCliBeanUI.apellido}"
-                                         placeholder="Apellidos"
-                                         class="form-control"
-                                         required="true"
-                                         requiredMessage="El campo Apellidos es obligatorio"/>
-                        </div>
+                    <!-- Campo para ingresar apellidos -->
+                    <div class="form-group">
+                        <h:outputLabel for="apellidoAlta" value="Apellidos"/>
+                        <p:inputText id="apellidoAlta"
+                                     value="#{altaCliBeanUI.apellido}"
+                                     placeholder="Apellidos"
+                                     class="form-control"
+                                     required="true"
+                                     requiredMessage="El campo Apellidos es obligatorio"/>
+                    </div>
 
-                        <!--Campo para ingresar telefono (solo admite los digitos exactos)-->
-                        <div class="form-group">
-                            <h:outputLabel for="telefono" value="Teléfono"/>
-                            <p:inputMask id="telefono"
-                                         value="#{altaCliBeanUI.telefono}"
-                                         mask="(999) 999-9999"
-                                         placeholder="(686) 185 8942"
-                                         class="form-control"
-                                         required="true"
-                                         requiredMessage="El campo Telefono es obligatorio"/>
-                        </div>
+                    <!-- Campo para ingresar teléfono -->
+                    <div class="form-group">
+                        <h:outputLabel for="telefonoAlta" value="Teléfono"/>
+                        <p:inputMask id="telefonoAlta"
+                                     value="#{altaCliBeanUI.telefono}"
+                                     mask="(999) 999-9999"
+                                     placeholder="(686) 185 8942"
+                                     class="form-control"
+                                     required="true"
+                                     requiredMessage="El campo Teléfono es obligatorio"/>
+                    </div>
 
-                        <div class="boton-registrar">
-                        <!--Boton de registrar el cliente que dispara la accion definida-->
+                    <!-- Botón para registrar cliente -->
+                    <div class="boton-registrar">
                         <p:commandButton id="registrarBtn"
                                          value="Registrar al cliente"
                                          action="#{altaCliBeanUI.altaCliente}"
-                                         update="msgs"
+                                         process="@this nombreAlta apellidoAlta telefonoAlta"
+                                         update="msgsAlta tablaClientes"
                                          icon="pi pi-plus-circle"
                                          styleClass="btn"
-                                         style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important; box-shadow: none !important;" />
+                                         style="background: #007bff !important;
+                                background-image: none !important;
+                                color: #fff !important;
+                                border: none !important;
+                                box-shadow: none !important;"/>
+                    </div>
+                </p:dialog>
+
+                <!-- pedir ID del cliente a modificar -->
+                <p:dialog header="Buscar cliente a modificar"
+                          widgetVar="dlgAskId"
+                          modal="true"
+                          resizable="false"
+                          closable="true"
+                          draggable="false"
+                          width="360">
+                    <h:panelGrid columns="1" style="width:100%;">
+
+                        <p:messages id="msgsAsk" showDetail="true" closable="true"/>
+
+                        <div class="form-group">
+                            <h:outputLabel for="searchId" value="ID Cliente"/>
+                            <p:inputText id="searchId"
+                                         value="#{modificarCliBeanUI.busquedaId}"
+                                         placeholder="Ej. CLI1001"
+                                         styleClass="form-control"
+                                         required="true"
+                                         requiredMessage="El ID es obligatorio"/>
                         </div>
-                    </p:dialog>
+
+                        <p:commandButton value="Buscar"
+                                         icon="pi pi-search"
+                                         action="#{modificarCliBeanUI.cargarClientePorId}"
+                                         update="@form"
+                                         process="@this searchId"
+                                         oncomplete="if (args &amp;&amp; args.found) { PF('dlgAskId').hide(); PF('dlgModificarCliente').show(); } else { PF('dlgAskId').show(); }"
+                                         styleClass="btn"
+                                         style="background: #007bff !important; background-image: none !important;color: #fff !important;border: none !important;box-shadow: none !important;"/>
+                    </h:panelGrid>
+                </p:dialog>
+
+                <!-- dialog de modificar cliente que solo se muestra en caso de que se haya encontrado el cliente por id -->
+                <p:dialog header="Modificar cliente"
+                          widgetVar="dlgModificarCliente"
+                          modal="true"
+                          resizable="false"
+                          closable="true"
+                          draggable="false"
+                          width="360">
+
+                    <p:messages id="msgsModificar" showDetail="true" closable="true"/>
+
+                    <div class="form-group">
+                        <h:outputLabel for="nombreMod" value="Nombre"/>
+                        <p:inputText id="nombreMod"
+                                     value="#{modificarCliBeanUI.nombre}"
+                                     placeholder="Nombre"
+                                     class="form-control"
+                                     required="true"
+                                     requiredMessage="El campo Nombre es obligatorio"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="apellidoMod" value="Apellidos"/>
+                        <p:inputText id="apellidoMod"
+                                     value="#{modificarCliBeanUI.apellido}"
+                                     placeholder="Apellidos"
+                                     class="form-control"
+                                     required="true"
+                                     requiredMessage="El campo Apellidos es obligatorio"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="telefonoMod" value="Teléfono"/>
+                        <p:inputMask id="telefonoMod"
+                                     value="#{modificarCliBeanUI.telefono}"
+                                     mask="(999) 999-9999"
+                                     placeholder="(686) 185 8942"
+                                     class="form-control"
+                                     required="true"
+                                     requiredMessage="El campo Teléfono es obligatorio"/>
+                    </div>
+
+                    <p:commandButton id="modificarBtn"
+                                     value="Modificar al cliente"
+                                     action="#{modificarCliBeanUI.modificarCliente}"
+                                     process="@this nombreMod apellidoMod telefonoMod"
+                                     update="msgsModificar"
+                                     icon="pi pi-check"
+                                     styleClass="btn"
+                                     style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important;box-shadow: none !important;"/>
+                </p:dialog>
 
                 <!-- Tabla de clientes -->
                 <p:dataTable id="tablaClientes"

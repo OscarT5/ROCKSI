@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import mx.desarollo.entity.Item;
 
 import java.time.LocalDate;
 import java.io.Serializable;
@@ -28,7 +29,6 @@ public class Membresia implements Serializable {
 
     @OneToMany(mappedBy = "membresia", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Cliente> clientes = new ArrayList<>();
-
 
     public Membresia() { }
 
@@ -61,16 +61,16 @@ public class Membresia implements Serializable {
         this.idMembresia = idMembresia;
     }
 
-    public Item getItem() {
+    /*public Item getItem() {
         return item;
     }
 
     public void setItem(Item item) {
         this.item = item;
-    }
+    }*/
 
     public Date getFechaVencimiento() {
-        return
+        return fechaVencimiento;
     }
 
     public void setFechaVencimiento(Date fechaVencimiento) {

@@ -49,12 +49,11 @@ public class ClienteDelegate {
         //busqueda de membresia simulada inyectada a la bd para probar alta de clientes
         Membresia membresiaPorDefecto = clienteDAO.getEntityManager().find(Membresia.class, "M002");
         if (membresiaPorDefecto == null) {
-            throw new RuntimeException("No existe la membresia por defecto en la BD");
+            throw new RuntimeException("No existe la membresía por defecto en la BD");
         }
         cliente.setMembresia(membresiaPorDefecto);
 
         cliente.setFechaRegistro(new Date());
-
         clienteDAO.crear(cliente);
     }
 

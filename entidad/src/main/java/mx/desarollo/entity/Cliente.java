@@ -41,21 +41,21 @@ public class Cliente {
     private List<Clase> clases = new ArrayList<>();
       */
 
-
-
     @Column(name = "credito")
     private double credito;
 
     //constructores
+    /*
     public Cliente() { }
+     */
 
-    public Cliente(String nombreCompleto, String telefono, Date fechaRegistro, double credito) {
+    /*public Cliente(String nombreCompleto, String telefono, Date fechaRegistro, double credito) {
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
         this.membresia = membresia;
         this.credito = credito;
-    }
+    }*/
 
     // metodo para creacion de ID
     public static synchronized String generarNuevoId() {

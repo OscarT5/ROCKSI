@@ -34,6 +34,10 @@ public class AltaClienteBeanUI implements Serializable {
             this.cliente.setTelefono(this.telefono);
             this.guardarCliente.AltaCliente(this.cliente);
             FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Alta Exitosa", "Cliente creado..."));
+            this.cliente = new Cliente();
+            this.nombre = "";
+            this.apellido = "";
+            this.telefono = "";
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Alta Invalida", e.getMessage()));
         }

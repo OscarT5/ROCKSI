@@ -17,8 +17,7 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         this.entityManager = em;
     }
 
-    @Override
-    protected EntityManager getEntityManager() {
+    public EntityManager getEntityManager() {
         return entityManager;
     }
 
@@ -121,9 +120,6 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
             throw new RuntimeException("Error al modificar el cliente.", e);
         }
     }
-}
-
-    /*
     public Cliente buscarPorTelefono(String Telefono) {
         List<Cliente> resultados = entityManager
                 .createQuery("SELECT c FROM Cliente c WHERE c.telefono = :Telefono", Cliente.class)
