@@ -340,7 +340,7 @@
             <div class="form-group">
                 <h:outputLabel for="nombreClase" value="Nombre"/>
                 <p:inputText id="nombreClase"
-                             value="#{altaClaseBeanUI.nombre}"
+                             value="#{altaClaBeanUI.nombre}"
                              placeholder="Nombre"
                              class="form-control"
                              required="true"
@@ -353,7 +353,7 @@
             <div class="form-group">
                 <h:outputLabel for="horario" value="Horario"/>
                 <p:inputText id="horario"
-                             value="#{altaClaseBeanUI.horario}"
+                             value="#{altaClaBeanUI.horario}"
                              placeholder="Horario de la clase"
                              class="form-control"
                              required="true"
@@ -366,20 +366,20 @@
             <div class="form-group">
                 <h:outputLabel for="cupo" value="Cupo máximo"/>
                 <p:inputText id="cupo"
-                             value="#{altaClaseBeanUI.cupoMaximo}"
+                             value="#{altaClaBeanUI.cupoMaximo}"
                              placeholder="Cupo maximo de clientes"
                              class="form-control"
                              required="true"
-                             validatorMessage="El cupo máximo no puede estar vacío"
-                             requiredMessage="El campo Cupo máximo es obligatorio">
-                    <f:validateRegex pattern=".*\S.*"/>
+                             validatorMessage="El cupo maximo debe ser un número válido"
+                             requiredMessage="El campo Cupo maximo es obligatorio">
+                    <f:validateLongRange minimum="1" maximum="200"/>
                 </p:inputText>
             </div>
 
             <div class="form-group">
                 <h:outputLabel for="maestro" value="Maestro"/>
                 <p:inputText id="maestro"
-                             value="#{altaClaseBeanUI.maestro}"
+                             value="#{altaClaBeanUI.maestro}"
                              placeholder="Nombre del maestro"
                              class="form-control"
                              required="true"
@@ -389,16 +389,19 @@
                 </p:inputText>
             </div>
 
-            <!--Este boton se conecta con el backend-->
+            <!--Este boton se conecta con el backend gracias al action-->
             <p:commandButton id="registrarClaseBtn"
                              value="Registrar la clase"
                              icon="pi pi-plus-circle"
-                             update="@form"
+                             action="#{altaClaBeanUI.altaClase}"
+                             update="msgsClase"
                              process="@form"
                              styleClass="btn"
-                             style="background: #007bff !important; color: #fff !important; border: none !important;"/>
+                             style="background: #007bff !important; color: #fff !important; border: none !important;"
+                             />
         </p:dialog>
     </h:form>
+
 
 </h:body>
 </html>

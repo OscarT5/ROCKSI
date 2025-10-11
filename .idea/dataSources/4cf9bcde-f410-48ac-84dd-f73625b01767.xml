@@ -1195,7 +1195,6 @@ ID_Clase</ColNames>
       <StoredType>enum(&apos;membresia&apos;, &apos;producto&apos;, &apos;clase&apos;)|0e</StoredType>
     </column>
     <column id="347" parent="303" name="precio">
-      <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>double|0s</StoredType>
     </column>
