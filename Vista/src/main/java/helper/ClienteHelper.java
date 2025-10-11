@@ -34,3 +34,11 @@ import mx.desarollo.integration.ServiceFacadeLocator;
     }
 
     }
+    public void ModificarCliente(Cliente cli) throws Exception {
+        ServiceFacadeLocator.getInstanceClienteFacade().actualizarCliente(cli);
+    }
+    public Cliente obtenerCliente(String id) {
+        return ServiceFacadeLocator.getInstanceClienteFacade().obtenerClientePorId(id);
+    }
+
+}

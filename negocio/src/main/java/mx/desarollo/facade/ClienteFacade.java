@@ -21,6 +21,10 @@ public class ClienteFacade {
      */
     public List<Cliente> obtenerCliente(String id) {
         return clienteDelegate.obtenerClientePorId(id);
+
+    }
+    public Cliente obtenerClientePorId(String id) {
+        return clienteDelegate.obtenerCliente(id);
     }
 
     /**

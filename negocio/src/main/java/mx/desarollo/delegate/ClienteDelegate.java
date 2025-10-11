@@ -3,6 +3,7 @@ package mx.desarollo.delegate;
 import mx.avanti.desarollo.dao.ClienteDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Membresia;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,15 +18,42 @@ public class ClienteDelegate {
     }
 
     public void registrarCliente(Cliente cliente) throws Exception {
+        //validar que el nombre no este vacio
         if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
-            throw new Exception("El nombre no puede estar vacio.");
+            throw new Exception("el nombre no puede estar vacio.");
         }
 
+        //validar que el telefono no este vacio
         if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
-            throw new Exception("El telefono no puede estar vacio.");
+            throw new Exception("el telefono no puede estar vacio.");
         }
 
-        //cliente.setFechaRegistro(new Date());
+        // trim inicial
+        String rawTelefono = cliente.getTelefono().trim();
+
+        // borra espacios y guiones
+        String telefonoNormalizado = rawTelefono.replaceAll("[\\s\\-()]", "");
+
+        //validar el formato del nombre
+        if (!cliente.getNombreCompleto().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+            throw new Exception("el nombre solo puede contener letras y espacios.");
+        }
+
+        //validar el formato del telefono
+        String normal = rawTelefono.replaceAll("[^0-9]", "");
+        if (!normal.matches("\\d{7,15}")) {
+            throw new Exception("Telefono invalido. Debe contener entre 7 y 15 dígitos.");
+        }
+        cliente.setTelefono(normal);
+
+        //busqueda de membresia simulada inyectada a la bd para probar alta de clientes
+        Membresia membresiaPorDefecto = clienteDAO.getEntityManager().find(Membresia.class, "M002");
+        if (membresiaPorDefecto == null) {
+            throw new RuntimeException("No existe la membresia por defecto en la BD");
+        }
+        cliente.setMembresia(membresiaPorDefecto);
+
+        cliente.setFechaRegistro(new Date());
 
         clienteDAO.crear(cliente);
     }
@@ -40,6 +68,22 @@ public class ClienteDelegate {
         List<Cliente> resultado = new ArrayList<>();
         clienteDAO.find(id).ifPresent(resultado::add);
         return resultado;
+    }
+
+    public Cliente obtenerCliente(String id) {
+        try {
+            if (id == null) return null;
+            id = id.trim();
+            if (id.isEmpty()) return null;
+
+            Cliente c = clienteDAO.find(id).orElse(null);
+            if (c != null && c.getMembresia() != null) {
+                c.getMembresia().getIdMembresia();
+            }
+            return c;
+        } catch (Exception e) {
+            throw new RuntimeException("Error obteniendo cliente con id=" + id, e);
+        }
     }
 
     /**
@@ -58,11 +102,43 @@ public class ClienteDelegate {
         }
     }
 
+    /*
+    este metodo sirve para actualizar clientes mediante su ID
+    que esta es proporcionada por el bean, falta implementar el bean
+     */
     public void actualizarCliente(Cliente cliente) throws Exception {
-        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
-            throw new Exception("El nombre no puede estar vacio.");
+        String idAActualizar = cliente.getIdCliente();
+        if (idAActualizar == null || idAActualizar.trim().isEmpty()) {
+            throw new Exception("No se proporcionó ID de cliente para actualizar.");
         }
 
-        clienteDAO.update(cliente);
+        Cliente existente = clienteDAO.buscarPorId(idAActualizar);
+        if (existente == null) {
+            throw new Exception("No existe el cliente con ID " + idAActualizar + " en la base de datos.");
+        }
+
+        // Validaciones
+        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
+            throw new Exception("El nombre no puede estar vacío.");
+        }
+        if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
+            throw new Exception("El teléfono no puede estar vacío.");
+        }
+
+        String rawTelefono = cliente.getTelefono().trim();
+        String normal = rawTelefono.replaceAll("[^0-9]", "");
+        if (!normal.matches("\\d{7,15}")) {
+            throw new Exception("Teléfono inválido. Debe contener entre 7 y 15 dígitos.");
+        }
+        if (!cliente.getNombreCompleto().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+            throw new Exception("El nombre solo puede contener letras y espacios.");
+        }
+
+        // Aplicar cambios
+        existente.setNombreCompleto(cliente.getNombreCompleto().trim());
+        existente.setTelefono(normal);
+
+        clienteDAO.actualizar(existente);
     }
+
 }

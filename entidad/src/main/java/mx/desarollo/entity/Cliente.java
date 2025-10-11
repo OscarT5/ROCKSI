@@ -8,6 +8,8 @@ import java.util.*;
 @Table(name = "cliente")
 public class Cliente {
 
+    private static int contador = 1000;
+
     @Id
     @Column(name = "ID_Cliente", length = 45)
     private String idCliente;
@@ -22,11 +24,9 @@ public class Cliente {
     @Column(name = "fechaRegistro")
     private Date fechaRegistro;
 
-    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_Membresia")
     private Membresia membresia;
-    */
 
      /*
      @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -47,17 +47,26 @@ public class Cliente {
     private double credito;
 
     //constructores
-    public Cliente() {
-        this.idCliente = UUID.randomUUID().toString();//Esto asigna un id aleatorio, MODIFICAR DESPUES
-        this.fechaRegistro = new Date();//Asigna el dia de hoy
-    }
+    public Cliente() { }
 
     public Cliente(String nombreCompleto, String telefono, Date fechaRegistro, double credito) {
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
         this.fechaRegistro = fechaRegistro;
-        //this.membresia = membresia;
+        this.membresia = membresia;
         this.credito = credito;
+    }
+
+    // metodo para creacion de ID
+    public static synchronized String generarNuevoId() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CLI").append(contador++);
+        return sb.toString();
+    }
+
+    // permite al DAO actualizar el contador
+    public static void setContador(int nuevoValor) {
+        contador = nuevoValor;
     }
 
     //getters y setters
@@ -93,7 +102,7 @@ public class Cliente {
         this.fechaRegistro = fechaRegistro;
     }
 
-    /*
+
     public Membresia getMembresia() {
         return membresia;
     }
@@ -102,6 +111,7 @@ public class Cliente {
         this.membresia = membresia;
     }
 
+    /*
     public List<Pago> getHistorialPagos() {//Se cambio el nombre de la clase a "Pagos"
         return historialPagos;
     }
