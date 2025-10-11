@@ -4,6 +4,7 @@ import mx.avanti.desarollo.dao.ClienteDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Cliente;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +30,16 @@ public class ClienteDelegate {
         clienteDAO.crear(cliente);
     }
 
-    public Cliente obtenerCliente(int id) {
-        return clienteDAO.find(id).orElse(null);
+    /**
+     * Metodo para hacer busqueda por ID en los clientes, llamara a la instancia de ClienteDAO
+     * @Throws Si la base de datos rechaza la peticion de busqueda por ID
+     * @Params Objeto de tipo String id
+     * @return Una lista con los clientes que cumplen con id del cliente especificado lladado resultado
+     */
+    public List<Cliente> obtenerClientePorId(String id) {
+        List<Cliente> resultado = new ArrayList<>();
+        clienteDAO.find(id).ifPresent(resultado::add);
+        return resultado;
     }
 
     /**

@@ -15,12 +15,24 @@ import java.io.Serializable;
 public class ClienteBeanUI implements Serializable {
     private List<Cliente> listaClientes;
     private ClienteHelper clienteHelper = new ClienteHelper();
+    private String filtroId;
 
     @PostConstruct
     public void init() {
         try {
             listaClientes = clienteHelper.ObtenerClientes();
-            System.out.println("Clientes cargados: " + (listaClientes != null ? listaClientes.size() : 0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void filtrarPorId() {
+        try {
+            if (filtroId == null || filtroId.isEmpty()) {
+                listaClientes = clienteHelper.ObtenerClientes();
+            } else {
+                listaClientes = clienteHelper.ObtenerClientesPorId(filtroId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -28,6 +40,12 @@ public class ClienteBeanUI implements Serializable {
 
     public List<Cliente> getListaClientes() {
         return listaClientes;
+    }
+    public String getFiltroId() {
+        return filtroId;
+    }
+    public void setFiltroId(String filtroId) {
+        this.filtroId = filtroId;
     }
 }
 

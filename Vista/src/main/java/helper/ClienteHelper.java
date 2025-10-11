@@ -23,5 +23,14 @@ import mx.desarollo.integration.ServiceFacadeLocator;
     public List<Cliente> ObtenerClientes() throws Exception {
         return ServiceFacadeLocator.getInstanceClienteFacade().listarClientes();
     }
+        /**
+         * Metodo para hacer busqueda por ID en los clientes, que llamara a la instancia de ClienteFacade
+         * @Throws Si la base de datos rechaza la peticion de busqueda por ID
+         * @Param Objeto de tipo String id
+         * @return Una lista con los clientes que cumplen con id del cliente especificado
+         */
+    public List<Cliente> ObtenerClientesPorId(String id) throws Exception {
+            return ServiceFacadeLocator.getInstanceClienteFacade().obtenerCliente(id);
+    }
 
-}
+    }

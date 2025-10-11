@@ -13,9 +13,15 @@ public class ClienteFacade {
         clienteDelegate.registrarCliente(cliente);
     }
 
-    /*public Cliente obtenerCliente(int id) {
-        return clienteDelegate.;
-    }*/
+    /**
+     * Metodo para hacer busqueda por ID en los clientes, llamara a la instancia de ClienteDelegate
+     * @Throws Si la base de datos rechaza la peticion de busqueda por ID
+     * @Params Objeto de tipo String id
+     * @return Una lista con los clientes que cumplen con id del cliente especificado
+     */
+    public List<Cliente> obtenerCliente(String id) {
+        return clienteDelegate.obtenerClientePorId(id);
+    }
 
     /**
      * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteDelegate
