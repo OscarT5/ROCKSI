@@ -12,9 +12,10 @@ public class ClienteFacade {
         clienteDelegate.registrarCliente(cliente);
     }
 
-    /*public Cliente obtenerCliente(int id) {
+    public Cliente obtenerClientePorId(String id) {
         return clienteDelegate.obtenerCliente(id);
     }
+    /*
 
     public List<Cliente> listarClientes() {
         return clienteDelegate.listarClientes();
@@ -23,8 +24,9 @@ public class ClienteFacade {
     public void eliminarCliente(int id) {
         clienteDelegate.eliminarCliente(id);
     }
+     */
 
     public void actualizarCliente(Cliente cliente) throws Exception {
         clienteDelegate.actualizarCliente(cliente);
-    }*/
+    }
 }

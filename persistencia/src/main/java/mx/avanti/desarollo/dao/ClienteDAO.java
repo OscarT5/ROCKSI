@@ -72,11 +72,15 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         }
     }
 
-    /*public Cliente buscarPorId(int id) {
-        Optional<Cliente> opt = find(id);
-        return opt.orElse(null);
+    public Cliente buscarPorId(String id) {
+        try {
+            return entityManager.find(Cliente.class, id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar cliente por ID", e);
+        }
     }
 
+    /*
     public List<Cliente> listarTodos() {
         return findAll();
     }
@@ -85,10 +89,35 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         Optional<Cliente> opt = find(id);
         opt.ifPresent(this::delete);
     }
+    */
     public void actualizar(Cliente cliente) {
-        update(cliente);
+    EntityTransaction tx = null;
+
+    try {
+        tx = entityManager.getTransaction();
+
+        // Iniciar transaccion si no está activa
+        if (!tx.isActive()) {
+            tx.begin();
+        }
+
+        // Actualizar el cliente existente
+        entityManager.merge(cliente);
+
+        // Confirmar los cambios
+        tx.commit();
+
+    } catch (Exception e) {
+        // Revertir la transaccion si ocurre un error
+        if (tx != null && tx.isActive()) {
+            tx.rollback();
+        }
+
+        throw new RuntimeException("Error al modificar el cliente.", e);
+        }
     }
 
+    /*
     public Cliente buscarPorTelefono(String Telefono) {
         List<Cliente> resultados = entityManager
                 .createQuery("SELECT c FROM Cliente c WHERE c.telefono = :Telefono", Cliente.class)

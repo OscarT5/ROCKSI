@@ -12,4 +12,11 @@ public class ClienteHelper implements Serializable {
     public void AltaCliente(Cliente cli) throws Exception {
         ServiceFacadeLocator.getInstanceClienteFacade().registrarCliente(cli);
     }
+    public void ModificarCliente(Cliente cli) throws Exception {
+        ServiceFacadeLocator.getInstanceClienteFacade().actualizarCliente(cli);
+    }
+    public Cliente obtenerCliente(String id) {
+        return ServiceFacadeLocator.getInstanceClienteFacade().obtenerClientePorId(id);
+    }
+
 }

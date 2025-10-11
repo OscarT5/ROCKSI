@@ -30,7 +30,7 @@ public class ClienteDelegate {
         // trim inicial
         String rawTelefono = cliente.getTelefono().trim();
 
-        // remueve espacios y guiones
+        // borra espacios y guiones
         String telefonoNormalizado = rawTelefono.replaceAll("[\\s\\-()]", "");
 
         //validar el formato del nombre
@@ -41,14 +41,14 @@ public class ClienteDelegate {
         //validar el formato del telefono
         String normal = rawTelefono.replaceAll("[^0-9]", "");
         if (!normal.matches("\\d{7,15}")) {
-            throw new Exception("Telefono inválido. Debe contener entre 7 y 15 dígitos.");
+            throw new Exception("Telefono invalido. Debe contener entre 7 y 15 dígitos.");
         }
         cliente.setTelefono(normal);
 
         //busqueda de membresia simulada inyectada a la bd para probar alta de clientes
         Membresia membresiaPorDefecto = clienteDAO.getEntityManager().find(Membresia.class, "M002");
         if (membresiaPorDefecto == null) {
-            throw new RuntimeException("No existe la membresía por defecto en la BD");
+            throw new RuntimeException("No existe la membresia por defecto en la BD");
         }
         cliente.setMembresia(membresiaPorDefecto);
 
@@ -57,10 +57,22 @@ public class ClienteDelegate {
         clienteDAO.crear(cliente);
     }
 
-    /*public Cliente obtenerCliente(int id) {
-        return clienteDAO.find(id).orElse(null);
-    }
+    public Cliente obtenerCliente(String id) {
+        try {
+            if (id == null) return null;
+            id = id.trim();
+            if (id.isEmpty()) return null;
 
+            Cliente c = clienteDAO.find(id).orElse(null);
+            if (c != null && c.getMembresia() != null) {
+                c.getMembresia().getIdMembresia();
+            }
+            return c;
+        } catch (Exception e) {
+            throw new RuntimeException("Error obteniendo cliente con id=" + id, e);
+        }
+    }
+    /*
     public List<Cliente> listarClientes() {
         return clienteDAO.findAll();
     }
@@ -71,12 +83,45 @@ public class ClienteDelegate {
             clienteDAO.delete(cliente);
         }
     }
+     */
 
+    /*
+    este metodo sirve para actualizar clientes mediante su ID
+    que esta es proporcionada por el bean, falta implementar el bean
+     */
     public void actualizarCliente(Cliente cliente) throws Exception {
-        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
-            throw new Exception("El nombre no puede estar vacio.");
+        String idAActualizar = cliente.getIdCliente();
+        if (idAActualizar == null || idAActualizar.trim().isEmpty()) {
+            throw new Exception("No se proporcionó ID de cliente para actualizar.");
         }
 
-        clienteDAO.update(cliente);
-    }*/
+        Cliente existente = clienteDAO.buscarPorId(idAActualizar);
+        if (existente == null) {
+            throw new Exception("No existe el cliente con ID " + idAActualizar + " en la base de datos.");
+        }
+
+        // Validaciones
+        if (cliente.getNombreCompleto() == null || cliente.getNombreCompleto().trim().isEmpty()) {
+            throw new Exception("El nombre no puede estar vacío.");
+        }
+        if (cliente.getTelefono() == null || cliente.getTelefono().trim().isEmpty()) {
+            throw new Exception("El teléfono no puede estar vacío.");
+        }
+
+        String rawTelefono = cliente.getTelefono().trim();
+        String normal = rawTelefono.replaceAll("[^0-9]", "");
+        if (!normal.matches("\\d{7,15}")) {
+            throw new Exception("Teléfono inválido. Debe contener entre 7 y 15 dígitos.");
+        }
+        if (!cliente.getNombreCompleto().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+            throw new Exception("El nombre solo puede contener letras y espacios.");
+        }
+
+        // Aplicar cambios
+        existente.setNombreCompleto(cliente.getNombreCompleto().trim());
+        existente.setTelefono(normal);
+
+        clienteDAO.actualizar(existente);
+    }
+
 }

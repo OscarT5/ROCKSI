@@ -28,7 +28,7 @@
     </session-timeout>
   </session-config>
     <welcome-file-list>
-        <welcome-file>GCLI-US1.xhtml</welcome-file>
+        <welcome-file>GCLI-US3.xhtml</welcome-file>
     </welcome-file-list>
 
 </web-app>
