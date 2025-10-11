@@ -62,7 +62,8 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
                     try {
                         int n = Integer.parseInt(id.substring(3));
                         if (n > max) max = n;
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }
 
@@ -95,32 +96,32 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
     }
 
     public void actualizar(Cliente cliente) {
-    EntityTransaction tx = null;
+        EntityTransaction tx = null;
 
-    try {
-        tx = entityManager.getTransaction();
+        try {
+            tx = entityManager.getTransaction();
 
-        // Iniciar transaccion si no está activa
-        if (!tx.isActive()) {
-            tx.begin();
-        }
+            // Iniciar transaccion si no está activa
+            if (!tx.isActive()) {
+                tx.begin();
+            }
 
-        // Actualizar el cliente existente
-        entityManager.merge(cliente);
+            // Actualizar el cliente existente
+            entityManager.merge(cliente);
 
-        // Confirmar los cambios
-        tx.commit();
+            // Confirmar los cambios
+            tx.commit();
 
-    } catch (Exception e) {
-        // Revertir la transaccion si ocurre un error
-        if (tx != null && tx.isActive()) {
-            tx.rollback();
-        }
+        } catch (Exception e) {
+            // Revertir la transaccion si ocurre un error
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
 
-        throw new RuntimeException("Error al modificar el cliente.", e);
+            throw new RuntimeException("Error al modificar el cliente.", e);
         }
     }
-    }
+}
 
     /*
     public Cliente buscarPorTelefono(String Telefono) {

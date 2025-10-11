@@ -23,6 +23,7 @@ public class ClienteFacade {
         return clienteDelegate.obtenerClientePorId(id);
 
     }
+
     public Cliente obtenerClientePorId(String id) {
         return clienteDelegate.obtenerCliente(id);
     }
