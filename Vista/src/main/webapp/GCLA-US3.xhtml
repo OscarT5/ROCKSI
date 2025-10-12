@@ -238,11 +238,7 @@
                              icon="pi pi-plus-circle"
                              onclick="PF('dlgConfirmar').show(); return false;"
                              styleClass="btn"
-                             style="background: #007bff !important;
-                        background-image: none !important;
-                        color: #fff !important;
-                        border: none !important;
-                        box-shadow: none !important;" />
+                             style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important; box-shadow: none !important;" />
 
             <p:confirmDialog id="confirmDialog"
                              widgetVar="dlgConfirmar"
@@ -258,13 +254,15 @@
                                  icon="pi pi-check"
                                  action="#{modificarClaBeanUI.modificarClase}"
                                  update="msgs"
-                                 oncomplete="PF('dlgConfirmar').hide();" />
+                                 oncomplete="PF('dlgConfirmar').hide();"
+                                 style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important; box-shadow: none !important;"/>
 
                 <!-- Boton cancelar cierra el diálogo -->
                 <p:commandButton value="Cancelar"
                                  icon="pi pi-times"
                                  onclick="PF('dlgConfirmar').hide(); return false;"
-                                 type="button" />
+                                 type="button"
+                                 style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important; box-shadow: none !important;"/>
             </p:confirmDialog>
 
         </p:dialog>
