@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="rocksi@localhost" uuid="799d488b-fc6d-42d4-a5ff-584aadd301db">
-      <driver-ref>mysql.8</driver-ref>
+    <data-source source="LOCAL" name="rocksi@localhost [2]" uuid="8ce70a37-3bfb-493e-9edd-078a5ade6ed0">
+      <driver-ref>mysql.9</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/rocksi</jdbc-url>

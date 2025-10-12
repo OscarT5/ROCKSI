@@ -8,6 +8,7 @@ package mx.avanti.desarollo.integration;
 import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.*;
 import mx.avanti.desarollo.persistence.HibernateUtil;
+import mx.desarollo.entity.Clase;
 
 
 /**
@@ -17,6 +18,8 @@ import mx.avanti.desarollo.persistence.HibernateUtil;
 public class ServiceLocator {
 
     private static ClienteDAO ClienteDAO;
+    private static ClaseDAO ClaseDAO;
+
 
     private static EntityManager getEntityManager(){
         return HibernateUtil.getEntityManager();
@@ -31,6 +34,18 @@ public class ServiceLocator {
             return ClienteDAO;
         } else{
             return ClienteDAO;
+        }
+    }
+
+    /**
+     * se crea la instancia para ClaseDAO si esta no existe
+     */
+    public static ClaseDAO getInstanceClaseDAO(){
+        if(ClaseDAO == null){
+            ClaseDAO = new ClaseDAO(getEntityManager());
+            return ClaseDAO;
+        } else{
+            return ClaseDAO;
         }
     }
 }
