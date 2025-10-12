@@ -54,6 +54,7 @@ public class ClienteDelegate {
         cliente.setMembresia(membresiaPorDefecto);
 
         cliente.setFechaRegistro(new Date());
+        clienteDAO.save(cliente);
         clienteDAO.crear(cliente);
     }
 
@@ -94,11 +95,13 @@ public class ClienteDelegate {
         return clienteDAO.findAll();
     }
 
-    public void eliminarCliente(int id) {
-        Cliente cliente = clienteDAO.find(id).orElse(null);
-        if (cliente != null) {
-            clienteDAO.delete(cliente);
+    //Metodo para eliminar el cliente
+    public boolean eliminarCliente(String idCliente) throws Exception {
+        if (idCliente == null || idCliente.trim().isEmpty()) {
+            throw new Exception("El id del cliente esta vacio");
         }
+
+        return clienteDAO.eliminarCliente(idCliente);
     }
 
     /*

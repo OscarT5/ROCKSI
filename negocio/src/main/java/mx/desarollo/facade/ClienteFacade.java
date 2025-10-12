@@ -2,7 +2,6 @@ package mx.desarollo.facade;
 
 import mx.desarollo.delegate.ClienteDelegate;
 import mx.desarollo.entity.Cliente;
-
 import java.util.List;
 
 public class ClienteFacade {
@@ -24,6 +23,8 @@ public class ClienteFacade {
 
     }
 
+
+
     public Cliente obtenerClientePorId(String id) {
         return clienteDelegate.obtenerCliente(id);
     }
@@ -37,8 +38,8 @@ public class ClienteFacade {
         return clienteDelegate.listarClientes();
     }
 
-    public void eliminarCliente(int id) {
-        clienteDelegate.eliminarCliente(id);
+    public boolean eliminarCliente(String idCliente) throws Exception {
+        return clienteDelegate.eliminarCliente(idCliente);
     }
 
     public void actualizarCliente(Cliente cliente) throws Exception {

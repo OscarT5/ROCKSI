@@ -1,25 +1,28 @@
 package mx.desarollo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
+import java.io.Serializable;
+import java.math.BigDecimal;
+//La clase item sera una superclase que puede convertirse en 3, las cuales seran clase, membresia y producto
 @Entity
 @Table(name = "item")
-public class Item {
+@Inheritance(strategy = InheritanceType.JOINED) // ← estrategia de herencia
+public abstract class Item implements Serializable {
+
     @Id
-    @Size(max = 45)
-    @Column(name = "ID_Item", nullable = false, length = 45)
+    @Column(name = "ID_Item", length = 45, nullable = false)
     private String idItem;
 
-    @NotNull
-    @Lob
-    @Column(name = "tipo", nullable = false)
-    private String tipo;
+    @Column(name = "precio", nullable = true, precision = 10, scale = 2)
+    private BigDecimal precio;
 
-    @NotNull
-    @Column(name = "precio", nullable = false)
-    private Double precio;
+    public Item() {
+    }
+
+    public Item(String idItem, BigDecimal precio) {
+        this.idItem = idItem;
+        this.precio = precio;
+    }
 
     public String getIdItem() {
         return idItem;
@@ -29,19 +32,11 @@ public class Item {
         this.idItem = idItem;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 

@@ -1,5 +1,7 @@
 package mx.desarollo.entity;
 
+import jakarta.persistence.*;
+import java.io.Serializable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,37 +11,43 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "clase")
-public class Clase {
-    @Id
-    @Size(max = 45)
-    @Column(name = "ID_Clase", nullable = false, length = 45)
-    private String idClase;
+@PrimaryKeyJoinColumn(name = "ID_Clase") //Aqui se vincula el id con el id de item
+public class Clase extends Item implements Serializable {
 
-    @Size(max = 45)
-    @NotNull
-    @Column(name = "nombre", nullable = false, length = 45)
-    private String nombre;
+    //Contador utilizado para la generacion de ids
+    private static int contador = 1000;
 
-    @Size(max = 45)
-    @NotNull
-    @Column(name = "horario", nullable = false, length = 45)
-    private String horario;
-
-    @NotNull
-    @Column(name = "cupoMaximo", nullable = false)
-    private Integer cupoMaximo;
-
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "maestro", nullable = false, length = 100)
-    private String maestro;
-
-    public String getIdClase() {
-        return idClase;
+    //Esto se utiliza para obtener el ID creado en el dao (solo el numero)
+    public static void setContador(int valor) {
+        contador = valor;
     }
 
-    public void setIdClase(String idClase) {
-        this.idClase = idClase;
+    //Aqui se genera el id
+    public static synchronized String generarNuevoId() {
+        return "CLA" + (contador++);
+    }
+
+    @Column(name = "nombre", length = 45, nullable = false)
+    private String nombre;
+
+    @Column(name = "horario", length = 45, nullable = false)
+    private String horario;
+
+    @Column(name = "cupoMaximo", nullable = false)
+    private int cupoMaximo;
+
+    @Column(name = "maestro", length = 100, nullable = false)
+    private String maestro;
+
+    public Clase() {
+    }
+
+    public Clase(String idClase, String nombre, String horario, int cupoMaximo, String maestro) {
+        super(idClase, null);
+        this.nombre = nombre;
+        this.horario = horario;
+        this.cupoMaximo = cupoMaximo;
+        this.maestro = maestro;
     }
 
     public String getNombre() {
@@ -58,11 +66,11 @@ public class Clase {
         this.horario = horario;
     }
 
-    public Integer getCupoMaximo() {
+    public int getCupoMaximo() {
         return cupoMaximo;
     }
 
-    public void setCupoMaximo(Integer cupoMaximo) {
+    public void setCupoMaximo(int cupoMaximo) {
         this.cupoMaximo = cupoMaximo;
     }
 

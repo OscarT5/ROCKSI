@@ -1,4 +1,5 @@
 package helper;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,6 +15,9 @@ import mx.desarollo.integration.ServiceFacadeLocator;
     public void AltaCliente(Cliente cli) throws Exception {
         ServiceFacadeLocator.getInstanceClienteFacade().registrarCliente(cli);
     }
+        public boolean eliminarCliente(String idCliente) throws Exception {
+            return ServiceFacadeLocator.getInstanceClienteFacade().eliminarCliente(idCliente);
+        }
     /**
      * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteFacade
      * @Throws Si la base de datos rechaza la peticion de selec * from tabla
