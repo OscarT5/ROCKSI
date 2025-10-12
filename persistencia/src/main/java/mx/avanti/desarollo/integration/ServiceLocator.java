@@ -8,6 +8,7 @@ package mx.avanti.desarollo.integration;
 import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.*;
 import mx.avanti.desarollo.persistence.HibernateUtil;
+import mx.desarollo.entity.Clase;
 
 
 /**
@@ -58,5 +59,5 @@ public class ServiceLocator {
     }
 
      */
-    
+
 }
