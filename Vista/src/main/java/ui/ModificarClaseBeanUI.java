@@ -75,6 +75,16 @@ public class ModificarClaseBeanUI implements Serializable {
 
                 this.horaInicio = horaInicio;
                 this.horaFinal = horaFinal;
+            } else if (horario != null && horario.contains("-")) {
+                String[] partes = horario.split("-");
+
+                String horaInicio = partes[0].trim();
+                String horaFinal = partes[1].trim();
+                if (horaInicio.length() == 4) horaInicio = "0" + horaInicio;
+                if (horaFinal.length() == 4) horaFinal = "0" + horaFinal;
+
+                this.horaInicio = horaInicio;
+                this.horaFinal = horaFinal;
             }
 
             PrimeFaces.current().ajax().addCallbackParam("found", true);
