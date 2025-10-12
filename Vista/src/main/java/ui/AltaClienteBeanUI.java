@@ -22,6 +22,7 @@ public class AltaClienteBeanUI implements Serializable {
     //Se llama a este metodo para crear el objeto de cliente y mandarselo a las otras capas
     public void altaCliente() {
         try {
+            this.cliente.setIdCliente(Cliente.generarNuevoId());
             this.cliente.setNombreCompleto(this.nombre + " " + this.apellido);
             this.cliente.setTelefono(this.telefono);
             this.guardarCliente.AltaCliente(this.cliente);

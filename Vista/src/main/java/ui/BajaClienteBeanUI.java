@@ -33,6 +33,8 @@ public class BajaClienteBeanUI implements Serializable {
         }
     }
 
+
+
     public String getIdCliente() {
         return idCliente;
     }

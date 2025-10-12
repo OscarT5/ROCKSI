@@ -24,10 +24,6 @@ public class Cliente {
     @Column(name = "fechaRegistro")
     private Date fechaRegistro;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_Membresia")
-    private Membresia membresia;
-
      /*
      @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Pago> historialPagos = new ArrayList<>();
@@ -45,17 +41,17 @@ public class Cliente {
     private double credito;
 
     //constructores
-    /*
-    public Cliente() { }
-     */
 
-    /*public Cliente(String nombreCompleto, String telefono, Date fechaRegistro, double credito) {
+    public Cliente() { }
+
+
+    public Cliente(String nombreCompleto, String telefono, double credito) {
+        this.idCliente = generarNuevoId();
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
-        this.fechaRegistro = fechaRegistro;
-        this.membresia = membresia;
+        this.fechaRegistro = new Date();
         this.credito = credito;
-    }*/
+    }
 
     // metodo para creacion de ID
     public static synchronized String generarNuevoId() {
@@ -101,33 +97,6 @@ public class Cliente {
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-
-
-    public Membresia getMembresia() {
-        return membresia;
-    }
-
-    public void setMembresia(Membresia membresia) {
-        this.membresia = membresia;
-    }
-
-    /*
-    public List<Pago> getHistorialPagos() {//Se cambio el nombre de la clase a "Pagos"
-        return historialPagos;
-    }
-
-    public void setHistorialPagos(List<Pago> historialPagos) {
-        this.historialPagos = historialPagos;
-    }
-
-    public List<Clase> getClases() {
-        return clases;
-    }
-
-    public void setClases(List<Clase> clases) {
-        this.clases = clases;
-    }
-     */
 
     public double getCredito() {
         return credito;

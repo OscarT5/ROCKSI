@@ -27,8 +27,10 @@ public class Membresia implements Serializable {
     private Date fechaVencimiento;
 
 
+    /*
     @OneToMany(mappedBy = "membresia", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Cliente> clientes = new ArrayList<>();
+    */
 
     public Membresia() { }
 
@@ -38,19 +40,19 @@ public class Membresia implements Serializable {
     }
 
 
+    /*
     public void addCliente(Cliente c) {
         if (c != null) {
             clientes.add(c);
-            c.setMembresia(this);
         }
     }
 
     public void removeCliente(Cliente c) {
         if (c != null) {
             clientes.remove(c);
-            c.setMembresia(null);
         }
     }
+     */
 
     // Getters y setters
     public String getIdMembresia() {
@@ -77,6 +79,7 @@ public class Membresia implements Serializable {
         this.fechaVencimiento = fechaVencimiento;
     }
 
+    /*
     public List<Cliente> getClientes() {
         return clientes;
     }
@@ -84,4 +87,6 @@ public class Membresia implements Serializable {
     public void setClientes(List<Cliente> clientes) {
         this.clientes = clientes;
     }
+
+     */
 }

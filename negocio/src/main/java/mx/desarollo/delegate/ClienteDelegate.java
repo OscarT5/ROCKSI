@@ -46,12 +46,7 @@ public class ClienteDelegate {
         }
         cliente.setTelefono(normal);
 
-        //busqueda de membresia simulada inyectada a la bd para probar alta de clientes
-        Membresia membresiaPorDefecto = clienteDAO.getEntityManager().find(Membresia.class, "M002");
-        if (membresiaPorDefecto == null) {
-            throw new RuntimeException("No existe la membresía por defecto en la BD");
-        }
-        cliente.setMembresia(membresiaPorDefecto);
+
 
         cliente.setFechaRegistro(new Date());
         clienteDAO.save(cliente);
@@ -77,9 +72,6 @@ public class ClienteDelegate {
             if (id.isEmpty()) return null;
 
             Cliente c = clienteDAO.find(id).orElse(null);
-            if (c != null && c.getMembresia() != null) {
-                c.getMembresia().getIdMembresia();
-            }
             return c;
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo cliente con id=" + id, e);

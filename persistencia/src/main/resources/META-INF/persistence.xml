@@ -3,7 +3,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.1">
-    <persistence-unit name="persistencePU">
+    <persistence-unit name="ROCKSIPU">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
 
@@ -36,7 +36,6 @@
             <property name="hibernate.hikari.minimumIdle" value="5"/>
             <property name="hibernate.hikari.maximumPoolSize" value="10"/>
             <property name="hibernate.hikari.idleTimeout" value="30000"/>
-
         </properties>
     </persistence-unit>
 </persistence>
