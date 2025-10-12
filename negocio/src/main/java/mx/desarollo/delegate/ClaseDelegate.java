@@ -30,4 +30,11 @@ public class ClaseDelegate {
 
         claseDAO.crear(clase);
     }
+
+    public boolean eliminarClase(String idClase) throws Exception {
+        if(idClase == null || idClase.trim().isEmpty()) {
+            throw new Exception("El id del clase esta vacio");
+        }
+        return claseDAO.eliminarClase(idClase);
+    }
 }

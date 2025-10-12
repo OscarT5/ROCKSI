@@ -13,4 +13,12 @@ public class ClaseFacade {
             throw new Exception("Error al registrar la clase: " + e.getMessage());
         }
     }
+
+    public boolean eliminarClase(String idClase) throws Exception {
+        try{
+            return claseDelegate.eliminarClase(idClase);
+        } catch(Exception e){
+            throw new Exception("Error al eliminar la clase: " + e.getMessage());
+        }
+    }
 }

@@ -187,10 +187,17 @@
                          onclick="PF('dlgAgregarClase').show();"
                          type="button"
                          style="margin-left:10px; background-color:#007bff !important; color:white !important;"/>
+        <!--Boton para eliminar la clase:P-->
+        <p:commandButton value="Eliminar Clase"
+                         icon="pi pi-minus"
+                         onclick="PF('dlgEliminarClase').show();"
+                         type="button"
+                         style="margin-left:10px; background-color:#d61e1e !important; color:white !important;"/>
+
     </h:form>
 
 
-    <!-- MODAL: AGREGAR CLIENTE -->
+    <!--Modal para agregar un cliente-->
     <h:form id="formAgregarCliente">
         <p:dialog header="Nuevo cliente"
                   widgetVar="dlgAgregarCliente"
@@ -246,7 +253,8 @@
 
     <!--Formulario para eliminar un cliente-->
     <h:form id="formEliminarCliente">
-        <p:dialog header="Eliminar"
+        <!--Texto de eliminar cliente-->
+        <p:dialog header="Eliminar Cliente"
                   widgetVar="dlgEliminarCliente"
                   modal="true"
                   resizable="false"
@@ -254,11 +262,10 @@
                   draggable="false"
                   width="400">
 
-            <!--Esto hace que los mensajes del backend se desplieguen-->
+            <!--Aqui se muestran los mensajes del backend-->
             <p:messages id="msgsEliminar" showDetail="true" closable="true"/>
 
             <div class="form-group">
-                <!-- Esta es la conexion con la variable de idCliente que se buscara y eliminara en el backend-->
                 <h:outputLabel for="idCliente" value="ID"/>
                 <p:inputText id="idCliente"
                              value="#{bajaClienteBeanUI.idCliente}"
@@ -268,57 +275,51 @@
                              requiredMessage="El campo ID es obligatorio"/>
             </div>
 
-            <!--Este boton abre la ventana (modal) de confirmacion-->
-            <p:commandButton id="eliminarBtn"
+            <!--Este boton abre el modal de confirmacion-->
+            <p:commandButton id="abrirConfirmarClienteBtn"
                              value="Eliminar Cliente"
                              icon="pi pi-times-circle"
                              styleClass="btn-eliminar"
-                             onclick="PF('dlgConfirmarEliminar').show(); PF('dlgEliminarCliente').hide(); return false;"/>
+                             onclick="PF('dlgConfirmarEliminarCliente').show(); PF('dlgEliminarCliente').hide(); return false;"/>
         </p:dialog>
-    </h:form>
 
-    <!--Formulario para la confirmacion de si se quiere eliminar un cliente-->
-    <h:form id="formConfirmacionEliminar">
+        <!--Modal de cofnirmacion-->
         <p:dialog header="Confirmar eliminación"
-                  widgetVar="dlgConfirmarEliminar"
+                  widgetVar="dlgConfirmarEliminarCliente"
                   modal="true"
                   resizable="false"
                   closable="false"
                   draggable="false"
                   width="400">
 
-            <!--este es el texto central-->
             <div class="confirm-content">
                 <p style="margin-bottom: 25px;">
                     ¿Seguro que deseas eliminar este cliente?
                 </p>
             </div>
 
-            <!--Estos son los 2 botones que hay en la ventana de confirmacion-->
-            <div class="confirm-buttons" style="display: flex; justify-content: space-between; gap: 15px; padding-top: 10px;">
+            <div class="confirm-buttons"
+                 style="display: flex; justify-content: space-between; gap: 15px; padding-top: 10px;">
+
+                <!--Boton de cancelar-->
                 <p:commandButton value="Cancelar"
                                  type="button"
-                                 onclick="PF('dlgConfirmarEliminar').hide(); PF('dlgEliminarCliente').show();"
+                                 onclick="PF('dlgConfirmarEliminarCliente').hide(); PF('dlgEliminarCliente').show();"
                                  styleClass="btn-cancelar"/>
 
-                <!--Conexion con el backend-->
+                <!--Boton para confirmar la eliminacion del cliente-->
                 <p:commandButton value="Eliminar"
                                  icon="pi pi-times-circle"
                                  action="#{bajaClienteBeanUI.eliminarCliente}"
-                                 update="formEliminarCliente:msgsEliminar"
+                                 process="@form"
+                                 update="@form"
                                  styleClass="btn-confirmar"
-                                 oncomplete="if (args &amp;&amp; !args.validationFailed) {
-                                    PF('dlgConfirmarEliminar').hide();
-                                    PF('dlgEliminarCliente').show();
-                                 } else {
-                                    PF('dlgConfirmarEliminar').hide();
-                                    PF('dlgEliminarCliente').show();
-                                 }"
-                                    />
-                                <!--Esas ultimas lineas son las que cierran la ventana de confirmacion y abren la anterior-->
+                                 oncomplete="PF('dlgConfirmarEliminarCliente').hide(); PF('dlgEliminarCliente').show();"/>
             </div>
         </p:dialog>
     </h:form>
+
+
 
 
 
@@ -401,6 +402,73 @@
                              />
         </p:dialog>
     </h:form>
+
+    <!--Formulario para eliminar una clase-->
+    <h:form id="formEliminarClase">
+        <!--Texto que dice que lo de eliminar la clase-->
+        <p:dialog header="Eliminar Clase"
+                  widgetVar="dlgEliminarClase"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <p:messages id="msgsEliminarClase" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel for="idClase" value="ID"/>
+                <p:inputText id="idClase"
+                             value="#{bajaClaseBeanUI.idClase}"
+                             placeholder="ID de la clase a eliminar"
+                             class="form-control"
+                             required="true"
+                             requiredMessage="El campo ID es obligatorio"/>
+            </div>
+
+            <p:commandButton id="abrirConfirmarClaseBtn"
+                             value="Eliminar Clase"
+                             icon="pi pi-times-circle"
+                             styleClass="btn-eliminar"
+                             onclick="PF('dlgConfirmarEliminarClase').show(); PF('dlgEliminarClase').hide(); return false;"/>
+        </p:dialog>
+
+        <!--Texto que pregunta si realmente se quiere eliminar una clase-->
+        <p:dialog header="Confirmar eliminacion"
+                  widgetVar="dlgConfirmarEliminarClase"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="400">
+
+            <div class="confirm-content">
+                <p style="margin-bottom: 25px;">
+                    ¿Seguro que deseas eliminar esta clase?
+                </p>
+            </div>
+
+            <div class="confirm-buttons"
+                 style="display: flex; justify-content: space-between; gap: 15px; padding-top: 10px;">
+
+                <p:commandButton value="Cancelar"
+                                 type="button"
+                                 onclick="PF('dlgConfirmarEliminarClase').hide(); PF('dlgEliminarClase').show();"
+                                 styleClass="btn-cancelar"/>
+
+                <p:commandButton value="Eliminar"
+                                 icon="pi pi-times-circle"
+                                 action="#{bajaClaseBeanUI.eliminarClase}"
+                                 process="@form"
+                                 update="@form"
+                                 styleClass="btn-confirmar"
+                                 oncomplete="PF('dlgConfirmarEliminarClase').hide(); PF('dlgEliminarClase').show();"/>
+            </div>
+        </p:dialog>
+    </h:form>
+
+
+
 
 
 </h:body>

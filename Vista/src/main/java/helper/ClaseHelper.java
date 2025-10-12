@@ -14,4 +14,8 @@ public class ClaseHelper implements Serializable {
         }
     }
 
+    public boolean eliminarClase(String idClase) throws Exception {
+        return ServiceFacadeLocator.getInstanceClaseFacade().eliminarClase(idClase);
+    }
+
 }

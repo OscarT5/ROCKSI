@@ -1,6 +1,7 @@
 package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Clase;
 import java.util.List;
@@ -44,11 +45,39 @@ public class ClaseDAO extends AbstractDAO<Clase> {
             //Aqui el contador se actualiza a uno mas que el maximo
             Clase.setContador(max + 1);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     //Aqui se genera el nuevo ID
     public String generarNuevoIdClase() {
         return Clase.generarNuevoId();
+    }
+
+    public boolean eliminarClase(String idClase){
+        EntityTransaction et = null;
+        boolean eliminado = false;
+
+        try{
+            et = em.getTransaction();
+            et.begin();//Se inicializa la transaccion
+
+            Clase clase = em.find(Clase.class, idClase);//Encuentra el id de la clase
+
+            if(clase != null){
+                if(!em.contains(clase)){
+                    clase = em.merge(clase);
+                }
+                em.remove(clase);
+                eliminado = true;//Se confirma la eliminacion
+            }
+            et.commit();//Se manda lo realizado
+            return eliminado;
+
+        } catch (Exception e){
+            if(et != null && et.isActive()) et.rollback();
+            e.printStackTrace();
+        }
+        return eliminado;
     }
 }
