@@ -105,6 +105,15 @@
             margin-right: 8px;
             font-size: 16px;
         }
+
+        .ui-confirmdialog {
+            z-index: 1100 !important;
+        }
+
+        .ui-widget-overlay {
+            z-index: 1000 !important;
+        }
+
     </style>
 </h:head>
 <h:body>
@@ -226,15 +235,38 @@
             <!-- boton para modificar el cliente -->
             <p:commandButton id="modificarBtn"
                              value="Modificar clase"
-                             action="#{modificarClaBeanUI.modificarClase}"
-                             update="msgs"
                              icon="pi pi-plus-circle"
+                             onclick="PF('dlgConfirmar').show(); return false;"
                              styleClass="btn"
                              style="background: #007bff !important;
-                                    background-image: none !important;
-                                    color: #fff !important;
-                                    border: none !important;
-                                    box-shadow: none !important;"/>
+                        background-image: none !important;
+                        color: #fff !important;
+                        border: none !important;
+                        box-shadow: none !important;" />
+
+            <p:confirmDialog id="confirmDialog"
+                             widgetVar="dlgConfirmar"
+                             header="Confirmar modificación"
+                             message="¿Estás seguro de que deseas modificar la clase?"
+                             icon="pi pi-exclamation-triangle"
+                             closable="false"
+                             modal="true"
+                             style="width: 400px;">
+
+                <!-- Boton si ejecuta la acción real -->
+                <p:commandButton value="Sí, modificar"
+                                 icon="pi pi-check"
+                                 action="#{modificarClaBeanUI.modificarClase}"
+                                 update="msgs"
+                                 oncomplete="PF('dlgConfirmar').hide();" />
+
+                <!-- Boton cancelar cierra el diálogo -->
+                <p:commandButton value="Cancelar"
+                                 icon="pi pi-times"
+                                 onclick="PF('dlgConfirmar').hide(); return false;"
+                                 type="button" />
+            </p:confirmDialog>
+
         </p:dialog>
 
     </h:form>
