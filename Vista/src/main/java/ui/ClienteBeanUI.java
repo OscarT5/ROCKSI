@@ -7,16 +7,32 @@ import java.util.List;
 import mx.desarollo.entity.Cliente;
 import helper.ClienteHelper;
 
+import jakarta.faces.view.ViewScoped;
+import java.io.Serializable;
+
 @Named("clienteBeanUI")
-@RequestScoped
-public class ClienteBeanUI {
+@ViewScoped
+public class ClienteBeanUI implements Serializable {
     private List<Cliente> listaClientes;
     private ClienteHelper clienteHelper = new ClienteHelper();
+    private String filtroId;
 
     @PostConstruct
     public void init() {
         try {
-            //listaClientes = clienteHelper.obtenerClientes(); // método en el helper que llama al DAO
+            listaClientes = clienteHelper.ObtenerClientes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void filtrarPorId() {
+        try {
+            if (filtroId == null || filtroId.isEmpty()) {
+                listaClientes = clienteHelper.ObtenerClientes();
+            } else {
+                listaClientes = clienteHelper.ObtenerClientesPorId(filtroId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,5 +41,12 @@ public class ClienteBeanUI {
     public List<Cliente> getListaClientes() {
         return listaClientes;
     }
+    public String getFiltroId() {
+        return filtroId;
+    }
+    public void setFiltroId(String filtroId) {
+        this.filtroId = filtroId;
+    }
 }
+
 

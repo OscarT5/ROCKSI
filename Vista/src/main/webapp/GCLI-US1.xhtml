@@ -106,18 +106,99 @@
             margin-right: 8px;
             font-size: 16px;
         }
+
+        .btn-eliminar {
+            background: #d61e1e !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 16px !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 15px auto 0 auto !important;
+            width: 80% !important;
+        }
+
+        .ui-widget-overlay {
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .btn-cancelar {
+            background: #a8a8a8 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 16px !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 15px auto 0 auto !important;
+            width: 40% !important;
+        }
+
+        .btn-confirmar {
+            background: #d61e1e !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 16px !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 15px auto 0 auto !important;
+            width: 40% !important;
+        }
+
+        .confirm-content {
+            text-align: center !important;
+            font-size: 18px !important;
+            font-weight: 500 !important;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
     </style>
 </h:head>
 <h:body>
 
-    <h:form id="formPrincipal">
-        <!--Boton de la pagina principal que al hacer clic en el abre el modal-->
+    <!-- BOTONES PRINCIPALES -->
+    <h:form id="formBotones">
         <p:commandButton value="Agregar Cliente"
                          icon="pi pi-user-plus"
                          onclick="PF('dlgAgregarCliente').show();"
                          type="button"/>
+        <p:commandButton value="Eliminar Cliente"
+                         icon="pi pi-user-minus"
+                         onclick="PF('dlgEliminarCliente').show();"
+                         type="button"
+                         style="margin-left:10px; background-color:#d61e1e !important; color:white !important;"/>
+        <p:commandButton value="Agregar Clase"
+                         icon="pi pi-plus"
+                         onclick="PF('dlgAgregarClase').show();"
+                         type="button"
+                         style="margin-left:10px; background-color:#007bff !important; color:white !important;"/>
+        <!--Boton para eliminar la clase:P-->
+        <p:commandButton value="Eliminar Clase"
+                         icon="pi pi-minus"
+                         onclick="PF('dlgEliminarClase').show();"
+                         type="button"
+                         style="margin-left:10px; background-color:#d61e1e !important; color:white !important;"/>
 
-        <!--Titulo y configuracion del modal modal-->
+    </h:form>
+
+
+    <!--Modal para agregar un cliente-->
+    <h:form id="formAgregarCliente">
         <p:dialog header="Nuevo cliente"
                   widgetVar="dlgAgregarCliente"
                   modal="true"
@@ -126,10 +207,8 @@
                   draggable="false"
                   width="400">
 
-            <!--Mensajes-->
             <p:messages id="msgs" showDetail="true" closable="true"/>
 
-            <!--Campo para ingresar nombre-->
             <div class="form-group">
                 <h:outputLabel for="nombre" value="Nombre"/>
                 <p:inputText id="nombre"
@@ -140,7 +219,6 @@
                              requiredMessage="El campo Nombre es obligatorio"/>
             </div>
 
-            <!--Campo para ingresar apellidos-->
             <div class="form-group">
                 <h:outputLabel for="apellido" value="Apellidos"/>
                 <p:inputText id="apellido"
@@ -151,7 +229,6 @@
                              requiredMessage="El campo Apellidos es obligatorio"/>
             </div>
 
-            <!--Campo para ingresar telefono (solo admite los digitos exactos)-->
             <div class="form-group">
                 <h:outputLabel for="telefono" value="Teléfono"/>
                 <p:inputMask id="telefono"
@@ -160,20 +237,236 @@
                              placeholder="(686) 185 8942"
                              class="form-control"
                              required="true"
-                             requiredMessage="El campo Telefono es obligatorio"/>
+                             requiredMessage="El campo Teléfono es obligatorio"/>
             </div>
 
-            <!--Boton de registrar el cliente que dispara la accion definida-->
             <p:commandButton id="registrarBtn"
                              value="Registrar al cliente"
                              action="#{altaCliBeanUI.altaCliente}"
                              update="msgs"
                              icon="pi pi-plus-circle"
                              styleClass="btn"
-                             style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important; box-shadow: none !important;" />
+                             style="background: #007bff !important; color: #fff !important; border: none !important;"/>
+        </p:dialog>
+    </h:form>
+
+
+    <!--Formulario para eliminar un cliente-->
+    <h:form id="formEliminarCliente">
+        <!--Texto de eliminar cliente-->
+        <p:dialog header="Eliminar Cliente"
+                  widgetVar="dlgEliminarCliente"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <!--Aqui se muestran los mensajes del backend-->
+            <p:messages id="msgsEliminar" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel for="idCliente" value="ID"/>
+                <p:inputText id="idCliente"
+                             value="#{bajaClienteBeanUI.idCliente}"
+                             placeholder="ID del cliente a eliminar"
+                             class="form-control"
+                             required="true"
+                             requiredMessage="El campo ID es obligatorio"/>
+            </div>
+
+            <!--Este boton abre el modal de confirmacion-->
+            <p:commandButton id="abrirConfirmarClienteBtn"
+                             value="Eliminar Cliente"
+                             icon="pi pi-times-circle"
+                             styleClass="btn-eliminar"
+                             onclick="PF('dlgConfirmarEliminarCliente').show(); PF('dlgEliminarCliente').hide(); return false;"/>
         </p:dialog>
 
+        <!--Modal de cofnirmacion-->
+        <p:dialog header="Confirmar eliminación"
+                  widgetVar="dlgConfirmarEliminarCliente"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="400">
+
+            <div class="confirm-content">
+                <p style="margin-bottom: 25px;">
+                    ¿Seguro que deseas eliminar este cliente?
+                </p>
+            </div>
+
+            <div class="confirm-buttons"
+                 style="display: flex; justify-content: space-between; gap: 15px; padding-top: 10px;">
+
+                <!--Boton de cancelar-->
+                <p:commandButton value="Cancelar"
+                                 type="button"
+                                 onclick="PF('dlgConfirmarEliminarCliente').hide(); PF('dlgEliminarCliente').show();"
+                                 styleClass="btn-cancelar"/>
+
+                <!--Boton para confirmar la eliminacion del cliente-->
+                <p:commandButton value="Eliminar"
+                                 icon="pi pi-times-circle"
+                                 action="#{bajaClienteBeanUI.eliminarCliente}"
+                                 process="@form"
+                                 update="@form"
+                                 styleClass="btn-confirmar"
+                                 oncomplete="PF('dlgConfirmarEliminarCliente').hide(); PF('dlgEliminarCliente').show();"/>
+            </div>
+        </p:dialog>
     </h:form>
+
+
+
+
+
+    <!--Modal para agregar una clase-->
+    <h:form id="formAgregarClase">
+        <p:dialog header="Nueva clase"
+                  widgetVar="dlgAgregarClase"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <!--Despliega los mensajes del backend-->
+            <p:messages id="msgsClase" showDetail="true" closable="true"/>
+
+            <!--Aqui se realizan pequenas validaciones de no dejar el campo vacio-->
+            <!--tambien por cada campo creado se conecta con la variable del backend-->
+            <div class="form-group">
+                <h:outputLabel for="nombreClase" value="Nombre"/>
+                <p:inputText id="nombreClase"
+                             value="#{altaClaBeanUI.nombre}"
+                             placeholder="Nombre"
+                             class="form-control"
+                             required="true"
+                             validatorMessage="El nombre no puede estar vacío"
+                             requiredMessage="El campo de nombre es obligatorio">
+                    <f:validateRegex pattern=".*\S.*"/>
+                </p:inputText>
+            </div>
+
+            <div class="form-group">
+                <h:outputLabel for="horario" value="Horario"/>
+                <p:inputText id="horario"
+                             value="#{altaClaBeanUI.horario}"
+                             placeholder="Horario de la clase"
+                             class="form-control"
+                             required="true"
+                             validatorMessage="El horario no puede estar vacío"
+                             requiredMessage="El campo Horario es obligatorio">
+                    <f:validateRegex pattern=".*\S.*"/>
+                </p:inputText>
+            </div>
+
+            <div class="form-group">
+                <h:outputLabel for="cupo" value="Cupo máximo"/>
+                <p:inputText id="cupo"
+                             value="#{altaClaBeanUI.cupoMaximo}"
+                             placeholder="Cupo maximo de clientes"
+                             class="form-control"
+                             required="true"
+                             validatorMessage="El cupo maximo debe ser un número válido"
+                             requiredMessage="El campo Cupo maximo es obligatorio">
+                    <f:validateLongRange minimum="1" maximum="200"/>
+                </p:inputText>
+            </div>
+
+            <div class="form-group">
+                <h:outputLabel for="maestro" value="Maestro"/>
+                <p:inputText id="maestro"
+                             value="#{altaClaBeanUI.maestro}"
+                             placeholder="Nombre del maestro"
+                             class="form-control"
+                             required="true"
+                             validatorMessage="El nombre del maestro no puede estar vacio"
+                             requiredMessage="El campo Maestro es obligatorio">
+                    <f:validateRegex pattern=".*\S.*"/>
+                </p:inputText>
+            </div>
+
+            <!--Este boton se conecta con el backend gracias al action-->
+            <p:commandButton id="registrarClaseBtn"
+                             value="Registrar la clase"
+                             icon="pi pi-plus-circle"
+                             action="#{altaClaBeanUI.altaClase}"
+                             update="msgsClase"
+                             process="@form"
+                             styleClass="btn"
+                             style="background: #007bff !important; color: #fff !important; border: none !important;"
+                             />
+        </p:dialog>
+    </h:form>
+
+    <!--Formulario para eliminar una clase-->
+    <h:form id="formEliminarClase">
+        <!--Texto que dice que lo de eliminar la clase-->
+        <p:dialog header="Eliminar Clase"
+                  widgetVar="dlgEliminarClase"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <p:messages id="msgsEliminarClase" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel for="idClase" value="ID"/>
+                <p:inputText id="idClase"
+                             value="#{bajaClaseBeanUI.idClase}"
+                             placeholder="ID de la clase a eliminar"
+                             class="form-control"
+                             required="true"
+                             requiredMessage="El campo ID es obligatorio"/>
+            </div>
+
+            <p:commandButton id="abrirConfirmarClaseBtn"
+                             value="Eliminar Clase"
+                             icon="pi pi-times-circle"
+                             styleClass="btn-eliminar"
+                             onclick="PF('dlgConfirmarEliminarClase').show(); PF('dlgEliminarClase').hide(); return false;"/>
+        </p:dialog>
+
+        <!--Texto que pregunta si realmente se quiere eliminar una clase-->
+        <p:dialog header="Confirmar eliminacion"
+                  widgetVar="dlgConfirmarEliminarClase"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="400">
+
+            <div class="confirm-content">
+                <p style="margin-bottom: 25px;">
+                    ¿Seguro que deseas eliminar esta clase?
+                </p>
+            </div>
+
+            <div class="confirm-buttons"
+                 style="display: flex; justify-content: space-between; gap: 15px; padding-top: 10px;">
+
+                <p:commandButton value="Cancelar"
+                                 type="button"
+                                 onclick="PF('dlgConfirmarEliminarClase').hide(); PF('dlgEliminarClase').show();"
+                                 styleClass="btn-cancelar"/>
+
+                <p:commandButton value="Eliminar"
+                                 icon="pi pi-times-circle"
+                                 action="#{bajaClaseBeanUI.eliminarClase}"
+                                 process="@form"
+                                 update="@form"
+                                 styleClass="btn-confirmar"
+                                 oncomplete="PF('dlgConfirmarEliminarClase').hide(); PF('dlgEliminarClase').show();"/>
+            </div>
+        </p:dialog>
+    </h:form>
+
 
 </h:body>
 </html>
