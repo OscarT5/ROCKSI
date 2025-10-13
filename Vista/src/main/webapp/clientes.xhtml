@@ -312,6 +312,14 @@
             margin-right: 8px;
             font-size: 16px;
         }
+
+        .ui-confirmdialog {
+            z-index: 1100 !important;
+        }
+
+        .ui-widget-overlay {
+            z-index: 1000 !important;
+        }
     </style>
 </h:head>
 
@@ -506,31 +514,36 @@
                     <!-- Botón que abre el modal de confirmación -->
                     <p:commandButton id="abrirConfirmarClienteBtn" value="Eliminar Cliente"
                                      icon="pi pi-times-circle" styleClass="btn-baja"
-                                     onclick="PF('dlgConfirmarEliminarCliente').show(); PF('dlgEliminarCliente').hide(); return false;"/>
-                </p:dialog>
+                                     onclick="PF('dlgConfirmar').show(); return false;"
+                                        />
 
                 <!-- dialog de confirmacion de eliminacion -->
-                <p:dialog header="Confirmar eliminación" widgetVar="dlgConfirmarEliminarCliente"
-                          modal="true" resizable="false" closable="false" draggable="false" width="360">
-                    <div class="confirm-content" style="text-align:center; font-size:16px; font-weight:500;">
-                        <p>¿Seguro que deseas eliminar este cliente?</p>
-                    </div>
+                    <p:confirmDialog id="confirmDialog"
+                                     widgetVar="dlgConfirmar"
+                                     header="Confirmar modificación"
+                                     message="¿Seguro que deseas eliminar este cliente?"
+                                     icon="pi pi-exclamation-triangle"
+                                     closable="false"
+                                     modal="true"
+                                     style="width: 400px;">
 
-                    <div class="confirm-buttons" style="display:flex; justify-content:space-between; margin-top:20px;">
-                        <!-- Botón de cancelar -->
-                        <p:commandButton value="Cancelar" type="button"
-                                         onclick="PF('dlgConfirmarEliminarCliente').hide(); PF('dlgEliminarCliente').show();"
-                                         styleClass="btn-cancelar"
-                                         style="background:#a8a8a8; color:white; border:none; border-radius:8px; width:45%;"/>
-
-                        <!-- Botón de confirmar eliminación -->
-                        <p:commandButton value="Eliminar" icon="pi pi-times-circle"
-                                         action="#{bajaClienteBeanUI.eliminarCliente}" process="@form"
-                                         update="msgsEliminar tablaClientes"
+                        <!-- Boton si ejecuta la acción real -->
+                        <p:commandButton value="Sí, eliminar"
+                                         icon="pi pi-check"
+                                         action="#{bajaClienteBeanUI.eliminarCliente}"
+                                         process="@this idClienteEliminar"
+                                         update=":formClientes:msgsEliminar :formClientes:tablaClientes"
+                                         oncomplete="PF('dlgConfirmar').hide();"
                                          styleClass="btn-confirmar"
-                                         style="background:#d61e1e; color:white; border:none; border-radius:8px; width:45%;"
-                                         oncomplete="PF('dlgConfirmarEliminarCliente').hide(); PF('dlgEliminarCliente').show();"/>
-                    </div>
+                                         style="background:#007bff !important; color:#fff !important; border:none !important; box-shadow:none !important;"/>
+
+                        <!-- Boton cancelar cierra el diálogo -->
+                        <p:commandButton value="Cancelar"
+                                         icon="pi pi-times"
+                                         onclick="PF('dlgConfirmar').hide(); return false;"
+                                         type="button"
+                                         style="background: #007bff !important; background-image: none !important; color: #fff !important; border: none !important; box-shadow: none !important;"/>
+                    </p:confirmDialog>
                 </p:dialog>
 
                 <!-- Tabla de clientes -->
