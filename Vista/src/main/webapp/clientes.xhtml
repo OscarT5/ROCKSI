@@ -489,11 +489,8 @@
                                             color: #fff !important; border: none !important; box-shadow: none !important;"/>
                 </p:dialog>
 
-                <!-- ============================================================= -->
-                <!-- DIALOG PARA ELIMINAR CLIENTE -->
-                <!-- ============================================================= -->
+                <!-- dialog para bajas de cliente -->
 
-                <!-- Se abre desde el botón “Baja de Cliente” -->
                 <p:dialog header="Eliminar Cliente" widgetVar="dlgEliminarCliente" modal="true" resizable="false"
                           closable="true" draggable="false" width="360">
                     <!-- Mensajes del backend -->
@@ -512,9 +509,7 @@
                                      onclick="PF('dlgConfirmarEliminarCliente').show(); PF('dlgEliminarCliente').hide(); return false;"/>
                 </p:dialog>
 
-                <!-- ============================================================= -->
-                <!-- DIALOG DE CONFIRMACIÓN DE ELIMINACIÓN -->
-                <!-- ============================================================= -->
+                <!-- dialog de confirmacion de eliminacion -->
                 <p:dialog header="Confirmar eliminación" widgetVar="dlgConfirmarEliminarCliente"
                           modal="true" resizable="false" closable="false" draggable="false" width="360">
                     <div class="confirm-content" style="text-align:center; font-size:16px; font-weight:500;">

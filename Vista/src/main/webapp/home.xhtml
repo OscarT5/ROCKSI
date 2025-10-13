@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://xmlns.jcp.org/xml/ns/persistence/orm">
 <h:head>
     <title>Rock On - Dashboard</title>
     <meta charset="UTF-8"/>
@@ -164,7 +164,9 @@
             color: #111;
         }
     </style>
-
+    <f:metadata>
+        <f:viewAction action="#{homeBeanUI.init}" />
+    </f:metadata>
 </h:head>
 
 <h:body>
@@ -264,6 +266,20 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- esto sirve para precargar la bd y no tenga que haber una "primera interaccion tardada" -->
+        <h:form>
+            <p:dataTable value="#{homeBeanUI.listaClientes}" var="cli"
+                         paginator="true" rows="5"
+                         emptyMessage="No hay clientes registrados">
+                <p:column headerText="ID">
+                    <h:outputText value="#{cli.idCliente}" />
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{cli.nombreCompleto}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
 
         <!-- Tabla de Clases de hoy -->
         <div class="card">

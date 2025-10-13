@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import java.util.List;
+
 public class ClaseDelegate {
     private final ClaseDAO claseDAO;
 
@@ -81,7 +83,7 @@ public class ClaseDelegate {
         if (cla.getMaestro() == null || cla.getMaestro().trim().isEmpty()) {
             throw new Exception("El nombre del maestro que imparte la clase no puede estar vacío.");
         }
-        if (cla.getCupoMaximo() == null || cla.getCupoMaximo() <= 0) {
+        if (cla.getCupoMaximo() <= 0) {
             throw new Exception("El cupo máximo debe ser un número mayor que cero.");
         }
 
@@ -93,6 +95,7 @@ public class ClaseDelegate {
 
         claseDAO.actualizarClase(existente);
     }
+
 
     public Clase obtenerClase(String id) {
         try {
@@ -106,5 +109,9 @@ public class ClaseDelegate {
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo la clase con id=" + id, e);
         }
+    }
+
+    public List<Clase> listarClases() {
+        return claseDAO.findAll();
     }
 }

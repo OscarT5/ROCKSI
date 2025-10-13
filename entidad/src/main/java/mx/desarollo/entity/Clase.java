@@ -82,4 +82,13 @@ public class Clase extends Item implements Serializable {
         this.maestro = maestro;
     }
 
+    @Transient
+    public String getIdClase() {
+        return super.getIdItem();
+    }
+
+    public void setIdClase(String idClase) {
+        super.setIdItem(idClase);
+    }
+
 }

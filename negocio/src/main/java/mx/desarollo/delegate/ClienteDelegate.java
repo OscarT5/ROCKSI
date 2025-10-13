@@ -49,7 +49,6 @@ public class ClienteDelegate {
 
 
         cliente.setFechaRegistro(new Date());
-        clienteDAO.save(cliente);
         clienteDAO.crear(cliente);
     }
 

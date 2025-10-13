@@ -1,9 +1,7 @@
 package mx.desarollo.facade;
 
 import mx.desarollo.delegate.ClaseDelegate;
-import mx.desarollo.delegate.ClienteDelegate;
 import mx.desarollo.entity.Clase;
-import mx.desarollo.entity.Cliente;
 
 import java.util.List;
 
@@ -32,10 +30,15 @@ public class ClaseFacade {
      * @Params Objeto de tipo String id
      * @return Una lista con los clientes que cumplen con id del cliente especificado
      */
-    public void actualizarCliente(Clase cla) throws Exception {
+    public void actualizarClase(Clase cla) throws Exception {
         claseDelegate.actualizarClase(cla);
     }
+
     public Clase obtenerClasePorId(String id) {
         return claseDelegate.obtenerClase(id);
+    }
+
+    public List<Clase> listarClases() {
+        return claseDelegate.listarClases();
     }
 }

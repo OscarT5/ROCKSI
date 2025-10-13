@@ -6,6 +6,7 @@ import mx.desarollo.entity.Cliente;
 import mx.desarollo.integration.ServiceFacadeLocator;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ClaseHelper implements Serializable {
     public void AltaClase(Clase cla) throws Exception {
@@ -27,12 +28,17 @@ public class ClaseHelper implements Serializable {
      * @return Una lista de clientes
      */
     public void ModificarClase(Clase cla) throws Exception {
-        ServiceFacadeLocator.getInstanceClaseFacade().actualizarCliente(cla);
+        ServiceFacadeLocator.getInstanceClaseFacade().actualizarClase(cla);
     }
+
 
     public Clase obtenerClase(String id) {
         return ServiceFacadeLocator.getInstanceClaseFacade().obtenerClasePorId(id);
 
+    }
+
+    public List<Clase> listarClases() throws Exception {
+        return ServiceFacadeLocator.getInstanceClaseFacade().listarClases();
     }
 
 }

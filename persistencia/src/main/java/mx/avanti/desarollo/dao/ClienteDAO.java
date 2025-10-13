@@ -2,6 +2,7 @@ package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Cliente;
 
@@ -11,10 +12,15 @@ import java.util.Optional;
 public class ClienteDAO extends AbstractDAO<Cliente> {
 
     private final EntityManager entityManager;
+    private static boolean contadorInicializado = false;
 
     public ClienteDAO(EntityManager em) {
         super(Cliente.class);
         this.entityManager = em;
+        if (!contadorInicializado) {
+            sincronizarContador();
+            contadorInicializado = true;
+        }
     }
 
     public EntityManager getEntityManager() {
@@ -24,7 +30,7 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
     public void crear(Cliente cliente) {
         EntityTransaction tx = null;
         try {
-            inicializarContador();
+            sincronizarContador();
 
             if (cliente.getIdCliente() == null || cliente.getIdCliente().isEmpty()) {
                 cliente.setIdCliente(Cliente.generarNuevoId());
@@ -49,26 +55,24 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
     /*
     En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
      */
-    private void inicializarContador() {
+    private void sincronizarContador() {
         try {
-            List<String> ids = entityManager
-                    .createQuery("SELECT c.idCliente FROM Cliente c", String.class)
-                    .getResultList();
+            String ultimoId = entityManager
+                    .createQuery("SELECT c.idCliente FROM Cliente c WHERE c.idCliente LIKE 'CLI%' ORDER BY c.idCliente DESC", String.class)
+                    .setMaxResults(1)
+                    .getSingleResult();
 
-            int max = 1000;
-            for (String id : ids) {
-                if (id != null && id.startsWith("CLI")) {
-                    try {
-                        int n = Integer.parseInt(id.substring(3));
-                        if (n > max) max = n;
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
+            if (ultimoId != null && ultimoId.startsWith("CLI")) {
+                int numero = Integer.parseInt(ultimoId.substring(3));
+                Cliente.setContador(numero + 1);
+                System.out.println("Contador sincronizado con base de datos: siguiente CLI" + (numero + 1));
             }
-
-            Cliente.setContador(max + 1);
+        } catch (NoResultException e) {
+            Cliente.setContador(1000);
+            System.out.println("No hay clientes registrados. Contador iniciado en CLI1000");
         } catch (Exception e) {
-            // Si falla se deja el contador por defecto
+            Cliente.setContador(1000);
+            System.err.println("Error sincronizando contador, se mantiene en CLI1000: " + e.getMessage());
         }
     }
 
@@ -101,11 +105,6 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         return eliminado;
     }
 
-    public Cliente buscarPorId(int id) {
-        Optional<Cliente> opt = find(id);
-        return opt.orElse(null);
-    }
-
     public Cliente buscarPorId(String id) {
         try {
             return entityManager.find(Cliente.class, id);
@@ -116,11 +115,6 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
 
     public List<Cliente> listarTodos() {
         return findAll();
-    }
-
-    public void eliminar(int id) {
-        Optional<Cliente> opt = find(id);
-        opt.ifPresent(this::delete);
     }
 
     public void actualizar(Cliente cliente) {
@@ -149,11 +143,12 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
             throw new RuntimeException("Error al modificar el cliente.", e);
         }
     }
-    public Cliente buscarPorTelefono(String Telefono) {
+    /*public Cliente buscarPorTelefono(String Telefono) {
         List<Cliente> resultados = entityManager
                 .createQuery("SELECT c FROM Cliente c WHERE c.telefono = :Telefono", Cliente.class)
                 .setParameter("Telefono", Telefono)
                 .getResultList();
         return resultados.isEmpty() ? null : resultados.get(0);
     }
+     */
 }

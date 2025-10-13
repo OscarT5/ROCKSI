@@ -2,18 +2,25 @@ package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Clase;
+import mx.desarollo.entity.Cliente;
+
 import java.util.List;
 import java.util.Optional;
 
 public class ClaseDAO extends AbstractDAO<Clase> {
     private final EntityManager em;
+    private static boolean contadorInicializado = false;
 
     public ClaseDAO(EntityManager em) {
         super(Clase.class);
         this.em = em;
-        inicializarContador();//Se inicializa el contador para crear los IDS
+        if (!contadorInicializado) {
+            sincronizarContador();
+            contadorInicializado = true;
+        }
     }
 
     @Override
@@ -23,30 +30,30 @@ public class ClaseDAO extends AbstractDAO<Clase> {
 
     public void crear(Clase clase){
         save(clase);
+        sincronizarContador();
     }
 
-    //Metodo para que el contador se inicialize y se cree asi un nuevo ID posteriormente
-    private void inicializarContador() {
+    /*
+    En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
+     */
+    private void sincronizarContador() {
         try {
-            //Se obtienen los ids de las clases que ya existen dentro de la BD
-            List<String> ids = em
-                    .createQuery("SELECT c.idItem FROM Clase c", String.class)
-                    .getResultList();
+            String ultimoId = em
+                    .createQuery("SELECT c.idItem FROM Clase c WHERE c.idItem LIKE 'CLA%' ORDER BY c.idItem DESC", String.class)
+                    .setMaxResults(1)
+                    .getSingleResult();
 
-            int max = 1000; //Valor inicial
-            for (String id : ids) {
-                if (id != null && id.startsWith("CLA")) {
-                    try {
-                        int n = Integer.parseInt(id.substring(3));
-                        if (n > max) max = n;
-                    } catch (NumberFormatException ignored) {}
-                }
+            if (ultimoId != null && ultimoId.startsWith("CLA")) {
+                int numero = Integer.parseInt(ultimoId.substring(3));
+                Clase.setContador(numero + 1);
+                System.out.println("Contador de clase sincronizado: siguiente CLA" + (numero + 1));
             }
-
-            //Aqui el contador se actualiza a uno mas que el maximo
-            Clase.setContador(max + 1);
+        } catch (NoResultException e) {
+            Clase.setContador(1000);
+            System.out.println("ℹNo hay clases registradas. Contador iniciado en CLA1000.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Clase.setContador(1000);
+            System.err.println("Error al sincronizar el contador de clases, se mantiene en CLA1000: " + e.getMessage());
         }
     }
 
@@ -89,9 +96,10 @@ public class ClaseDAO extends AbstractDAO<Clase> {
         }
     }
 
-    public List<Clase> listarTodasLasClases() {
+    /*public List<Clase> listarTodasLasClases() {
         return findAll();
     }
+     */
 
     public void actualizarClase(Clase cla) {
         EntityTransaction tx = null;
