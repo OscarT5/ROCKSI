@@ -1,6 +1,8 @@
 import mx.avanti.desarollo.dao.ClienteDAO;
+import mx.avanti.desarollo.dao.ProductoDAO;
 import mx.avanti.desarollo.persistence.HibernateUtil;
 import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Producto;
 
 import java.util.List;
 
@@ -11,12 +13,12 @@ public class testDAO {
      * @return imprime en consola el Cliente + id[ID del cliente]
      */
     public static void main(String[] args) {
-        ClienteDAO ClienteDAO = new ClienteDAO(HibernateUtil.getEntityManager());
+        ProductoDAO productoDAO = new ProductoDAO(HibernateUtil.getEntityManager());
 
 
 
-        for (Cliente Cliente : ClienteDAO.listarTodos()) {
-            System.out.println(Cliente + "|| id [" + Cliente.getIdCliente()+ "]");
+        for (Producto pro : productoDAO.listarTodosLosProductos()) {
+            System.out.println(pro + "|| id [" + pro.getIdProducto()+ "]");
         }
     }
 }

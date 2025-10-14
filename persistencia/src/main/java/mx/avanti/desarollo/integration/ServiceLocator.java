@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.*;
 import mx.avanti.desarollo.persistence.HibernateUtil;
 import mx.desarollo.entity.Clase;
+import mx.desarollo.entity.Producto;
 
 
 /**
@@ -19,7 +20,7 @@ public class ServiceLocator {
 
     private static ClienteDAO ClienteDAO;
     private static ClaseDAO ClaseDAO;
-    //private static UsuarioDAO usuarioDAO;
+    private static ProductoDAO ProductoDAO;
 
     private static EntityManager getEntityManager(){
         return HibernateUtil.getEntityManager();
@@ -45,19 +46,13 @@ public class ServiceLocator {
             return ClaseDAO;
         }
     }
-    /**
-     * se crea la instancia de usuarioDAO si esta no existe
-     */
-    /*
-    public static UsuarioDAO getInstanceUsuarioDAO(){
-        if(usuarioDAO == null){
-            usuarioDAO = new UsuarioDAO(getEntityManager());
-            return usuarioDAO;
+
+    public static ProductoDAO getInstanceProductoDAO(){
+        if(ProductoDAO == null){
+            ProductoDAO  = new ProductoDAO(getEntityManager());
+            return ProductoDAO;
         } else{
-            return usuarioDAO;
+            return ProductoDAO;
         }
     }
-
-     */
-
 }
