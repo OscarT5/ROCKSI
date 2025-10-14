@@ -22,7 +22,7 @@ public class ProductoDelegate {
         }
 
         //Se llama al metodo para asignar y crear un nuevoID
-        producto.setIdItem(productoDAO.generarNuevoIdProducto());
+        //producto.setIdItem(productoDAO.generarNuevoIdProducto());
 
         productoDAO.crear(producto);
     }

@@ -1,10 +1,6 @@
-import mx.avanti.desarollo.dao.ClienteDAO;
 import mx.avanti.desarollo.dao.ProductoDAO;
 import mx.avanti.desarollo.persistence.HibernateUtil;
-import mx.desarollo.entity.Cliente;
 import mx.desarollo.entity.Producto;
-
-import java.util.List;
 
 public class testDAO {
 

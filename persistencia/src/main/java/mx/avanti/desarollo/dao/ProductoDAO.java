@@ -16,7 +16,7 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         super(Producto.class);
         this.em = em;
         if (!contadorInicializado) {
-            sincronizarContador();
+            //sincronizarContador();
             contadorInicializado = true;
         }
     }
@@ -28,13 +28,13 @@ public class ProductoDAO extends AbstractDAO<Producto> {
 
     public void crear(Producto producto){
         save(producto);
-        sincronizarContador();
+        //sincronizarContador();
     }
 
     /*
     En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
      */
-    private void sincronizarContador() {
+    /*private void sincronizarContador() {
         try {
             String ultimoId = em
                     .createQuery("SELECT p.idItem FROM Producto p WHERE p.idItem LIKE 'PR%' ORDER BY p.idItem DESC", String.class)
@@ -57,8 +57,8 @@ public class ProductoDAO extends AbstractDAO<Producto> {
 
     //Aqui se genera el nuevo ID
     public String generarNuevoIdProducto() {
-        return Producto.generarNuevoId();
-    }
+        //return Producto.generarNuevoId();
+    }*/
 
     public boolean eliminarProducto(String idProducto) {
         EntityTransaction et = null;

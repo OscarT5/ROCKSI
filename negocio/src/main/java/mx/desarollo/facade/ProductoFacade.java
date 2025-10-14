@@ -1,6 +1,5 @@
 package mx.desarollo.facade;
 
-import mx.desarollo.delegate.ClaseDelegate;
 import mx.desarollo.delegate.ProductoDelegate;
 import mx.desarollo.entity.Producto;
 
