@@ -22,7 +22,7 @@ public class ProductoDelegate {
         }
 
         //Se llama al metodo para asignar y crear un nuevoID
-        //producto.setIdItem(productoDAO.generarNuevoIdProducto());
+        producto.setIdItem(productoDAO.generarNuevoIdProducto());
 
         productoDAO.crear(producto);
     }
@@ -45,7 +45,7 @@ public class ProductoDelegate {
     que esta es proporcionada por el bean, falta implementar el bean
      */
     public void actualizarProducto(Producto producto) throws Exception {
-        String idAActualizar = producto.getIdProducto();
+        String idAActualizar = producto.getIdItem();
         if (idAActualizar == null || idAActualizar.trim().isEmpty()) {
             throw new Exception("No se proporcionó ID de producto para modificar.");
         }

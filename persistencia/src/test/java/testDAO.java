@@ -13,8 +13,6 @@ public class testDAO {
 
 
 
-        for (Producto pro : productoDAO.listarTodosLosProductos()) {
-            System.out.println(pro + "|| id [" + pro.getIdProducto()+ "]");
-        }
+
     }
 }

@@ -3,22 +3,13 @@ package mx.desarollo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "producto")
-public class Producto {
-    @Id
-    @Size(max = 45)
-    @Column(name = "ID_Producto", nullable = false, length = 45)
-    private String idProducto;
+@PrimaryKeyJoinColumn(name = "ID_Producto")
+public class Producto extends Item {
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ID_Producto", nullable = false)
-    private Item item;
+    private static int contador = 1000;
 
     @Size(max = 45)
     @NotNull
@@ -29,20 +20,22 @@ public class Producto {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    public String getIdProducto() {
-        return idProducto;
+    public Producto() {
+        super();
     }
 
-    public void setIdProducto(String idProducto) {
-        this.idProducto = idProducto;
+    public Producto(String nombre, int stock) {
+        super(generarNuevoId(),null);
+        this.nombre = nombre;
+        this.stock = stock;
     }
 
-    public Item getItem() {
-        return item;
+    public static synchronized String generarNuevoId() {
+        return "PR" + (contador++);
     }
 
-    public void setItem(Item item) {
-        this.item = item;
+    public static void setContador(int valor) {
+        contador = valor;
     }
 
     public String getNombre() {
@@ -60,5 +53,4 @@ public class Producto {
     public void setStock(Integer stock) {
         this.stock = stock;
     }
-
 }
