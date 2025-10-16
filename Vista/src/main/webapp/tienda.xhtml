@@ -479,6 +479,58 @@
         </h:form>
     </p:dialog>
 
+    <!-- baja de clases -->
+    <p:dialog header="Eliminar Producto" widgetVar="dlgEliminarProducto"
+                  modal="true" resizable="false" closable="true"
+                  draggable="false" width="360">
+        <h:form id="formEliminarProducto">
+
+            <!-- Mensajes del backend -->
+            <p:messages id="msgsEliminarProducto" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel for="idEliminarProducto" value="ID del Producto"/>
+                <p:inputText id="idEliminarProducto"
+                             value="#{bajaProductoBeanUI.idProducto}"
+                             placeholder="ID del producto a eliminar"
+                             required="true"
+                             requiredMessage="El campo ID es obligatorio"/>
+            </div>
+
+            <!-- Botón que abre el modal de confirmación -->
+            <p:commandButton id="abrirConfirmarProductoBtn" value="Eliminar Producto"
+                             icon="pi pi-times-circle"
+                             styleClass="btn-baja"
+                             onclick="PF('dlgConfirmar').show(); return false;"
+                             type="button"/>
+
+            <!-- Diálogo de confirmación -->
+            <p:confirmDialog id="confirmDialog"
+                             widgetVar="dlgConfirmar"
+                             header="Confirmar Eliminación"
+                             message="¿Seguro que deseas eliminar este producto?"
+                             icon="pi pi-exclamation-triangle"
+                             closable="false" modal="true">
+
+                <!-- Botón SÍ -->
+                <p:commandButton value="Sí, eliminar"
+                                 icon="pi pi-check"
+                                 action="#{bajaProductoBeanUI.eliminarProducto}"
+                                 process="@form"
+                                 update="msgsEliminarProducto :formProductos:tablaProductos"
+                                 oncomplete="PF('dlgConfirmar').hide();"
+                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+
+                <!-- Botón CANCELAR -->
+                <p:commandButton value="Cancelar"
+                                 icon="pi pi-times"
+                                 onclick="PF('dlgConfirmar').hide(); return false;"
+                                 type="button"
+                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog>
+
 
 </h:body>
 </html>
