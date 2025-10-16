@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "producto")
-@PrimaryKeyJoinColumn(name = "ID_Producto") //Une el id de producto con el de item
+@PrimaryKeyJoinColumn(name = "ID_Producto", referencedColumnName = "ID_Item")
 public class Producto extends Item implements Serializable {
 
     @NotNull
@@ -18,6 +18,10 @@ public class Producto extends Item implements Serializable {
     @NotNull
     @Column(name = "stock", nullable = false)
     private Integer stock;
+
+    @NotNull
+    @Column(name = "precio", nullable = false)
+    private Double precio;
 
     private static int contador = 1000;
 
@@ -33,12 +37,14 @@ public class Producto extends Item implements Serializable {
         super();
     }
 
-    public Producto(String id, double precio, String nombre, Integer stock) {
-        super(id, precio);
+    public Producto(String id, Double precio, String nombre, Integer stock) {
+        super(id);
+        this.precio = precio;
         this.nombre = nombre;
         this.stock = stock;
     }
 
+    // Getters y setters
     public String getNombre() {
         return nombre;
     }
@@ -53,5 +59,13 @@ public class Producto extends Item implements Serializable {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 }

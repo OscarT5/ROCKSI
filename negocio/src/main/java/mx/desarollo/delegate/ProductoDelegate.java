@@ -26,9 +26,6 @@ public class ProductoDelegate {
             throw new Exception("El stock debe ser mayor que cero.");
         }
 
-        if (producto.getPrecio() <= 0) {
-            throw new Exception("El precio debe ser mayor que cero.");
-        }
 
         //genera un nuevo id
         producto.setIdItem(productoDAO.generarNuevoIdProducto());

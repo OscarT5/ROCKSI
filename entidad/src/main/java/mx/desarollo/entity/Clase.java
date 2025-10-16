@@ -43,7 +43,7 @@ public class Clase extends Item implements Serializable {
     }
 
     public Clase(String idClase, String nombre, String horario, int cupoMaximo, String maestro) {
-        super(idClase, null);
+        super(idClase);
         this.nombre = nombre;
         this.horario = horario;
         this.cupoMaximo = cupoMaximo;

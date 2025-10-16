@@ -24,30 +24,28 @@ public class AltaProductoBeanUI implements Serializable {
     public void altaProducto() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            if (nombre == null || nombre.trim().isEmpty()) {
+            if (nombre == null || nombre.trim().isEmpty())
                 throw new Exception("El campo Nombre es obligatorio.");
-            }
 
-            if (stock == null || stock <= 0) {
+            if (stock == null || stock <= 0)
                 throw new Exception("El campo Stock debe ser mayor a 0.");
-            }
 
-            if (precio == null || precio <= 0) {
+            if (precio == null || precio <= 0)
                 throw new Exception("El campo Precio debe ser mayor a 0.");
-            }
 
-            Producto nuevoProducto = new Producto();
-            nuevoProducto.setNombre(nombre.trim());
-            nuevoProducto.setStock(stock);
-            nuevoProducto.setPrecio(precio);
+            Producto nuevoProducto = new Producto(
+                    Producto.generarNuevoId(),
+                    precio,
+                    nombre.trim(),
+                    stock
+            );
 
             productoHelper.altaProducto(nuevoProducto);
 
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Registro exitoso", "El producto fue agregado correctamente."));
 
-            PrimeFaces.current().ajax().update("formProductos:tablaProductos formProductos:msgsProducto");
-
+            //PrimeFaces.current().ajax().update("formProductos:tablaProductos formProductos:msgsProducto");
             limpiarCampos();
 
         } catch (Exception e) {
@@ -55,6 +53,8 @@ public class AltaProductoBeanUI implements Serializable {
                     "Error al registrar producto", e.getMessage()));
         }
     }
+
+
 
 
     public String getNombre() { return nombre; }
