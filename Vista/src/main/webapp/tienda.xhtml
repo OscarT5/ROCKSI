@@ -312,6 +312,14 @@
             margin-right: 8px;
             font-size: 16px;
         }
+
+        .ui-confirmdialog {
+            z-index: 1100 !important;
+        }
+
+        .ui-widget-overlay {
+            z-index: 1000 !important;
+        }
     </style>
 </h:head>
 
@@ -403,7 +411,7 @@
                                      type="button"/>
 
                     <p:commandButton value="Baja de Producto" icon="pi pi-trash" styleClass="btn-baja"
-                                     type="button"/>
+                                     onclick="PF('dlgEliminarProducto').show(); return false;" type="button"/>
 
                 </div>
 
