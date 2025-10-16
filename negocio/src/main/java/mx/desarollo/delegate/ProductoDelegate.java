@@ -29,10 +29,10 @@ public class ProductoDelegate {
             throw new Exception("El precio debe ser mayor que cero.");
         }
 
-        // Generar nuevo id
-        producto.setIdProducto(productoDAO.generarNuevoIdProducto());
+        //genera un nuevo id
+        producto.setIdItem(productoDAO.generarNuevoIdProducto());
 
-        // Guardar en la base de datos
+        //Aqui se guarda en la BD
         productoDAO.crear(producto);
     }
 }

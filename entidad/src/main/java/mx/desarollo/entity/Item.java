@@ -14,12 +14,12 @@ public abstract class Item implements Serializable {
     private String idItem;
 
     @Column(name = "precio", nullable = true, precision = 10, scale = 2)
-    private BigDecimal precio;
+    private double precio;
 
     public Item() {
     }
 
-    public Item(String idItem, BigDecimal precio) {
+    public Item(String idItem, double precio) {
         this.idItem = idItem;
         this.precio = precio;
     }
@@ -32,11 +32,11 @@ public abstract class Item implements Serializable {
         this.idItem = idItem;
     }
 
-    public BigDecimal getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(BigDecimal precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 

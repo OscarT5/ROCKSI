@@ -3,20 +3,12 @@ package mx.desarollo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "producto")
-public class Producto {
-
-    @Id
-    private String idProducto;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "ID_Producto")
-    private Item item;
+@PrimaryKeyJoinColumn(name = "ID_Producto") //Une el id de producto con el de item
+public class Producto extends Item implements Serializable {
 
     @NotNull
     @Size(max = 45)
@@ -26,10 +18,6 @@ public class Producto {
     @NotNull
     @Column(name = "stock", nullable = false)
     private Integer stock;
-
-    @NotNull
-    @Column(name = "precio", nullable = false)
-    private double precio;
 
     private static int contador = 1000;
 
@@ -41,20 +29,14 @@ public class Producto {
         return "PR" + contador++;
     }
 
-    public String getIdProducto() {
-        return idProducto;
+    public Producto() {
+        super();
     }
 
-    public void setIdProducto(String idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
+    public Producto(String id, double precio, String nombre, Integer stock) {
+        super(id, precio);
+        this.nombre = nombre;
+        this.stock = stock;
     }
 
     public String getNombre() {
@@ -71,13 +53,5 @@ public class Producto {
 
     public void setStock(Integer stock) {
         this.stock = stock;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
     }
 }
