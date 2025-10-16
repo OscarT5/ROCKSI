@@ -2,11 +2,13 @@ package mx.desarollo.integration;
 
 import mx.desarollo.facade.ClaseFacade;
 import mx.desarollo.facade.ClienteFacade;
+import mx.desarollo.facade.ProductoFacade;
 
 public class ServiceFacadeLocator {
 
     private static ClienteFacade ClienteFacade;
     private static ClaseFacade ClaseFacade;
+    private static ProductoFacade ProductoFacade;
     //private static FacadeUsuario facadeUsuario;
 
     public static ClienteFacade getInstanceClienteFacade() {
@@ -24,6 +26,16 @@ public class ServiceFacadeLocator {
         }
         else{
             return ClaseFacade;
+        }
+    }
+
+    public static ProductoFacade getInstanceProductoFacade() {
+        if(ProductoFacade == null){
+            ProductoFacade = new ProductoFacade();
+            return ProductoFacade;
+        }
+        else{
+            return ProductoFacade;
         }
     }
 

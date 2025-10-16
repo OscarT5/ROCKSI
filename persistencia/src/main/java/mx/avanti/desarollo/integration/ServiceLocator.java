@@ -19,6 +19,7 @@ public class ServiceLocator {
 
     private static ClienteDAO ClienteDAO;
     private static ClaseDAO ClaseDAO;
+    private static ProductoDAO ProductoDAO;
     //private static UsuarioDAO usuarioDAO;
 
     private static EntityManager getEntityManager(){
@@ -43,6 +44,15 @@ public class ServiceLocator {
             return ClaseDAO;
         } else{
             return ClaseDAO;
+        }
+    }
+
+    public static ProductoDAO getInstanceProductoDAO(){
+        if(ProductoDAO == null){
+            ProductoDAO = new ProductoDAO(getEntityManager());
+            return ProductoDAO;
+        } else{
+            return ProductoDAO;
         }
     }
     /**
