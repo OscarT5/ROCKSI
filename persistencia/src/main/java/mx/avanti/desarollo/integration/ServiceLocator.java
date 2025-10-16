@@ -8,7 +8,6 @@ package mx.avanti.desarollo.integration;
 import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.*;
 import mx.avanti.desarollo.persistence.HibernateUtil;
-import mx.desarollo.entity.Clase;
 
 
 /**
@@ -20,7 +19,6 @@ public class ServiceLocator {
     private static ClienteDAO ClienteDAO;
     private static ClaseDAO ClaseDAO;
     private static ProductoDAO ProductoDAO;
-    //private static UsuarioDAO usuarioDAO;
 
     private static EntityManager getEntityManager(){
         return HibernateUtil.getEntityManager();

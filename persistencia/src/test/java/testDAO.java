@@ -1,22 +1,35 @@
-import mx.avanti.desarollo.dao.ClienteDAO;
+import mx.avanti.desarollo.dao.ProductoDAO;
 import mx.avanti.desarollo.persistence.HibernateUtil;
-import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Producto;
 
 import java.util.List;
 
 public class testDAO {
 
-    /**
-     * Metodo main ejecutable para comprobar que mi capa de negocio se conecta y trae objetos de la base de datos
-     * @return imprime en consola el Cliente + id[ID del cliente]
-     */
     public static void main(String[] args) {
-        ClienteDAO ClienteDAO = new ClienteDAO(HibernateUtil.getEntityManager());
+        try {
+            // Crear DAO pasando el EntityManager
+            ProductoDAO productoDAO = new ProductoDAO(HibernateUtil.getEntityManager());
 
+            // Llamar al método que obtiene todos los productos
+            List<Producto> listaProductos = productoDAO.findAll();
 
+            // Verificar si hay productos
+            if (listaProductos == null || listaProductos.isEmpty()) {
+                System.out.println("⚠️ No se encontraron productos en la base de datos.");
+            } else {
+                // Imprimir los productos encontrados
+                for (Producto p : listaProductos) {
+                    System.out.println("Producto: " + p.getNombre() + " | ID: " + p.getIdItem());
+                }
+            }
 
-        for (Cliente Cliente : ClienteDAO.listarTodos()) {
-            System.out.println(Cliente + "|| id [" + Cliente.getIdCliente()+ "]");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Cerrar el EntityManager al terminar
+            HibernateUtil.close();
         }
     }
+
 }
