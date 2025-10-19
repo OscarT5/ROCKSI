@@ -9,4 +9,8 @@ public class AsignarClaseHelper {
     public void asignarClaseACliente(String idCliente, String idClase) throws Exception {
         dao.asignarClaseACliente(idCliente, idClase);
     }
+
+    public void eliminarAsignacionClienteClase(String idCliente, String idClase) throws Exception {
+        dao.eliminarAsignacionClienteClase(idCliente, idClase);
+    }
 }
