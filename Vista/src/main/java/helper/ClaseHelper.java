@@ -37,7 +37,7 @@ public class ClaseHelper implements Serializable {
 
     }
 
-    public List<Clase> listarClases() throws Exception {
+    public List<Clase> listarClases() {
         return ServiceFacadeLocator.getInstanceClaseFacade().listarClases();
     }
 

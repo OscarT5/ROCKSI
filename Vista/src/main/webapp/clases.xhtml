@@ -401,26 +401,54 @@
                                      onclick="PF('dlgAsignarClase').show();" styleClass="btn-registrar" type="button"/>
                 </div>
 
-                <!-- Tabla -->
-                <p:dataTable id="tablaClases" value="#{claseBeanUI.listaClases}" var="cla"
-                             paginator="true" rows="8" emptyMessage="No hay clases registradas"
-                             paginatorPosition="bottom" style="margin-top:20px;">
+                <p:dataTable id="tablaClases"
+                             value="#{claseBeanUI.listaClases}"
+                             var="cla"
+                             rowKey="#{cla.idClase}"
+                             paginator="true"
+                             rows="8"
+                             emptyMessage="No hay clases registradas"
+                             paginatorPosition="bottom"
+                             style="margin-top:20px;">
+
+                    <!-- Botón para expandir fila -->
+                    <p:column style="width:50px; text-align:center;">
+                        <p:rowToggler />
+                    </p:column>
+
                     <p:column headerText="ID Clase" sortBy="#{cla.idClase}">
-                        <h:outputText value="#{cla.idClase}"/>
+                        <h:outputText value="#{cla.idClase}" />
                     </p:column>
                     <p:column headerText="Nombre" sortBy="#{cla.nombre}">
-                        <h:outputText value="#{cla.nombre}"/>
+                        <h:outputText value="#{cla.nombre}" />
                     </p:column>
-                    <p:column headerText="Horario" sortBy="#{cla.horario}">
-                        <h:outputText value="#{cla.horario}"/>
+                    <p:column headerText="Horario">
+                        <h:outputText value="#{cla.horario}" />
                     </p:column>
                     <p:column headerText="Cupo Máx.">
-                        <h:outputText value="#{cla.cupoMaximo}"/>
+                        <h:outputText value="#{cla.cupoMaximo}" />
                     </p:column>
-                    <p:column headerText="Maestro" sortBy="#{cla.maestro}">
-                        <h:outputText value="#{cla.maestro}"/>
+                    <p:column headerText="Maestro">
+                        <h:outputText value="#{cla.maestro}" />
                     </p:column>
+
+                    <!-- Subtabla expandible -->
+                    <p:rowExpansion>
+                        <p:dataTable value="#{cla.clientes}" var="cli" style="margin-left:20px" emptyMessage="Sin clientes asignados">
+                            <p:column headerText="ID Cliente">
+                                <h:outputText value="#{cli.idCliente}" />
+                            </p:column>
+                            <p:column headerText="Nombre Completo">
+                                <h:outputText value="#{cli.nombreCompleto}" />
+                            </p:column>
+                            <p:column headerText="Teléfono">
+                                <h:outputText value="#{cli.telefono}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:rowExpansion>
+
                 </p:dataTable>
+
             </h:form>
         </div>
     </div>
@@ -658,7 +686,7 @@
         </h:form>
     </p:dialog>
 
-    <!-- asignar clase (FALTA!!!!!!!!!!!!!!) -->
+    <!-- asignar clase -->
     <p:dialog header="Asignar clase a cliente" widgetVar="dlgAsignarClase" modal="true" resizable="false" closable="true" draggable="false" width="420">
         <h:form id="formAsignarClase">
             <p:messages id="msgsAsignar" showDetail="true" closable="true"/>

@@ -7,6 +7,7 @@ import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Clase;
 import mx.desarollo.entity.Cliente;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,24 @@ public class ClaseDAO extends AbstractDAO<Clase> {
             contadorInicializado = true;
         }
     }
+
+    public List<Clase> findAllWithClientes() {
+        return execute(em -> {
+            //Limpia contexto antes de ejecutar la query
+            em.clear();
+
+            List<Clase> result = em.createQuery(
+                            "SELECT DISTINCT c FROM Clase c LEFT JOIN FETCH c.clientes",
+                            Clase.class
+                    )
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH") //forzar lectura desde la BD
+                    .setHint("org.hibernate.cacheable", false)
+                    .getResultList();
+
+            return result;
+        });
+    }
+
 
     @Override
     public EntityManager getEntityManager() {

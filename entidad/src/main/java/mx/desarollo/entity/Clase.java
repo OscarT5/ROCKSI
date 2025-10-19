@@ -2,6 +2,9 @@ package mx.desarollo.entity;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -38,6 +41,9 @@ public class Clase extends Item implements Serializable {
 
     @Column(name = "maestro", length = 100, nullable = false)
     private String maestro;
+
+    @ManyToMany(mappedBy = "clases")
+    private List<Cliente> clientes = new ArrayList<>();
 
     public Clase() {
     }
@@ -90,5 +96,9 @@ public class Clase extends Item implements Serializable {
     public void setIdClase(String idClase) {
         super.setIdItem(idClase);
     }
+
+    public List<Cliente> getClientes() {return clientes;}
+
+    public void setClientes(List<Cliente> clientes) {this.clientes = clientes;}
 
 }
