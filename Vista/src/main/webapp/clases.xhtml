@@ -397,30 +397,70 @@
                                      onclick="PF('dlgAskId').show();" styleClass="btn-modificar" type="button"/>
                     <p:commandButton value="Baja de Clase" icon="pi pi-user-minus"
                                      onclick="PF('dlgEliminarClase').show();" styleClass="btn-baja" type="button"/>
-                    <p:commandButton value="Asignar clase a cliente" icon="pi pi-link"
-                                     onclick="PF('dlgAsignarClase').show();" styleClass="btn-registrar" type="button"/>
+                    <p:commandButton value="Asignar clase a cliente"
+                                     icon="pi pi-link"
+                                     actionListener="#{claseBeanUI.recargar}"
+                                     update=":formAsignarClase:asg_selectClase"
+                                     oncomplete="PF('dlgAsignarClase').show();"
+                                     styleClass="btn-registrar"/>
+
+                    <p:commandButton value="Quitar cliente de clase"
+                                     icon="pi pi-unlink"
+                                     actionListener="#{claseBeanUI.recargar}"
+                                     update=":formEliminarAsignacion:elim_selectClase"
+                                     oncomplete="PF('dlgEliminarAsignacion').show();"
+                                     styleClass="btn-baja"/>
+
                 </div>
 
-                <!-- Tabla -->
-                <p:dataTable id="tablaClases" value="#{claseBeanUI.listaClases}" var="cla"
-                             paginator="true" rows="8" emptyMessage="No hay clases registradas"
-                             paginatorPosition="bottom" style="margin-top:20px;">
+                <p:dataTable id="tablaClases"
+                             value="#{claseBeanUI.listaClases}"
+                             var="cla"
+                             rowKey="#{cla.idClase}"
+                             paginator="true"
+                             rows="8"
+                             emptyMessage="No hay clases registradas"
+                             paginatorPosition="bottom"
+                             style="margin-top:20px;">
+
+                    <!-- Botón para expandir fila -->
+                    <p:column style="width:50px; text-align:center;">
+                        <p:rowToggler />
+                    </p:column>
+
                     <p:column headerText="ID Clase" sortBy="#{cla.idClase}">
-                        <h:outputText value="#{cla.idClase}"/>
+                        <h:outputText value="#{cla.idClase}" />
                     </p:column>
                     <p:column headerText="Nombre" sortBy="#{cla.nombre}">
-                        <h:outputText value="#{cla.nombre}"/>
+                        <h:outputText value="#{cla.nombre}" />
                     </p:column>
-                    <p:column headerText="Horario" sortBy="#{cla.horario}">
-                        <h:outputText value="#{cla.horario}"/>
+                    <p:column headerText="Horario">
+                        <h:outputText value="#{cla.horario}" />
                     </p:column>
                     <p:column headerText="Cupo Máx.">
-                        <h:outputText value="#{cla.cupoMaximo}"/>
+                        <h:outputText value="#{cla.cupoMaximo}" />
                     </p:column>
-                    <p:column headerText="Maestro" sortBy="#{cla.maestro}">
-                        <h:outputText value="#{cla.maestro}"/>
+                    <p:column headerText="Maestro">
+                        <h:outputText value="#{cla.maestro}" />
                     </p:column>
+
+                    <!-- Subtabla expandible -->
+                    <p:rowExpansion>
+                        <p:dataTable value="#{cla.clientes}" var="cli" style="margin-left:20px" emptyMessage="Sin clientes asignados">
+                            <p:column headerText="ID Cliente">
+                                <h:outputText value="#{cli.idCliente}" />
+                            </p:column>
+                            <p:column headerText="Nombre Completo">
+                                <h:outputText value="#{cli.nombreCompleto}" />
+                            </p:column>
+                            <p:column headerText="Teléfono">
+                                <h:outputText value="#{cli.telefono}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:rowExpansion>
+
                 </p:dataTable>
+
             </h:form>
         </div>
     </div>
@@ -658,7 +698,7 @@
         </h:form>
     </p:dialog>
 
-    <!-- asignar clase (FALTA!!!!!!!!!!!!!!) -->
+    <!-- asignar clase -->
     <p:dialog header="Asignar clase a cliente" widgetVar="dlgAsignarClase" modal="true" resizable="false" closable="true" draggable="false" width="420">
         <h:form id="formAsignarClase">
             <p:messages id="msgsAsignar" showDetail="true" closable="true"/>
@@ -683,6 +723,50 @@
                              styleClass="btn-registrar"/>
         </h:form>
     </p:dialog>
+
+    <!-- Dialogo para eliminar asignación -->
+    <p:dialog header="Quitar cliente de clase"
+              widgetVar="dlgEliminarAsignacion"
+              modal="true"
+              resizable="false"
+              closable="true"
+              draggable="false"
+              width="420">
+
+        <h:form id="formEliminarAsignacion">
+            <p:messages id="msgsEliminarAsignacion" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel for="elim_idCliente" value="ID Cliente"/>
+                <p:inputText id="elim_idCliente"
+                             value="#{eliminarAsignacionBeanUI.idCliente}"
+                             required="true"
+                             requiredMessage="El ID del cliente es obligatorio"
+                             styleClass="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <h:outputLabel for="elim_selectClase" value="Clase"/>
+                <p:selectOneMenu id="elim_selectClase"
+                                 value="#{eliminarAsignacionBeanUI.idClase}"
+                                 required="true"
+                                 requiredMessage="Seleccione una clase"
+                                 styleClass="form-control">
+                    <f:selectItem itemLabel="-- Seleccione --" itemValue=""/>
+                    <f:selectItems value="#{claseBeanUI.listaClases}" var="c"
+                                   itemValue="#{c.idClase}" itemLabel="#{c.nombre}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <p:commandButton value="Quitar asignación"
+                             icon="pi pi-trash"
+                             action="#{eliminarAsignacionBeanUI.eliminarAsignacion}"
+                             process="@form"
+                             update="msgsEliminarAsignacion :formClases:tablaClases"
+                             styleClass="btn-baja"/>
+        </h:form>
+    </p:dialog>
+
 
 </h:body>
 </html>

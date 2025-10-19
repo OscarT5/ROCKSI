@@ -5,32 +5,40 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import org.primefaces.PrimeFaces;
 import java.io.Serializable;
 
-@Named("asignarClaseBeanUI")
+@Named("eliminarAsignacionBeanUI")
 @SessionScoped
-public class AsignarClaseBeanUI implements Serializable {
+public class EliminarAsignacionBeanUI implements Serializable {
+
     private String idCliente;
     private String idClase;
-
     private final AsignarClaseHelper helper = new AsignarClaseHelper();
 
-    public void asignarClase() {
+    public void eliminarAsignacion() {
         try {
-            helper.asignarClaseACliente(idCliente, idClase);
+            if (idCliente == null || idCliente.trim().isEmpty()) {
+                throw new Exception("Debe ingresar un ID de cliente.");
+            }
+            if (idClase == null || idClase.trim().isEmpty()) {
+                throw new Exception("Debe seleccionar una clase.");
+            }
+
+            helper.eliminarAsignacionClienteClase(idCliente, idClase);
 
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Clase asignada correctamente."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Asignación eliminada",
+                            "El cliente fue removido de la clase correctamente."));
 
-            PrimeFaces.current().executeScript("PF('dlgAsignarClase').hide();");
+            idCliente = null;
+            idClase = null;
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
         }
     }
 
-    // Getters y setters
     public String getIdCliente() {
         return idCliente;
     }

@@ -1,17 +1,15 @@
 package ui;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 import java.util.List;
 import mx.desarollo.entity.Cliente;
 import helper.ClienteHelper;
-
-import jakarta.faces.view.ViewScoped;
 import java.io.Serializable;
 
 @Named("clienteBeanUI")
-@ViewScoped
+@SessionScoped
 public class ClienteBeanUI implements Serializable {
     private List<Cliente> listaClientes;
     private ClienteHelper clienteHelper = new ClienteHelper();
@@ -25,6 +23,17 @@ public class ClienteBeanUI implements Serializable {
             e.printStackTrace();
         }
     }
+
+    public void probarConexion() {
+        try {
+            System.out.println("Si se mando a llamar");
+            listaClientes = clienteHelper.ObtenerClientes();
+            System.out.println("Tabla de clientes actualizada\n Total: " + listaClientes.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void filtrarPorId() {
         try {

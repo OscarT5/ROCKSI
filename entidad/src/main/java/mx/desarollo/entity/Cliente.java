@@ -27,6 +27,7 @@ public class Cliente {
      /*
      @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Pago> historialPagos = new ArrayList<>();
+     */
 
     @ManyToMany
     @JoinTable( //Aqui se hace un join para realizar la tabla puente de estainscrito dentro de la BD
@@ -35,7 +36,6 @@ public class Cliente {
             inverseJoinColumns = @JoinColumn(name = "ID_Clase")
     )
     private List<Clase> clases = new ArrayList<>();
-      */
 
     @Column(name = "credito")
     private double credito;
@@ -112,6 +112,14 @@ public class Cliente {
             return nombreCompleto.substring(nombreCompleto.indexOf(' ') + 1);
         }
         return "";
+    }
+
+    public List<Clase> getClases() {
+        return clases;
+    }
+
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
     }
 
 }

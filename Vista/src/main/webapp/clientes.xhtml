@@ -388,9 +388,14 @@
                         <p:ajax event="input" listener="#{clienteBeanUI.filtrarPorId}" update="tablaClientes" process="@this" delay="300"/>
                     </p:inputText>
 
-                    <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
-                                     action="#{clienteBeanUI.init}" update="tablaClientes" process="@this"
-                                     delay="300" styleClass="btn-registrar"/>
+                    <p:commandButton value="Actualizar Tabla"
+                                     icon="pi pi-refresh"
+                                     actionListener="#{clienteBeanUI.probarConexion}"
+                                     process="@this"
+                                     update="@none"
+                                     styleClass="btn-registrar"/>
+
+
 
                     <p:commandButton value="Registrar Cliente" icon="pi pi-user-plus"
                                      onclick="PF('dlgAgregarCliente').show();" styleClass="btn-registrar"/>
@@ -548,9 +553,16 @@
 
                 <!-- Tabla de clientes -->
                 <p:dataTable id="tablaClientes" value="#{clienteBeanUI.listaClientes}" var="cli"
+                             rowKey="#{cli.idCliente}"
                              paginator="true" rows="5"
                              emptyMessage="No hay clientes registrados"
-                             styleClass="clientes-tabla" paginatorPosition="bottom">
+                             styleClass="clientes-tabla"
+                             paginatorPosition="bottom">
+
+                    <!-- Columna para expandir -->
+                    <p:column style="width:50px; text-align:center;">
+                        <p:rowToggler />
+                    </p:column>
 
                     <p:column headerText="ID Cliente" sortBy="#{cli.idCliente}">
                         <h:outputText value="#{cli.idCliente}"/>
@@ -579,7 +591,26 @@
                             <f:convertNumber type="currency" currencySymbol="$"/>
                         </h:outputText>
                     </p:column>
+
+                    <!-- Subtabla de clases asignadas -->
+                    <p:rowExpansion>
+                        <p:dataTable value="#{cli.clases}" var="cla" style="margin-left:20px" emptyMessage="Sin clases asignadas">
+                            <p:column headerText="ID Clase">
+                                <h:outputText value="#{cla.idClase}" />
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{cla.nombre}" />
+                            </p:column>
+                            <p:column headerText="Horario">
+                                <h:outputText value="#{cla.horario}" />
+                            </p:column>
+                            <p:column headerText="Maestro">
+                                <h:outputText value="#{cla.maestro}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:rowExpansion>
                 </p:dataTable>
+
             </h:form>
         </div>
     </div>

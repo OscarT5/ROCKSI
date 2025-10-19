@@ -112,6 +112,7 @@ public class ClaseDelegate {
     }
 
     public List<Clase> listarClases() {
-        return claseDAO.findAll();
+        return claseDAO.findAllWithClientes();
     }
+
 }
