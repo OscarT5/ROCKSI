@@ -549,7 +549,7 @@
                 <p:commandButton value="Guardar cambios"
                                  icon="pi pi-check"
                                  action="#{modificarProdBeanUI.modificarProducto}"
-                                 update="msgsModificar"
+                                 update="msgsModificar formBuscarProd:msgsAsk"
                                  oncomplete="if (!args.validationFailed) { PF('dlgModificarProd').hide(); PF('dlgBuscarProd').show(); }"/>
             </div>
 

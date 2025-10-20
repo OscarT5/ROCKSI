@@ -37,6 +37,9 @@ public class ServiceLocator {
         }
     }
 
+    /**
+     * se crea la instancia para Clase DAO si esta no existe
+     */
     public static ClaseDAO getInstanceClaseDAO(){
         if(ClaseDAO == null){
             ClaseDAO = new ClaseDAO(getEntityManager());
@@ -46,6 +49,9 @@ public class ServiceLocator {
         }
     }
 
+    /**
+     * se crea la instancia para Producto DAO si esta no existe
+     */
     public static ProductoDAO getInstanceProductoDAO(){
         if(ProductoDAO == null){
             ProductoDAO = new ProductoDAO(getEntityManager());

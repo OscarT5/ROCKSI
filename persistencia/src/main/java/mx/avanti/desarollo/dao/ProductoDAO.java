@@ -58,6 +58,9 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         return Producto.generarNuevoId();
     }
 
+    /*
+   Con esta funcion se elimina un producto por su ID
+    */
     public boolean eliminarProducto(String idProducto) {
         EntityTransaction et = null;
         boolean eliminado = false;
@@ -85,6 +88,9 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         return eliminado;
     }
 
+    /*
+   Con esta funcion se obtiene un producto por su ID
+    */
     public Producto buscarProductoPorId(String id) {
         try {
             return em.find(Producto.class, id);
@@ -93,6 +99,9 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         }
     }
 
+    /*
+   Con esta funcion se listan todos los productos registrados
+    */
     public List<Producto> listarTodosLosProductos() {
         return findAll();
     }

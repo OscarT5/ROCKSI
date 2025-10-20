@@ -38,7 +38,7 @@ public class ProductoBeanUI implements Serializable {
     //carga todas los productos desde la capa de negocio utilizando ProductoHelper
     public void cargarProductos() {
         try {
-            List<Producto> obtenidas = productoHelper.listarProducto(); // debe implementar listarProductos()
+            List<Producto> obtenidas = productoHelper.listarProductos(); // debe implementar listarProductos()
             if (obtenidas == null) {
                 obtenidas = new ArrayList<>();
             }
@@ -57,7 +57,7 @@ public class ProductoBeanUI implements Serializable {
     public void filtrarPorId() {
         try {
             if (filtro == null || filtro.isEmpty()) {
-                listaProductos = productoHelper.listarProducto();
+                listaProductos = productoHelper.listarProductos();
             } else {
                 Producto p = productoHelper.obtenerProducto(filtro);
                 listaProductos = new ArrayList<>();

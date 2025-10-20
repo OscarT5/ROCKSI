@@ -36,18 +36,18 @@ public class ProductoDelegate {
         productoDAO.crear(producto);
     }
 
+    /**
+     * Metodo para eliminar un producto por su ID que llamara a la instancia de ProductoDAO
+     * @Throws Si la base de datos rechaza la peticion, si no se encuentra un producto con el ID o si la cadena esta vacia
+     * @params Un objeto de tipo String id
+     * @return Una respuesta de tipo boolean
+     */
     public boolean eliminarProducto(String idProducto) throws Exception {
         if(idProducto == null || idProducto.trim().isEmpty()) {
             throw new Exception("El id del producto esta vacio");
         }
         return productoDAO.eliminarProducto(idProducto);
     }
-
-    /**
-     * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteDAO
-     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
-     * @return Una lista de clientes que contendra todos los clientes de la base de datos
-     */
 
     /*
     este metodo sirve para actualizar clientes mediante su ID
@@ -119,7 +119,12 @@ public class ProductoDelegate {
         productoDAO.actualizarProducto(existente);
     }*/
 
-
+    /**
+     * Metodo para obtener un producto por su ID que llamara a la instancia de ProductoDAO
+     * @Throws Si la base de datos rechaza la peticion o no se encuentra un producto con el ID
+     * @params Un objeto de tipo String id
+     * @return Un objeto de tipo Producto
+     */
     public Producto obtenerProducto(String id) {
         try {
             if (id == null) return null;
@@ -134,6 +139,11 @@ public class ProductoDelegate {
         }
     }
 
+    /**
+     * Metodo para listar todos los productos registrados que llamara a la instancia de ProductoDAO
+     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
+     * @return Una lista de productos que contendra todos los productos de la base de datos
+     */
     public List<Producto> listarProductos() {
         return productoDAO.findAll();
     }
