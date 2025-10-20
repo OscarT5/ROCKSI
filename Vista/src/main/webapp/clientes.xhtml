@@ -390,9 +390,9 @@
 
                     <p:commandButton value="Actualizar Tabla"
                                      icon="pi pi-refresh"
-                                     actionListener="#{clienteBeanUI.probarConexion}"
+                                     actionListener="#{clienteBeanUI.probarConexion()}"
                                      process="@this"
-                                     update="@none"
+                                     update="formClientes:tablaClientes"
                                      styleClass="btn-registrar"/>
 
 
