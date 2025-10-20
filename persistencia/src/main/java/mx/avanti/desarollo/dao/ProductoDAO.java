@@ -1,0 +1,135 @@
+package mx.avanti.desarollo.dao;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
+import mx.avanti.desarollo.persistence.AbstractDAO;
+import mx.desarollo.entity.Producto;
+
+import java.util.List;
+
+public class ProductoDAO extends AbstractDAO<Producto> {
+    private final EntityManager em;
+    private static boolean contadorInicializado = false;
+
+    public ProductoDAO(EntityManager em) {
+        super(Producto.class);
+        this.em = em;
+        if (!contadorInicializado) {
+            sincronizarContador();
+            contadorInicializado = true;
+        }
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return em;
+    }
+
+    public void crear(Producto producto) {
+        save(producto);
+        sincronizarContador();
+    }
+
+    /*
+    En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
+     */
+    private void sincronizarContador() {
+        try {
+            String ultimoId = em
+                    .createQuery("SELECT p.idItem FROM Producto p WHERE p.idItem LIKE 'PR%' ORDER BY p.idItem DESC", String.class)
+                    .setMaxResults(1)
+                    .getSingleResult();
+
+            if (ultimoId != null && ultimoId.startsWith("PR")) {
+                int numero = Integer.parseInt(ultimoId.substring(2)); // quitar "PR"
+                Producto.setContador(numero + 1);
+            }
+        } catch (NoResultException e) {
+            Producto.setContador(1000);
+        } catch (Exception e) {
+            Producto.setContador(1000);
+            System.err.println("Error al sincronizar la id: " + e.getMessage());
+        }
+    }
+
+    //Aqui se genera el nuevo ID
+    public String generarNuevoIdProducto() {
+        return Producto.generarNuevoId();
+    }
+
+    /*
+   Con esta funcion se elimina un producto por su ID
+    */
+    public boolean eliminarProducto(String idProducto) {
+        EntityTransaction et = null;
+        boolean eliminado = false;
+
+        try{
+            et = em.getTransaction();
+            et.begin();//Se inicializa la transaccion
+
+            Producto producto = em.find(Producto.class, idProducto);//Encuentra el id del producto
+
+            if(producto != null){
+                if(!em.contains(producto)){
+                    producto = em.merge(producto);
+                }
+                em.remove(producto);
+                eliminado = true;//Se confirma la eliminacion
+            }
+            et.commit();//Se manda lo realizado
+            return eliminado;
+
+        } catch (Exception e){
+            if(et != null && et.isActive()) et.rollback();
+            e.printStackTrace();
+        }
+        return eliminado;
+    }
+
+    /*
+   Con esta funcion se obtiene un producto por su ID
+    */
+    public Producto buscarProductoPorId(String id) {
+        try {
+            return em.find(Producto.class, id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar el producto por ID...", e);
+        }
+    }
+
+    /*
+   Con esta funcion se listan todos los productos registrados
+    */
+    public List<Producto> listarTodosLosProductos() {
+        return findAll();
+    }
+
+    public void actualizarProducto(Producto producto) {
+        EntityTransaction tx = null;
+
+        try {
+            tx = em.getTransaction();
+
+            // Iniciar transaccion si no está activa
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            // Actualizar el producto existente
+            em.merge(producto);
+
+            // Confirmar los cambios
+            tx.commit();
+
+        } catch (Exception e) {
+            // Revertir la transaccion si ocurre un error
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+
+            throw new RuntimeException("Error al modificar el producto.", e);
+        }
+    }
+}

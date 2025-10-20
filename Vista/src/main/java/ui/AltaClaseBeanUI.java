@@ -69,7 +69,7 @@ public class AltaClaseBeanUI implements Serializable {
             claseHelper.AltaClase(nuevaClase);
 
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro exitoso", "La clase fue agregada correctamente."));
-            PrimeFaces.current().ajax().update("formClases:tablaClases formClases:msgsClase");
+           // PrimeFaces.current().ajax().update("formClases:tablaClases formClases:msgsClase");
 
             limpiarCampos();
 

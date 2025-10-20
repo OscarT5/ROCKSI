@@ -3,25 +3,15 @@ package mx.desarollo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "producto")
-public class Producto {
-    @Id
-    @Size(max = 45)
-    @Column(name = "ID_Producto", nullable = false, length = 45)
-    private String idProducto;
+@PrimaryKeyJoinColumn(name = "ID_Producto", referencedColumnName = "ID_Item")
+public class Producto extends Item implements Serializable {
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ID_Producto", nullable = false)
-    private Item item;
-
-    @Size(max = 45)
     @NotNull
+    @Size(max = 45)
     @Column(name = "nombre", nullable = false, length = 45)
     private String nombre;
 
@@ -29,22 +19,32 @@ public class Producto {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    public String getIdProducto() {
-        return idProducto;
+    @NotNull
+    @Column(name = "precio", nullable = false)
+    private Double precio;
+
+    private static int contador = 1000;
+
+    public static void setContador(int nuevoContador) {
+        contador = nuevoContador;
     }
 
-    public void setIdProducto(String idProducto) {
-        this.idProducto = idProducto;
+    public static String generarNuevoId() {
+        return "PR" + contador++;
     }
 
-    public Item getItem() {
-        return item;
+    public Producto() {
+        super();
     }
 
-    public void setItem(Item item) {
-        this.item = item;
+    public Producto(String id, Double precio, String nombre, Integer stock) {
+        super(id);
+        this.precio = precio;
+        this.nombre = nombre;
+        this.stock = stock;
     }
 
+    // Getters y setters
     public String getNombre() {
         return nombre;
     }
@@ -61,4 +61,11 @@ public class Producto {
         this.stock = stock;
     }
 
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
 }

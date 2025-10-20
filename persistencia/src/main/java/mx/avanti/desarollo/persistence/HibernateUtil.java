@@ -12,7 +12,7 @@ public class HibernateUtil {
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = buildEntityManagerFactory();
 
     /**
-     * Crea la instancia de EntityManagerFactory a partir del archivo persistence.xml.
+     * Crea la instancia de EntityManagerFactory a partir del archivo persistencexml.
      */
     private static EntityManagerFactory buildEntityManagerFactory() {
         try {
