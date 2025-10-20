@@ -408,7 +408,7 @@
                                      type="button"/>
 
                     <p:commandButton value="Modificar Producto" icon="pi pi-pencil" styleClass="btn-modificar"
-                                     type="button"/>
+                                     onclick="PF('dlgBuscarProd').show(); return false;" type="button"/>
 
                     <p:commandButton value="Baja de Producto" icon="pi pi-trash" styleClass="btn-baja"
                                      onclick="PF('dlgEliminarProducto').show(); return false;" type="button"/>
@@ -487,7 +487,83 @@
         </h:form>
     </p:dialog>
 
-    <!-- baja de clases -->
+    <!-- dialogo para buscar el id del producto a modificar -->
+    <p:dialog header="Buscar producto" widgetVar="dlgBuscarProd"
+              modal="true" resizable="false" draggable="false" closable="true"
+              width="380">
+
+        <h:form id="formBuscarProd">
+            <p:messages id="msgsAsk" showDetail="true" closable="true" />
+
+            <div class="form-group" style="margin-top: 10px;">
+                <h:outputLabel for="busquedaId" value="ID del producto:"/>
+                <p:inputText id="busquedaId"
+                             value="#{modificarProdBeanUI.busquedaId}"
+                             placeholder="Ejemplo: PR1001"
+                             style="width:100%" required="true"
+                             requiredMessage="Debe ingresar un ID."/>
+            </div>
+
+            <div style="text-align:center; margin-top:1em;">
+                <p:commandButton value="Buscar"
+                                 icon="pi pi-search"
+                                 action="#{modificarProdBeanUI.cargarProductoPorId}"
+                                 update="formBuscarProd:msgsAsk, formModificarProd"
+                                 oncomplete="if (args &amp;&amp; args.found){PF('dlgBuscarProd').hide();PF('dlgModificarProd').show();}"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <!-- dialogo para modificar el producto -->
+    <p:dialog header="Modificar producto" widgetVar="dlgModificarProd"
+              modal="true" resizable="false" draggable="false" closable="true"
+              width="420">
+
+        <h:form id="formModificarProd">
+            <p:messages id="msgsModificar" showDetail="true" closable="true" />
+
+            <h:panelGrid columns="1" cellpadding="5" style="width:100%;">
+
+                <!-- Campo Nombre -->
+                <h:outputLabel for="nombre" value="Nombre"/>
+                <p:inputText id="nombre" value="#{modificarProdBeanUI.nombre}"
+                             placeholder="Nombre del producto" style="width:100%" required="true"
+                             requiredMessage="El nombre es obligatorio."/>
+
+                <!-- Campo Stock -->
+                <h:outputLabel for="stock" value="Stock"/>
+                <p:inputNumber id="stock" value="#{modificarProdBeanUI.stock}"
+                               placeholder="Existencia del producto" style="width:100%"
+                               minValue="0" required="true"
+                               requiredMessage="El stock es obligatorio."/>
+
+                <!-- Campo Precio -->
+                <h:outputLabel for="precio" value="Precio"/>
+                <p:inputNumber id="precio" value="#{modificarProdBeanUI.precio}"
+                               placeholder="Precio del producto" style="width:100%"
+                               decimalPlaces="2" minValue="0"
+                               required="true" requiredMessage="El precio es obligatorio."/>
+            </h:panelGrid>
+
+            <div style="text-align:center; margin-top:15px;">
+                <p:commandButton value="Guardar cambios"
+                                 icon="pi pi-check"
+                                 action="#{modificarProdBeanUI.modificarProducto}"
+                                 update="msgsModificar"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgModificarProd').hide(); PF('dlgBuscarProd').show(); }"/>
+            </div>
+
+            <div style="text-align:center; margin-top:10px;">
+                <p:commandButton value="Cancelar"
+                                 icon="pi pi-times"
+                                 type="button"
+                                 onclick="PF('dlgModificarProd').hide(); PF('dlgBuscarProd').show();"/>
+            </div>
+
+        </h:form>
+    </p:dialog>
+
+    <!-- Eliminar Producto -->
     <p:dialog header="Eliminar Producto" widgetVar="dlgEliminarProducto"
                   modal="true" resizable="false" closable="true"
                   draggable="false" width="360">
