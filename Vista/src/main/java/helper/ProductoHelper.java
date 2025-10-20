@@ -24,7 +24,7 @@ public class ProductoHelper implements Serializable {
      * @Param Objeto de tipo Cliente
      * @return Una lista de clientes
      */
-    public void ModificarProducto(Producto producto) throws Exception {
+    public void modificarProducto(Producto producto) throws Exception {
         ServiceFacadeLocator.getInstanceProductoFacade().actualizarProducto(producto);
     }
 
