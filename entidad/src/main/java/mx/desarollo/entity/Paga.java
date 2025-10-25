@@ -20,7 +20,7 @@ public class Paga {
 
     //Aqui se genera el id
     public static synchronized String generarNuevoId() {
-        return "PA" + (contador++);
+        return "GPA" + (contador++);
     }
 
     @Id
