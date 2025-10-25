@@ -28,6 +28,6 @@
     </session-timeout>
   </session-config>
   <welcome-file-list>
-    <welcome-file>home.xhtml</welcome-file>
+    <welcome-file>VPR-US3.xhtml</welcome-file>
   </welcome-file-list>
 </web-app>
