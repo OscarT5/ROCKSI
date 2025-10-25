@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .ui-dialog { border-radius: 15px !important; border: none !important; background: white !important; }
+        .ui-dialog-titlebar { background: white !important; border: none !important; text-align: center !important; font-weight: bold; }
+        .ui-dialog-content { background: white !important; border: none !important; }
+        .form-control, .ui-inputfield {
+            border: none; border-bottom: 2px solid #ccc; border-radius: 0;
+            background: transparent; color: #000; font-size: 15px;
+        }
+        .form-control:focus, .ui-inputfield:focus { border-color: #919191 !important; outline: none !important; }
+        .ui-button {
+            border: none !important; border-radius: 8px !important; padding: 10px 16px !important;
+            font-weight: 600 !important; font-size: 15px !important;
+            width: 80% !important; margin: 15px auto 0 auto !important;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <h:form id="formPrincipal">
+
+        <!-- Botón inicial -->
+        <p:commandButton value="Realizar Compra"
+                         icon="pi pi-shopping-cart"
+                         onclick="PF('dlgAskId').show();"
+                         type="button"/>
+
+        <!-- DIALOG 1: INGRESAR ID DEL RECEPCIONISTA -->
+        <p:dialog header="Identifícate" widgetVar="dlgAskId" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsId" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="searchId" value="ID Usuario Recepcionista"/>
+                    <p:inputText id="searchId"
+                                 value="#{RealizarPagoBeanUI.idUR}"
+                                 placeholder="Ej. UR0001"
+                                 styleClass="form-control"
+                                 required="true"
+                                 requiredMessage="El ID es obligatorio"/>
+                </div>
+
+                <p:commandButton value="Siguiente"
+                                 icon="pi pi-search"
+                                 action="#{RealizarPagoBeanUI.verificarUsuario}"
+                                 update="msgsId"
+                                 process="@this searchId"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskId').hide(); PF('dlgAskPass').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#007bff; color:#fff;"/>
+
+            </h:panelGrid>
+        </p:dialog>
+
+        <!-- DIALOG 2: VALIDAR CONTRASEÑA -->
+        <p:dialog header="Validar contraseña" widgetVar="dlgAskPass" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsPass" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="pass" value="Contraseña del Recepcionista"/>
+                    <p:password id="pass"
+                                value="#{RealizarPagoBeanUI.contrasenaUR}"
+                                feedback="false"
+                                styleClass="form-control"
+                                required="true"
+                                requiredMessage="Debe ingresar la contraseña"/>
+                </div>
+
+                <p:commandButton value="Validar"
+                                 icon="pi pi-lock"
+                                 action="#{RealizarPagoBeanUI.validarContrasena}"
+                                 update="msgsPass"
+                                 process="@this pass"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPass').hide(); PF('dlgPagoInteractivo').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#28a745; color:#fff;"/>
+
+            </h:panelGrid>
+        </p:dialog>
+
+        <!-- DIALOG 3: REALIZAR PAGO -->
+        <p:dialog header="Realizar Pago Interactivo"
+                  widgetVar="dlgPagoInteractivo"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsPagoInteractivo" showDetail="true" closable="true"/>
+
+                <div class="form-group">
+                    <h:outputLabel for="montoIngresado" value="Monto ingresado"/>
+                    <p:inputText id="montoIngresado" value="#{RealizarPagoBeanUI.montoIngresado}">
+                        <p:ajax event="keyup" update="faltante" process="@this"/>
+                    </p:inputText>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Monto restante"/>
+                    <h:outputText id="faltante" value="#{RealizarPagoBeanUI.montoFaltante}"/>
+                </div>
+
+                <p:commandButton value="Pagar"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivo}"
+                                 update="msgsPagoInteractivo faltante"
+                                 styleClass="ui-button"
+                                 style="background:#28a745; color:#fff;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+    </h:form>
+</h:body>
+</html>
