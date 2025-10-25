@@ -18,6 +18,9 @@ public class AltaClienteBeanUI implements Serializable {
     private String nombre; //String que se llenara de acuerdo a lo que la vista obtenga
     private String apellido; //String que se llenara de acuerdo a lo que la vista obtenga
     private String telefono; //String que se llenara de acuerdo a lo que la vista obtenga
+    private String segundoTelefono; //String que se llenara de acuerdo a lo que la vista obtenga
+    private String sexo;
+    private double cantidadDineroMensual; //String que se llenara de acuerdo a lo que la vista obtenga
 
     //Se llama a este metodo para crear el objeto de cliente y mandarselo a las otras capas
     public void altaCliente() {
@@ -25,12 +28,17 @@ public class AltaClienteBeanUI implements Serializable {
             this.cliente.setIdCliente(Cliente.generarNuevoId());
             this.cliente.setNombreCompleto(this.nombre + " " + this.apellido);
             this.cliente.setTelefono(this.telefono);
+            this.cliente.setSexo(this.sexo);
+            this.cliente.setSegundoTelefono(this.segundoTelefono);
+            this.cliente.setCantidadDineroMensual(0);
             this.guardarCliente.AltaCliente(this.cliente);
             FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Alta Exitosa", "Cliente creado..."));
             this.cliente = new Cliente();
             this.nombre = "";
             this.apellido = "";
             this.telefono = "";
+            this.sexo = "";
+            this.cantidadDineroMensual = 0;
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Alta Invalida", e.getMessage()));
         }
@@ -60,5 +68,19 @@ public class AltaClienteBeanUI implements Serializable {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+
+    public String getSegundoTelefono() {return segundoTelefono;}
+
+    public void setSegundoTelefono(String telefonoOpcional) {this.segundoTelefono = telefonoOpcional;}
+
+    public String getSexo() {return sexo;}
+
+    public void setSexo(String sexo) {this.sexo = sexo;}
+
+    public double getCantidadDineroMensual() {return cantidadDineroMensual;}
+
+    public void setCantidadDineroMensual(double cantidadDineroMensual) {this.cantidadDineroMensual = cantidadDineroMensual;}
+
+
 
 }

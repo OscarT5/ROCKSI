@@ -40,17 +40,29 @@ public class Cliente {
     @Column(name = "credito")
     private double credito;
 
+    @Column(name = "sexo")
+    private String sexo;
+
+    @Column(name = "segundoTelefono")
+    private String segundoTelefono;
+
+    @Column(name = "cantidadDineroMensual")
+    private double cantidadDineroMensual;
+
     //constructores
 
     public Cliente() { }
 
 
-    public Cliente(String nombreCompleto, String telefono, double credito) {
+    public Cliente(String nombreCompleto, String telefono, double credito, String sexo, String segundoTelefono) {
         this.idCliente = generarNuevoId();
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
         this.fechaRegistro = new Date();
         this.credito = credito;
+        this.sexo = sexo;
+        this.segundoTelefono = segundoTelefono;
+        this.cantidadDineroMensual = 0;
     }
 
     // metodo para creacion de ID
@@ -121,5 +133,18 @@ public class Cliente {
     public void setClases(List<Clase> clases) {
         this.clases = clases;
     }
+
+    public String getSegundoTelefono() {return segundoTelefono;}
+
+    public void setSegundoTelefono(String segundoTelefono) {this.segundoTelefono = segundoTelefono;}
+
+    public String getSexo() {return sexo;}
+
+    public void setSexo(String sexo) {this.sexo = sexo;}
+
+    public double getCantidadDineroMensual() {return cantidadDineroMensual;}
+
+    public void setCantidadDineroMensual(double cantidadDineroMensual) {this.cantidadDineroMensual = cantidadDineroMensual;}
+
 
 }

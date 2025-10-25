@@ -9,6 +9,7 @@
     <meta charset="UTF-8"/>
 
     <style>
+
         body {
             margin: 0;
             font-family: "Poppins", Arial, sans-serif;
@@ -320,6 +321,22 @@
         .ui-widget-overlay {
             z-index: 1000 !important;
         }
+
+        /* Quita el resalte verde al enfocar los inputs */
+        .form-control:focus,
+        .ui-inputfield:focus,
+        .ui-inputmask:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border-color: #ccc !important;
+        }
+
+        .form-control,
+        .ui-inputfield,
+        .ui-inputmask {
+            border: 1px solid #ccc !important;
+            transition: none !important;
+        }
     </style>
 </h:head>
 
@@ -427,23 +444,42 @@
                                      class="form-control" required="true" requiredMessage="El campo Apellidos es obligatorio"/>
                     </div>
 
-                    <!-- Campo para ingresar teléfono -->
+                    <!-- Campo para seleccionar sexo -->
                     <div class="form-group">
-                        <h:outputLabel for="telefonoAlta" value="Teléfono"/>
+                        <h:outputLabel for="sexoAlta" value="Sexo"/>
+                        <p:selectOneMenu id="sexoAlta" value="#{altaCliBeanUI.sexo}" class="form-control" required="true"
+                                         requiredMessage="Debe seleccionar el sexo del cliente">
+                            <f:selectItem itemLabel="Seleccione..." itemValue=""/>
+                            <f:selectItem itemLabel="Masculino" itemValue="Masculino"/>
+                            <f:selectItem itemLabel="Femenino" itemValue="Femenino"/>
+                            <f:selectItem itemLabel="Otro" itemValue="Otro"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <!-- Campo para ingresar teléfono principal -->
+                    <div class="form-group">
+                        <h:outputLabel for="telefonoAlta" value="Teléfono principal"/>
                         <p:inputMask id="telefonoAlta" value="#{altaCliBeanUI.telefono}" mask="(999) 999-9999"
                                      placeholder="(686) 185 8942" class="form-control"
                                      required="true" requiredMessage="El campo Teléfono es obligatorio"/>
+                    </div>
+
+                    <!-- Campo para ingresar otro teléfono (opcional) -->
+                    <div class="form-group">
+                        <h:outputLabel for="segundoTelefonoAlta" value="Otro teléfono (opcional)"/>
+                        <p:inputMask id="segundoTelefonoAlta" value="#{altaCliBeanUI.segundoTelefono}" mask="(999) 999-9999"
+                                     placeholder="(686) 185 8942" class="form-control"/>
                     </div>
 
                     <!-- Botón para registrar cliente -->
                     <div class="boton-registrar">
                         <p:commandButton id="registrarBtn" value="Registrar al cliente"
                                          action="#{altaCliBeanUI.altaCliente}"
-                                         process="@this nombreAlta apellidoAlta telefonoAlta"
+                                         process="@this nombreAlta apellidoAlta sexoAlta telefonoAlta segundoTelefonoAlta"
                                          update="msgsAlta tablaClientes"
                                          icon="pi pi-plus-circle" styleClass="btn"
                                          style="background: #007bff !important; background-image: none !important;
-                                                color: #fff !important; border: none !important; box-shadow: none !important;"/>
+                                color: #fff !important; border: none !important; box-shadow: none !important;"/>
                     </div>
                 </p:dialog>
 
