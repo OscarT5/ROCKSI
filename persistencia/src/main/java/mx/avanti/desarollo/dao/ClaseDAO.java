@@ -65,14 +65,12 @@ public class ClaseDAO extends AbstractDAO<Clase> {
             if (ultimoId != null && ultimoId.startsWith("CLA")) {
                 int numero = Integer.parseInt(ultimoId.substring(3));
                 Clase.setContador(numero + 1);
-                System.out.println("Contador de clase sincronizado: siguiente CLA" + (numero + 1));
             }
         } catch (NoResultException e) {
             Clase.setContador(1000);
-            System.out.println("ℹNo hay clases registradas. Contador iniciado en CLA1000.");
         } catch (Exception e) {
             Clase.setContador(1000);
-            System.err.println("Error al sincronizar el contador de clases, se mantiene en CLA1000: " + e.getMessage());
+            System.err.println("Error al sincronizar: " + e.getMessage());
         }
     }
 

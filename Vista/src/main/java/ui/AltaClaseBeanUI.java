@@ -23,6 +23,7 @@ public class AltaClaseBeanUI implements Serializable {
     private String maestro;
     private String horaInicio;
     private String horaFinal;
+    private String dias;
 
     private Date horaInicioDate;
     private Date horaFinalDate;
@@ -65,6 +66,9 @@ public class AltaClaseBeanUI implements Serializable {
             nuevaClase.setHorario(horario);
             nuevaClase.setCupoMaximo(cupoMaximo);
             nuevaClase.setMaestro(maestro.trim());
+            nuevaClase.setDias(dias.trim());
+            nuevaClase.setIdUsuarioAdmin("ADM1000"); //Este valor se va a tener que cambiar despues, cuando exista el usuario admin
+            nuevaClase.setTipo("clase");
 
             claseHelper.AltaClase(nuevaClase);
 
@@ -123,6 +127,9 @@ public class AltaClaseBeanUI implements Serializable {
     public String getMaestro() { return maestro; }
     public void setMaestro(String maestro) { this.maestro = maestro; }
 
+    public String getDias() { return dias; }
+    public void setDias(String dias) { this.dias = dias; }
+
     //Esta funcion pone en blanco los campos del formulario de xhtml
     private void limpiarCampos() {
         nombre = "";
@@ -132,5 +139,6 @@ public class AltaClaseBeanUI implements Serializable {
         maestro = "";
         horaInicioDate = null;
         horaFinalDate = null;
+        dias = "";
     }
 }

@@ -45,6 +45,9 @@ public class Clase extends Item implements Serializable {
     @ManyToMany(mappedBy = "clases")
     private List<Cliente> clientes = new ArrayList<>();
 
+    @Column(name = "diasImpartida", length = 100, nullable = false)
+    private String dias;
+
     public Clase() {
     }
 
@@ -101,4 +104,12 @@ public class Clase extends Item implements Serializable {
 
     public void setClientes(List<Cliente> clientes) {this.clientes = clientes;}
 
+
+    public String getDias() {
+        return dias;
+    }
+
+    public void setDias(String dias) {
+        this.dias = dias;
+    }
 }
