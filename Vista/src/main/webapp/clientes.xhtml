@@ -498,17 +498,17 @@
 
                         <p:commandButton value="Buscar" icon="pi pi-search"
                                          action="#{modificarCliBeanUI.cargarClientePorId}"
-                                         update="@form" process="@this searchId"
-                                         oncomplete="if (args &amp;&amp; args.found) { PF('dlgAskId').hide(); PF('dlgModificarCliente').show(); } else { PF('dlgAskId').show(); }"
+                                         process="@this searchId"
+                                         oncomplete="if (args &amp;&amp; args.found) { PF('dlgAskId').hide(); PF('dlgModificarCliente').loadContents(); }"
                                          styleClass="btn"
-                                         style="background: #007bff !important; background-image: none !important;
-                                                color: #fff !important; border: none !important; box-shadow: none !important;"/>
+                                         style="background: #007bff !important; color: #fff !important; border: none !important;"/>
+
                     </h:panelGrid>
                 </p:dialog>
 
                 <!-- dialog de modificar cliente que solo se muestra en caso de que se haya encontrado el cliente por id -->
-                <p:dialog header="Modificar cliente" widgetVar="dlgModificarCliente" modal="true" resizable="false"
-                          closable="true" draggable="false" width="360">
+                <p:dialog id="dlgModificar" header="Modificar cliente" widgetVar="dlgModificarCliente" modal="true" resizable="false"
+                          dynamic="true" cache="false" closable="true" draggable="false" width="360">
                     <p:messages id="msgsModificar" showDetail="true" closable="true"/>
 
                     <div class="form-group">
@@ -530,9 +530,27 @@
                                      required="true" requiredMessage="El campo Teléfono es obligatorio"/>
                     </div>
 
+                    <div class="form-group">
+                        <h:outputLabel for="segundoTel" value="Teléfono secundario (opcional)"/>
+                        <p:inputMask id="segundoTel" value="#{modificarCliBeanUI.segundoTelefono}" mask="(999) 999-9999"
+                                     placeholder="(686) 999 9999" class="form-control"
+                                     required="false" maxlength="15"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="sexoMod" value="Sexo"/>
+                        <p:selectOneMenu id="sexoMod" value="#{modificarCliBeanUI.sexo}" class="form-control" required="true"
+                                         requiredMessage="Debe seleccionar el sexo del cliente">
+                            <f:selectItem itemLabel="Seleccione..." itemValue=""/>
+                            <f:selectItem itemLabel="Masculino" itemValue="masculino"/>
+                            <f:selectItem itemLabel="Femenino" itemValue="femenino"/>
+                            <f:selectItem itemLabel="Otro" itemValue="otro"/>
+                        </p:selectOneMenu>
+                    </div>
+
                     <p:commandButton id="modificarBtn" value="Modificar al cliente"
                                      action="#{modificarCliBeanUI.modificarCliente}"
-                                     process="@this nombreMod apellidoMod telefonoMod"
+                                     process="@this nombreMod apellidoMod telefonoMod segundoTel sexoMod"
                                      update="msgsModificar" icon="pi pi-check" styleClass="btn"
                                      style="background: #007bff !important; background-image: none !important;
                                             color: #fff !important; border: none !important; box-shadow: none !important;"/>
@@ -588,7 +606,7 @@
                 </p:dialog>
 
                 <!-- Tabla de clientes -->
-                <p:dataTable id="tablaClientes" value="#{clienteBeanUI.listaClientes}" var="cli"
+                <p:dataTable id="tablaClientes" value="#{clienteBeanUI.listaClientes}" var="cli" lazy="false"
                              rowKey="#{cli.idCliente}"
                              paginator="true" rows="5"
                              emptyMessage="No hay clientes registrados"
