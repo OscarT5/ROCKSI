@@ -423,6 +423,9 @@
                     <p:column headerText="Precio por unidad" sortBy="#{pro.precio}">
                         <h:outputText value="#{pro.precio}"/>
                     </p:column>
+                    <p:column headerText="Proveedor" sortBY="#{pro.proveedor}">
+                        <h:outputText value="#{pro.proveedor}"/>
+                    </p:column>
                 </p:dataTable>
             </h:form>
         </div>
@@ -465,12 +468,22 @@
             </p:inputText>
         </div>
 
+        <div class="form-group">
+            <h:outputLabel for="proveedorProducto" value="Proveedor"/>
+            <p:inputText id="proveedorProducto"
+                         value="#{altaProdBeanUI.proveedor}"
+                         placeholder="Ej. Barrita energetica, cocacola"
+                         required="true"
+                         requiredMessage="El campo Proveedor es obligatorio"/>
+        </div>
+
+
         <div class="boton-registrar">
             <p:commandButton id="registrarProductoBtn"
                              value="Registrar el producto"
                              icon="pi pi-plus-circle"
                              action="#{altaProdBeanUI.altaProducto}"
-                             process="@this nombreProducto stockProducto precioProducto"
+                             process="@this nombreProducto stockProducto precioProducto proveedorProducto"
                              update="msgsAltaProducto formProductos:tablaProductos"
                              style="background:#007bff; color:#fff; border:none;"/>
         </div>

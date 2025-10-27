@@ -431,6 +431,9 @@
                     <p:column headerText="Precio por unidad" sortBy="#{pro.precio}">
                         <h:outputText value="#{pro.precio}"/>
                     </p:column>
+                    <p:column headerText="Proveedor" sortBy="#{pro.proveedor}">
+                        <h:outputText value="#{pro.proveedor}"/>
+                    </p:column> <!--Proveedor agregado por sugerencia del cliente-->
                 </p:dataTable>
             </h:form>
         </div>
@@ -474,6 +477,15 @@
                     <f:validateDoubleRange minimum="0.01"/>
                 </p:inputText>
             </div>
+
+            <div class="form-group">
+                <h:outputLabel for="proveedorProducto" value="Proveedor"/>
+                <p:inputText id="proveedorProducto"
+                             value="#{altaProdBeanUI.proveedor}"
+                             placeholder="Ej. cocacola, nestle"
+                             required="true"
+                             requiredMessage="El campo Proveedor es obligatorio"/>
+            </div> <!--Proveedor gagregado-->
 
             <div class="boton-registrar">
                 <p:commandButton id="registrarProductoBtn"
@@ -543,6 +555,8 @@
                                placeholder="Precio del producto" style="width:100%"
                                decimalPlaces="2" minValue="0"
                                required="true" requiredMessage="El precio es obligatorio."/>
+
+
             </h:panelGrid>
 
             <div style="text-align:center; margin-top:15px;">
