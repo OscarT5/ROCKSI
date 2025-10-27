@@ -612,8 +612,16 @@
                         <h:outputText value="#{cli.apellido}"/>
                     </p:column>
 
+                    <p:column headerText="Sexo" sortBy="#{cli.sexo}">
+                        <h:outputText value="#{cli.sexo}"/>
+                    </p:column>
+
                     <p:column headerText="Teléfono" sortBy="#{cli.telefono}">
                         <h:outputText value="#{cli.telefono}"/>
+                    </p:column>
+
+                    <p:column headerText="Teléfono 2" sortBy="#{cli.segundoTelefono}">
+                        <h:outputText value="#{empty cli.segundoTelefono ? 'No se registró' : cli.segundoTelefono}" />
                     </p:column>
 
                     <p:column headerText="Fecha de Registro" sortBy="#{cli.fechaRegistro}">
@@ -626,6 +634,10 @@
                         <h:outputText value="#{cli.credito}">
                             <f:convertNumber type="currency" currencySymbol="$"/>
                         </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Pago Mensual" sortBy="#{cli.cantidadDineroMensual}">
+                        <h:outputText value="#{cli.cantidadDineroMensual}"/>
                     </p:column>
 
                     <!-- Subtabla de clases asignadas -->
