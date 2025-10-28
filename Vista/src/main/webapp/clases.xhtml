@@ -312,6 +312,14 @@
             margin-right: 8px;
             font-size: 16px;
         }
+
+        .ui-confirmdialog {
+            z-index: 1100 !important;
+        }
+
+        .ui-widget-overlay {
+            z-index: 1000 !important;
+        }
     </style>
 </h:head>
 
@@ -637,12 +645,43 @@
                              styleClass="form-control"/>
             </div>
 
+            <div class="form-group">
+                <h:outputLabel for="mod_diasImpartida" value="Dias en los que se imparte"/>
+                <p:inputText id="mod_diasImpartida"
+                             value="#{modificarClaBeanUI.diasImpartidos}"
+                             required="true"
+                             requiredMessage="Dias impatidos de la materia es obligatorio"
+                             styleClass="form-control"/>
+            </div>
+
             <p:commandButton value="Guardar cambios"
                              icon="pi pi-check"
-                             action="#{modificarClaBeanUI.modificarClase}"
+                             onclick="PF('dlgConfirmar').show(); return false;"
+                             process="@form"
+                             styleClass="btn-modificar"/>
+
+
+        <p:confirmDialog id="confirmDialog"
+                         widgetVar="dlgConfirmar"
+                         header="Confirmar Modificación"
+                         message="¿Seguro que deseas modificar la clase?"
+                         icon="pi pi-exclamation-triangle"
+                         closable="false" modal="true">
+
+            <p:commandButton value="Sí, Modificar"
+                             icon="pi pi-check"
+                             action="#{modificarClaBeanUI.modificarClase()}"
                              process="@form"
                              update="msgsModificar :formClases:tablaClases"
-                             styleClass="btn-modificar"/>
+                             oncomplete="PF('dlgConfirmar').hide();"
+                             style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+
+            <p:commandButton value="Cancelar"
+                             icon="pi pi-times"
+                             onclick="PF('dlgConfirmar').hide(); PF('dlgModificarClase').hide(); return false;"
+                             type="button"
+                             style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+        </p:confirmDialog>
         </h:form>
     </p:dialog>
     <!-- baja de clases -->

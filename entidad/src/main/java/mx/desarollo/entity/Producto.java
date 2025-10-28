@@ -23,6 +23,11 @@ public class Producto extends Item implements Serializable {
     @Column(name = "precio", nullable = false)
     private Double precio;
 
+    @NotNull
+    @Size(max = 45)
+    @Column(name = "proveedor", nullable = false, length = 45)
+    private String proveedor;
+
     private static int contador = 1000;
 
     public static void setContador(int nuevoContador) {
@@ -67,5 +72,13 @@ public class Producto extends Item implements Serializable {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    public String getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(String proveedor) {
+        this.proveedor = proveedor;
     }
 }

@@ -42,13 +42,16 @@ public class Clase extends Item implements Serializable {
     @Column(name = "maestro", length = 100, nullable = false)
     private String maestro;
 
+    @Column(name = "diasImpartida", length = 45, nullable = false)
+    private String diasImpartida;
+
     @ManyToMany(mappedBy = "clases")
     private List<Cliente> clientes = new ArrayList<>();
 
     public Clase() {
     }
 
-    public Clase(String idClase, String nombre, String horario, int cupoMaximo, String maestro) {
+    public Clase(String idClase, String nombre, String horario, int cupoMaximo, String maestro, String diasImpartidos) {
         super(idClase);
         this.nombre = nombre;
         this.horario = horario;
@@ -101,4 +104,11 @@ public class Clase extends Item implements Serializable {
 
     public void setClientes(List<Cliente> clientes) {this.clientes = clientes;}
 
+    public String getdiasImpartida() {
+        return diasImpartida;
+    }
+
+    public void setdiasImpartida(String diasImpartida) {
+        this.diasImpartida = diasImpartida;
+    }
 }
