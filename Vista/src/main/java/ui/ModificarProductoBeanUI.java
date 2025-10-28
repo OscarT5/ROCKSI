@@ -18,6 +18,7 @@ public class ModificarProductoBeanUI implements Serializable {
     private String nombre;
     private Integer stock;
     private Double precio;
+    private String proveedor;
 
     private Producto productoEncontrado;
     private final ProductoHelper productoHelper = new ProductoHelper();
@@ -42,6 +43,7 @@ public class ModificarProductoBeanUI implements Serializable {
             this.nombre = productoEncontrado.getNombre();
             this.stock = productoEncontrado.getStock();
             this.precio = productoEncontrado.getPrecio();
+            this.proveedor = productoEncontrado.getProveedor();
 
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Producto encontrado", "Los datos han sido cargados correctamente."));
@@ -66,6 +68,7 @@ public class ModificarProductoBeanUI implements Serializable {
             productoEncontrado.setNombre(nombre.trim());
             productoEncontrado.setStock(stock);
             productoEncontrado.setPrecio(precio);
+            productoEncontrado.setProveedor(proveedor.trim());
 
             productoHelper.modificarProducto(productoEncontrado);
 
@@ -90,4 +93,7 @@ public class ModificarProductoBeanUI implements Serializable {
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
+
+    public String getProveedor() { return proveedor; }
+    public void setProveedor(String proveedor) { this.proveedor = proveedor; }
 }
