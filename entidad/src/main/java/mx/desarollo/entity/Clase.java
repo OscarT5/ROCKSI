@@ -42,11 +42,14 @@ public class Clase extends Item implements Serializable {
     @Column(name = "maestro", length = 100, nullable = false)
     private String maestro;
 
-    @Column(name = "diasImpartida", length = 45, nullable = false)
-    private String diasImpartida;
+    /*@Column(name = "diasImpartida", length = 45, nullable = false)
+    private String diasImpartida;*/
 
     @ManyToMany(mappedBy = "clases")
     private List<Cliente> clientes = new ArrayList<>();
+
+    @Column(name = "diasImpartida", length = 100, nullable = false)
+    private String dias;
 
     public Clase() {
     }
@@ -104,11 +107,12 @@ public class Clase extends Item implements Serializable {
 
     public void setClientes(List<Cliente> clientes) {this.clientes = clientes;}
 
-    public String getdiasImpartida() {
-        return diasImpartida;
+
+    public String getDias() {
+        return dias;
     }
 
-    public void setdiasImpartida(String diasImpartida) {
-        this.diasImpartida = diasImpartida;
+    public void setDias(String dias) {
+        this.dias = dias;
     }
 }

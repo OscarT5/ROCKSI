@@ -25,8 +25,8 @@ public class Producto extends Item implements Serializable {
 
     @NotNull
     @Size(max = 45)
-    @Column(name = "proveedor", nullable = false, length = 45)
-    private String proveedor;
+    @Column(name = "proveedor", nullable = false)
+    private String proveedor;//Se agrego el campo de proveedor que faltaba antes
 
     private static int contador = 1000;
 
@@ -42,14 +42,14 @@ public class Producto extends Item implements Serializable {
         super();
     }
 
-    public Producto(String id, Double precio, String nombre, Integer stock) {
+    public Producto(String id, Double precio, String nombre, Integer stock, String proveedor) {
         super(id);
         this.precio = precio;
         this.nombre = nombre;
         this.stock = stock;
+        this.proveedor = proveedor;
     }
 
-    // Getters y setters
     public String getNombre() {
         return nombre;
     }
@@ -74,11 +74,7 @@ public class Producto extends Item implements Serializable {
         this.precio = precio;
     }
 
-    public String getProveedor() {
-        return proveedor;
-    }
+    public String getProveedor() { return proveedor; }
 
-    public void setProveedor(String proveedor) {
-        this.proveedor = proveedor;
-    }
+    public void setProveedor(String proveedor) { this.proveedor = proveedor; }
 }

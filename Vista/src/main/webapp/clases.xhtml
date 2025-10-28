@@ -451,6 +451,9 @@
                     <p:column headerText="Maestro">
                         <h:outputText value="#{cla.maestro}" />
                     </p:column>
+                    <p:column headerText="Días">
+                        <h:outputText value="#{cla.dias}" />
+                    </p:column> <!--Aqui se agrego lo que faltaba de diasImpartidos-->
 
                     <!-- Subtabla expandible -->
                     <p:rowExpansion>
@@ -540,6 +543,16 @@
                              requiredMessage="El maestro es obligatorio"
                              styleClass="form-control"
                              placeholder="Maestro"/>
+            </div>
+
+            <div class="form-group">
+                <h:outputLabel for="alta_dias" value="Días en que se imparte (separados por comas)"/>
+                <p:inputText id="alta_dias"
+                             value="#{altaClaBeanUI.dias}"
+                             required="true"
+                             requiredMessage="Los días son obligatorios"
+                             styleClass="form-control"
+                             placeholder="Ej. Lunes, Miercoles, Viernes"/>
             </div>
 
             <p:commandButton value="Registrar"
