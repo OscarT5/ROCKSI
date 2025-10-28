@@ -42,9 +42,6 @@ public class Clase extends Item implements Serializable {
     @Column(name = "maestro", length = 100, nullable = false)
     private String maestro;
 
-    /*@Column(name = "diasImpartida", length = 45, nullable = false)
-    private String diasImpartida;*/
-
     @ManyToMany(mappedBy = "clases")
     private List<Cliente> clientes = new ArrayList<>();
 
