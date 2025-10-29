@@ -17,18 +17,9 @@ public class PagaDelegate {
         this.pagaDAO = ServiceLocator.getInstancePagaDAO();
     }
 
-    public void registrarPago(Paga paga) throws Exception {
+    public void registrarPago(Paga paga, String tipo) throws Exception {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
-        }
-        if (paga.getIdItem() == null || paga.getIdItem().getIdItem().trim().isEmpty()) {
-            throw new Exception("Se debe ingresar el item de donde esta surgiedo la compra");
-        }
-        if (paga.getIdUsuariorecep() == null || paga.getIdUsuariorecep().trim().isEmpty()) {
-            throw new Exception("Se debe ingresar el item de donde esta surgiedo la compra");
-        }
-        if (paga.getFecha() == null) {
-            throw new Exception("Se debe ingresar la fecha del pago");
         }
         if (paga.getMonto() == null) {
             throw new Exception("Se debe ingresar el monto del pago");

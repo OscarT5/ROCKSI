@@ -50,7 +50,7 @@ public class PagaDAO extends AbstractDAO<Paga> {
     }
 
     /*
-    En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
+    En esta funcion se inicializa el contador para su respectivo ID que empieza con PA
      */
     private void sincronizarContador() {
         try {
@@ -59,8 +59,8 @@ public class PagaDAO extends AbstractDAO<Paga> {
                     .setMaxResults(1)
                     .getSingleResult();
 
-            if (ultimoId != null && ultimoId.startsWith("P")) {
-                int numero = Integer.parseInt(ultimoId.substring(3));
+            if (ultimoId != null && ultimoId.startsWith("PA")) {
+                int numero = Integer.parseInt(ultimoId.substring(2));
                 Paga.setContador(numero + 1);
                 System.out.println("Contador de pagos sincronizado: siguiente P" + (numero + 1));
             }
