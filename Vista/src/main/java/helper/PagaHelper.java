@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PagaHelper implements Serializable {
-    public void RealizarPago(Paga paga) throws Exception {
+    public void RealizarPago(Paga paga,String tipo) throws Exception {
         try {
-            ServiceFacadeLocator.getInstancePagaFacade().registrarPago(paga);
+            ServiceFacadeLocator.getInstancePagaFacade().registrarPago(paga,tipo);
         } catch (Exception e) {
             throw new Exception("Error al registrar el pago: " + e.getMessage());
         }
