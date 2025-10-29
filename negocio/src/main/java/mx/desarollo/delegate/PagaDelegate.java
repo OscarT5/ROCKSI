@@ -2,8 +2,12 @@ package mx.desarollo.delegate;
 
 import mx.avanti.desarollo.dao.PagaDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
+import mx.desarollo.entity.Item;
+import mx.desarollo.entity.Membresia;
 import mx.desarollo.entity.Paga;
+import mx.desarollo.entity.Producto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PagaDelegate {
@@ -13,18 +17,9 @@ public class PagaDelegate {
         this.pagaDAO = ServiceLocator.getInstancePagaDAO();
     }
 
-    public void registrarPago(Paga paga) throws Exception {
+    public void registrarPago(Paga paga, String tipo) throws Exception {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
-        }
-        if (paga.getIdItem() == null || paga.getIdItem().getIdItem().trim().isEmpty()) {
-            throw new Exception("Se debe ingresar el item de donde esta surgiedo la compra");
-        }
-        if (paga.getIdUsuariorecep() == null || paga.getIdUsuariorecep().trim().isEmpty()) {
-            throw new Exception("Se debe ingresar el item de donde esta surgiedo la compra");
-        }
-        if (paga.getFecha() == null) {
-            throw new Exception("Se debe ingresar la fecha del pago");
         }
         if (paga.getMonto() == null) {
             throw new Exception("Se debe ingresar el monto del pago");
@@ -32,14 +27,23 @@ public class PagaDelegate {
         if (paga.getMonto() <= 0) {
             throw new Exception("El monto del pago debe ser mayor que 0");
         }
-        if (paga.getPorPagar() <= 0) {
-            throw new Exception("El monto por pagar debe ser mayor que 0");
+        if (paga.getPorPagar() < 0) {
+            throw new Exception("El monto por pagar no debe ser menor que 0");
         }
 
-        //Se llama al metodo para asignar y crear un nuevoID
-        paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
-
-        pagaDAO.crear(paga);
+        if ("membresia".equalsIgnoreCase(tipo)) {
+            Item item = new Producto();
+            item.setIdItem("CLI0002");
+            paga.setIdItem(item);
+            paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
+            pagaDAO.crear(paga);
+        } else if ("clase".equalsIgnoreCase(tipo)) {
+            Item item = new Producto();
+            item.setIdItem("CLA2");
+            paga.setIdItem(item);
+            paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
+            pagaDAO.crear(paga);
+        }
     }
 
     public boolean eliminarPago(String id) throws Exception {

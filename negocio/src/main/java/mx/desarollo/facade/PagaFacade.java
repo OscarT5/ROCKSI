@@ -8,9 +8,9 @@ import java.util.List;
 public class PagaFacade {
     private final PagaDelegate pagaDelegate = new PagaDelegate();
 
-    public void registrarPago(Paga paga) throws Exception {
+    public void registrarPago(Paga paga,String tipo) throws Exception {
         try {
-            pagaDelegate.registrarPago(paga);
+            pagaDelegate.registrarPago(paga,tipo);
         } catch (Exception e) {
             throw new Exception("Error al registrar el pago: " + e.getMessage());
         }
