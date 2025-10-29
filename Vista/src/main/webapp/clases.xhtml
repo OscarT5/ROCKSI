@@ -659,11 +659,12 @@
             </div>
 
             <div class="form-group">
-                <h:outputLabel for="mod_diasImpartida" value="Dias en los que se imparte"/>
+                <h:outputLabel for="mod_diasImpartida" value="Días en que se imparte (separados por comas)"/>
                 <p:inputText id="mod_diasImpartida"
                              value="#{modificarClaBeanUI.diasImpartidos}"
                              required="true"
                              requiredMessage="Dias impatidos de la materia es obligatorio"
+                             placeholder="Ej. Lunes, Miercoles, Viernes"
                              styleClass="form-control"/>
             </div>
 
