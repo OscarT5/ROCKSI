@@ -2,10 +2,7 @@ package mx.desarollo.delegate;
 
 import mx.avanti.desarollo.dao.PagaDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
-import mx.desarollo.entity.Item;
-import mx.desarollo.entity.Membresia;
-import mx.desarollo.entity.Paga;
-import mx.desarollo.entity.Producto;
+import mx.desarollo.entity.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,8 +35,8 @@ public class PagaDelegate {
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);
         } else if ("clase".equalsIgnoreCase(tipo)) {
-            Item item = new Producto();
-            item.setIdItem("CLA2");
+            Item item = new Clase();
+            item.setIdItem("CLA1000");
             paga.setIdItem(item);
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);

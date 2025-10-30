@@ -6,6 +6,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarollo.entity.Cliente;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 //Nombre del Bean
@@ -33,6 +34,13 @@ public class AltaClienteBeanUI implements Serializable {
             this.cliente.setCantidadDineroMensual(0);
             this.guardarCliente.AltaCliente(this.cliente);
             FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Alta Exitosa", "Cliente creado..."));
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("clienteSeleccionado", this.cliente);
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("PBI-GPA-US1.xhtml");
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             this.cliente = new Cliente();
             this.nombre = "";
             this.apellido = "";

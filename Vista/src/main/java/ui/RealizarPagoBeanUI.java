@@ -91,10 +91,10 @@ public class RealizarPagoBeanUI implements Serializable {
         }
     }
 
-    public void realizarPagoInteractivo() {
+    public void realizarPagoInteractivo(String tipoPago) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            String tipo = obtenerTotal("membresia");
+            String tipo = obtenerTotal(tipoPago);
 
             if (usuarioRecepcionista == null)
                 throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
@@ -120,7 +120,10 @@ public class RealizarPagoBeanUI implements Serializable {
 
             if (cliente == null) {
                 cliente = new Cliente();
-                cliente.setIdCliente("CLI0002");
+                cliente = (Cliente) FacesContext.getCurrentInstance()
+                        .getExternalContext()
+                        .getSessionMap()
+                        .get("clienteSeleccionado");
             }
 
             paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
@@ -146,7 +149,7 @@ public class RealizarPagoBeanUI implements Serializable {
         }
     }
 
-    public void realizarPagoTarjeta() {
+    public void realizarPagoTarjeta(String tipoTarjeta) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
             if (usuarioRecepcionista == null)
@@ -156,10 +159,13 @@ public class RealizarPagoBeanUI implements Serializable {
 
             if (cliente == null) {
                 cliente = new Cliente();
-                cliente.setIdCliente("CLI0002");
+                cliente = (Cliente) FacesContext.getCurrentInstance()
+                        .getExternalContext()
+                        .getSessionMap()
+                        .get("clienteSeleccionado");
             }
 
-            String tipo = obtenerTotal("membresia");
+            String tipo = obtenerTotal(tipoTarjeta);
 
             paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
             paga.setFecha(LocalDate.now());
@@ -179,16 +185,19 @@ public class RealizarPagoBeanUI implements Serializable {
         }
     }
 
-    public void prepararPago() {
+    public void prepararPago(String tipo) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
             if (this.cliente == null) {
                 this.cliente = new Cliente();
-                this.cliente.setIdCliente("CLI0002");
-                this.cliente.setNombreCompleto("Luis Epinoza Diaz");
+                cliente = (Cliente) FacesContext.getCurrentInstance()
+                        .getExternalContext()
+                        .getSessionMap()
+                        .get("clienteSeleccionado");
+                this.cliente.setNombreCompleto(cliente.getNombreCompleto());
             }
 
-            obtenerTotal("membresia");
+            obtenerTotal(tipo);
 
             this.fecha = new Date();
 

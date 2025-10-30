@@ -92,7 +92,7 @@
                 <!-- BOTÓN PAGO EN EFECTIVO -->
                 <p:commandButton value="Pago en Efectivo"
                                  icon="pi pi-money-bill"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago()}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
                                  process="@this"
                                  update=":formPrincipal"
                                  oncomplete="PF('dlgMetodoPago').hide(); PF('dlgPagoInteractivo').show();"
@@ -101,7 +101,7 @@
                 <!-- BOTÓN PAGO CON TARJETA -->
                 <p:commandButton value="Pago con Tarjeta"
                                  icon="pi pi-credit-card"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago()}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
                                  process="@this"
                                  update=":formPrincipal"
                                  oncomplete="PF('dlgMetodoPago').hide(); PF('dlgPagoTarjeta').show();"
@@ -149,7 +149,7 @@
                 <h:panelGroup layout="block" style="margin-top:15px; text-align:center;">
                     <p:commandButton value="Pagar con Tarjeta"
                                      icon="pi pi-check"
-                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjeta()}"
+                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjeta('clase')}"
                                      process="@this"
                                      update="@form"
                                      oncomplete="if (!args.validationFailed) { PF('dlgPagoTarjeta').hide(); PF('dlgExitoTarjeta').show(); }"
@@ -205,7 +205,12 @@
 
                 <div class="form-group">
                     <h:outputLabel for="montoIngresado" value="Monto ingresado"/>
-                    <p:inputText id="montoIngresado" value="#{RealizarPagoBeanUI.montoIngresado}">
+
+                    <p:inputText id="montoIngresado"
+                                 value="#{RealizarPagoBeanUI.montoIngresado}"
+                                 maxlength="5"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 style="text-align:left;">
                         <p:ajax event="keyup" update="faltante" process="@this"/>
                     </p:inputText>
                 </div>
@@ -216,7 +221,7 @@
                 </div>
 
                 <p:commandButton value="Pagar"
-                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivo}"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivo('clase')}"
                                  update="msgsPagoInteractivo faltante"
                                  styleClass="ui-button"
                                  process="@this montoIngresado"
