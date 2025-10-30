@@ -9,6 +9,7 @@ import jakarta.inject.Named;
 import mx.desarollo.entity.Cliente;
 import mx.desarollo.entity.Paga;
 import mx.desarollo.entity.Usuariorecepcionista;
+import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class RealizarPagoBeanUI implements Serializable {
     private Double montoIngresado = 0.0;
     private Double montoFaltante = 0.0;
     private Double montoVenta = 0.0;
+    private Double montoCambio = 0.0;
 
     private Paga paga = new Paga();
     private Cliente cliente;
@@ -79,13 +81,19 @@ public class RealizarPagoBeanUI implements Serializable {
     private void calcularFaltante() {
         if (montoIngresado == null) montoIngresado = 0.0;
         if (montoTotal == null) montoTotal = 0.0;
-        montoFaltante = Math.max(montoTotal - montoIngresado, 0.0);
+
+        if (montoIngresado < montoTotal) {
+            montoFaltante = montoTotal - montoIngresado;
+            montoCambio = 0.0;
+        } else {
+            montoFaltante = 0.0;
+            montoCambio = montoIngresado - montoTotal;
+        }
     }
 
     public void realizarPagoInteractivo() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-
             String tipo = obtenerTotal("membresia");
 
             if (usuarioRecepcionista == null)
@@ -100,9 +108,13 @@ public class RealizarPagoBeanUI implements Serializable {
             calcularFaltante();
 
             if (montoIngresado < montoTotal) {
-                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Monto insuficiente", "Faltan " + montoFaltante + " pesos."));
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Monto insuficiente", "Faltan " + montoFaltante + " pesos."));
                 return;
             }
+
+            montoCambio = montoIngresado - montoTotal;
+            if (montoCambio < 0) montoCambio = 0.0;
 
             if (paga == null) paga = new Paga();
 
@@ -119,14 +131,18 @@ public class RealizarPagoBeanUI implements Serializable {
 
             pagaHelper.RealizarPago(paga, tipo);
 
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago exitoso", "Se ha recibido el pago completo."));
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                    "Pago exitoso", "Se ha recibido el pago completo."));
 
-            limpiarCampos();
+            PrimeFaces.current().ajax().update("formPrincipal:dlgCambio");
+            PrimeFaces.current().executeScript("PF('dlgPagoInteractivo').hide(); PF('dlgCambio').show();");
+
             montoIngresado = 0.0;
             montoFaltante = 0.0;
 
         } catch (Exception e) {
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al realizar el pago", e.getMessage()));
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al realizar el pago", e.getMessage()));
         }
     }
 
@@ -153,23 +169,37 @@ public class RealizarPagoBeanUI implements Serializable {
 
             pagaHelper.RealizarPago(paga, tipo);
 
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago con tarjeta", "El pago con tarjeta fue procesado correctamente."));
-        } catch (Exception e) {
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al realizar el pago con tarjeta", e.getMessage()));
-        }
-    }
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                    "Pago con tarjeta", "El pago con tarjeta fue procesado correctamente."));
 
-    public void finalizarProcesoTarjeta() {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        try {
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago completado", "El pago con tarjeta ha sido procesado correctamente."));
             limpiarCampos();
         } catch (Exception e) {
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al finalizar", e.getMessage()));
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al realizar el pago con tarjeta", e.getMessage()));
         }
     }
 
-    private void limpiarCampos() {
+    public void prepararPago() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            if (this.cliente == null) {
+                this.cliente = new Cliente();
+                this.cliente.setIdCliente("CLI0002");
+                this.cliente.setNombreCompleto("Luis Epinoza Diaz");
+            }
+
+            obtenerTotal("membresia");
+
+            this.fecha = new Date();
+
+        } catch (Exception e) {
+            fc.validationFailed();
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al preparar pago", "No se pudieron cargar los datos: " + e.getMessage()));
+        }
+    }
+
+    public void limpiarCampos() {
         cliente = null;
         monto = null;
         fecha = null;
@@ -233,6 +263,9 @@ public class RealizarPagoBeanUI implements Serializable {
         this.montoIngresado = montoIngresado;
         calcularFaltante();
     }
+
+    public Double getMontoCambio() { return montoCambio; }
+    public void setMontoCambio(Double montoCambio) { this.montoCambio = montoCambio; }
 
     public Double getMontoFaltante() { return montoFaltante; }
 }
