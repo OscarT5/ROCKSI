@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PagaHelper implements Serializable {
+
     public void RealizarPago(Paga paga,String tipo) throws Exception {
         try {
             ServiceFacadeLocator.getInstancePagaFacade().registrarPago(paga,tipo);
@@ -28,6 +29,10 @@ public class PagaHelper implements Serializable {
 
     public List<Paga> listarPagos() {
         return ServiceFacadeLocator.getInstancePagaFacade().listarPagos();
+    }
+
+    public List<Paga> buscarPagosPorId(String idParcial) {
+        return ServiceFacadeLocator.getInstancePagaFacade().buscarPagosPorId(idParcial);
     }
 
 }

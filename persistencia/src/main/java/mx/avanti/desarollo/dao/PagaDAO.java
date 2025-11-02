@@ -105,12 +105,17 @@ public class PagaDAO extends AbstractDAO<Paga> {
         return eliminado;
     }
 
-    public Paga buscarPagaPorId(String id) {
-        try {
-            return em.find(Paga.class, id);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar el Pago por ID", e);
-        }
+    public List<Paga> buscarPagosPorId(String idParcial) {
+        return execute(em -> {
+            em.clear();
+            return em.createQuery(
+                            "SELECT p FROM Paga p " +
+                                    "JOIN FETCH p.idCliente c " +
+                                    "JOIN FETCH p.idItem i " +
+                                    "WHERE p.idPaga LIKE :filtro", Paga.class)
+                    .setParameter("filtro", "%" + idParcial + "%")
+                    .getResultList();
+        });
     }
 
     /*public List<Clase> listarTodasLasClases() {
