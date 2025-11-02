@@ -37,4 +37,9 @@ public class PagaFacade {
     public List<Paga> listarPagos() {
         return pagaDelegate.listarPagos();
     }
+
+    public List<Paga> buscarPagosPorId(String idParcial) {
+        return pagaDelegate.buscarPagosPorId(idParcial);
+    }
+
 }

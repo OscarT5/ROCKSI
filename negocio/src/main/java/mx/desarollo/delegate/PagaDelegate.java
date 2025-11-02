@@ -71,4 +71,8 @@ public class PagaDelegate {
         return pagaDAO.findAllWithPaga();
     }
 
+    public List<Paga> buscarPagosPorId(String idParcial) {
+        return pagaDAO.buscarPagosPorId(idParcial);
+    }
+
 }
