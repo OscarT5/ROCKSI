@@ -1,18 +1,19 @@
 package ui;
 
+import helper.ClienteHelper;
+import helper.MembresiaHelper;
 import helper.PagaHelper;
 import helper.UsuarioRHelper;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import mx.desarollo.entity.Cliente;
-import mx.desarollo.entity.Paga;
-import mx.desarollo.entity.Usuariorecepcionista;
+import mx.desarollo.entity.*;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Named("RealizarPagoBeanUI")
@@ -20,6 +21,7 @@ import java.util.Date;
 public class RealizarPagoBeanUI implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    Membresia nueva = new Membresia();
 
     private Double montoTotal = 0.0;
     private Double montoIngresado = 0.0;
@@ -39,6 +41,8 @@ public class RealizarPagoBeanUI implements Serializable {
 
     private final PagaHelper pagaHelper = new PagaHelper();
     private final UsuarioRHelper usuarioHelper = new UsuarioRHelper();
+    private final ClienteHelper clienteHelper = new ClienteHelper();
+    private final MembresiaHelper membresiaHelper = new MembresiaHelper();
 
     public void verificarUsuario() {
         FacesContext fc = FacesContext.getCurrentInstance();
@@ -116,26 +120,69 @@ public class RealizarPagoBeanUI implements Serializable {
             montoCambio = montoIngresado - montoTotal;
             if (montoCambio < 0) montoCambio = 0.0;
 
-            if (paga == null) paga = new Paga();
-
+            // Obtener cliente desde la sesión si no está asignado
             if (cliente == null) {
-                cliente = new Cliente();
                 cliente = (Cliente) FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
                         .get("clienteSeleccionado");
             }
 
-            paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
-            paga.setFecha(LocalDate.now());
-            paga.setIdCliente(cliente);
-            paga.setMonto(montoTotal);
-            paga.setPorPagar(porPagar);
+            if (cliente == null)
+                throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
 
-            pagaHelper.RealizarPago(paga, tipo);
+            Cliente clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+            if (clienteExistente == null) {
+                clienteHelper.AltaCliente(cliente);
+            } else {
+                cliente = clienteExistente;
+            }
 
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Pago exitoso", "Se ha recibido el pago completo."));
+
+            if (tipoPago.equalsIgnoreCase("membresia")) {
+                Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
+
+                boolean tieneActiva = false;
+
+                // Verificar si ya tiene una membresia
+                if (membresiaActual != null && membresiaActual.getFechaVencimiento() != null) {
+                    LocalDate fechaV = membresiaActual.getFechaVencimiento();
+
+                    if (fechaV.isAfter(LocalDate.now())) {
+                        tieneActiva = true;
+                        fc.addMessage(null, new FacesMessage(
+                                FacesMessage.SEVERITY_WARN,
+                                "Membresía activa",
+                                "El cliente ya tiene una membresía vigente hasta " + fechaV + "."));
+                    }
+                }
+
+                // Si no tiene membresia crea una nueva
+                if (!tieneActiva) {
+                    clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+                    if (clienteExistente == null) {
+                        clienteHelper.AltaCliente(cliente);
+                    } else {
+                        cliente = clienteExistente;
+                    }
+
+                    nueva = new Membresia();
+                    nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
+                    nueva.setIdCliente(cliente);
+                    membresiaHelper.registrarMembresia(nueva, cliente);
+
+                    paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                    paga.setFecha(LocalDate.now());
+                    paga.setIdCliente(cliente);
+                    paga.setMonto(montoTotal);
+                    paga.setPorPagar(porPagar);
+
+                    pagaHelper.RealizarPago(paga, tipo, nueva);
+
+                } else {
+                    return;
+                }
+            }
 
             PrimeFaces.current().ajax().update("formPrincipal:dlgCambio");
             PrimeFaces.current().executeScript("PF('dlgPagoInteractivo').hide(); PF('dlgCambio').show();");
@@ -149,6 +196,7 @@ public class RealizarPagoBeanUI implements Serializable {
         }
     }
 
+
     public void realizarPagoTarjeta(String tipoTarjeta) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -158,25 +206,82 @@ public class RealizarPagoBeanUI implements Serializable {
             if (paga == null) paga = new Paga();
 
             if (cliente == null) {
-                cliente = new Cliente();
                 cliente = (Cliente) FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
                         .get("clienteSeleccionado");
             }
 
+            if (cliente == null)
+                throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
+
+            Cliente clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+
+            if (clienteExistente == null) {
+                clienteHelper.AltaCliente(cliente);
+            } else {
+                cliente = clienteExistente;
+            }
+
             String tipo = obtenerTotal(tipoTarjeta);
 
-            paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
-            paga.setFecha(LocalDate.now());
-            paga.setIdCliente(cliente);
-            paga.setMonto(montoTotal);
-            paga.setPorPagar(porPagar);
+            if (cliente == null)
+                throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
 
-            pagaHelper.RealizarPago(paga, tipo);
+            clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+            if (clienteExistente == null) {
+                clienteHelper.AltaCliente(cliente);
+            } else {
+                cliente = clienteExistente;
+            }
 
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Pago con tarjeta", "El pago con tarjeta fue procesado correctamente."));
+
+            if (tipo.equalsIgnoreCase("membresia")) {
+                Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
+
+                boolean tieneActiva = false;
+
+                // Verificar si ya tiene una membresia
+                if (membresiaActual != null && membresiaActual.getFechaVencimiento() != null) {
+                    LocalDate fechaV = membresiaActual.getFechaVencimiento();
+
+                    if (fechaV.isAfter(LocalDate.now())) {
+                        tieneActiva = true;
+                        fc.addMessage(null, new FacesMessage(
+                                FacesMessage.SEVERITY_WARN,
+                                "Membresía activa",
+                                "El cliente ya tiene una membresía vigente hasta " + fechaV + "."));
+                    }
+                }
+
+                // Si no tiene membresia crea una nueva
+                if (!tieneActiva) {
+                    clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+                    if (clienteExistente == null) {
+                        clienteHelper.AltaCliente(cliente);
+                    } else {
+                        cliente = clienteExistente;
+                    }
+
+                    nueva = new Membresia();
+                    nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
+                    nueva.setIdCliente(cliente);
+                    membresiaHelper.registrarMembresia(nueva, cliente);
+
+                    paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                    paga.setFecha(LocalDate.now());
+                    paga.setIdCliente(cliente);
+                    paga.setMonto(montoTotal);
+                    paga.setPorPagar(porPagar);
+
+                    pagaHelper.RealizarPago(paga, tipo, nueva);
+
+                } else {
+                    return;
+                }
+            }
+
+            PrimeFaces.current().executeScript("PF('dlgPagoTarjeta').hide(); PF('dlgExitoTarjeta').show();");
 
             limpiarCampos();
         } catch (Exception e) {
@@ -188,13 +293,11 @@ public class RealizarPagoBeanUI implements Serializable {
     public void prepararPago(String tipo) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            if (this.cliente == null) {
-                this.cliente = new Cliente();
+            if (cliente == null) {
                 cliente = (Cliente) FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
                         .get("clienteSeleccionado");
-                this.cliente.setNombreCompleto(cliente.getNombreCompleto());
             }
 
             obtenerTotal(tipo);
@@ -205,6 +308,17 @@ public class RealizarPagoBeanUI implements Serializable {
             fc.validationFailed();
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error al preparar pago", "No se pudieron cargar los datos: " + e.getMessage()));
+        }
+    }
+
+    public void cancelarPago() {
+        try {
+            limpiarCampos();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago cancelado", "El proceso de pago ha sido cancelado."));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cancelar pago", e.getMessage()));
         }
     }
 

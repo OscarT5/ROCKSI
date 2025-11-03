@@ -32,26 +32,27 @@ public class AltaClienteBeanUI implements Serializable {
             this.cliente.setSexo(this.sexo);
             this.cliente.setSegundoTelefono(this.segundoTelefono);
             this.cliente.setCantidadDineroMensual(0);
-            this.guardarCliente.AltaCliente(this.cliente);
-            FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Alta Exitosa", "Cliente creado..."));
+
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("clienteSeleccionado", this.cliente);
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("PBI-GPA-US1.xhtml");
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.cliente = new Cliente();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Datos Cargados", "Cliente temporal creado. Continúe con el pago."));
+
+            FacesContext.getCurrentInstance().getExternalContext().redirect("PBI-GPA-US1.xhtml");
+
             this.nombre = "";
             this.apellido = "";
             this.telefono = "";
             this.sexo = "";
             this.cantidadDineroMensual = 0;
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage((String)null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Alta Invalida", e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Alta Inválida", e.getMessage()));
         }
-
     }
+
 
     public String getNombre() {
         return this.nombre;

@@ -14,7 +14,7 @@ public class PagaDelegate {
         this.pagaDAO = ServiceLocator.getInstancePagaDAO();
     }
 
-    public void registrarPago(Paga paga, String tipo) throws Exception {
+    public void registrarPago(Paga paga, String tipo,Membresia membresia) throws Exception {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
         }
@@ -29,12 +29,11 @@ public class PagaDelegate {
         }
 
         if ("membresia".equalsIgnoreCase(tipo)) {
-            Item item = new Producto();
-            item.setIdItem("CLI0002");
-            paga.setIdItem(item);
+            paga.setIdItem(membresia);
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);
-        } else if ("clase".equalsIgnoreCase(tipo)) {
+        }
+        else if ("clase".equalsIgnoreCase(tipo)) {
             Item item = new Clase();
             item.setIdItem("CLA1000");
             paga.setIdItem(item);

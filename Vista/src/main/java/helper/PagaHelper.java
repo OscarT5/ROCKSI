@@ -1,5 +1,7 @@
 package helper;
 
+import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Membresia;
 import mx.desarollo.entity.Paga;
 import mx.desarollo.integration.ServiceFacadeLocator;
 
@@ -7,9 +9,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PagaHelper implements Serializable {
-    public void RealizarPago(Paga paga,String tipo) throws Exception {
+    public void RealizarPago(Paga paga, String tipo, Membresia membresia) throws Exception {
         try {
-            ServiceFacadeLocator.getInstancePagaFacade().registrarPago(paga,tipo);
+            ServiceFacadeLocator.getInstancePagaFacade().registrarPago(paga,tipo, membresia);
         } catch (Exception e) {
             throw new Exception("Error al registrar el pago: " + e.getMessage());
         }
