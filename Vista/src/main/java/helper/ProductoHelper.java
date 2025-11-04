@@ -24,6 +24,10 @@ public class ProductoHelper implements Serializable {
         return ServiceFacadeLocator.getInstanceProductoFacade().eliminarProducto(idProducto);
     }
 
+    public void reducirStock(String idProducto) throws Exception {
+        ServiceFacadeLocator.getInstanceProductoFacade().reducirStock(idProducto);
+    }
+
     public void modificarProducto(Producto producto) throws Exception {
         ServiceFacadeLocator.getInstanceProductoFacade().actualizarProducto(producto);
     }

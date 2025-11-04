@@ -519,14 +519,15 @@
             <h:form id="formProductos">
                 <h1>Productos</h1>
 
-                <!-- 🔹 NUEVO BLOQUE con estilos -->
+                <!-- Tienda -->
                 <div class="tienda-container">
 
+                    <!-- Bloque de productos -->
                     <div class="tienda-box">
                         <div class="header-tienda">
                             <h2>Productos</h2>
 
-                            <!-- Campo de búsqueda reutilizando la lógica existente -->
+                            <!-- Campo de búsqueda -->
                             <p:inputText id="buscarProducto"
                                          value="#{productoBeanUI.filtro}"
                                          placeholder="Buscar por ID Clase"
@@ -538,9 +539,23 @@
                             </p:inputText>
                         </div>
 
-                        <!-- Tabla -->
-                        <p:dataTable id="tablaProductosMini" value="#{productoBeanUI.listaProductos}" var="pro"
-                                     paginator="false" emptyMessage="No hay productos registrados">
+                        <!-- Mensajes -->
+                        <p:growl id="msgs" showDetail="true" life="3000" />
+
+                        <!-- Tabla de productos existentes -->
+                        <p:dataTable id="tablaProductosMini"
+                                     value="#{productoBeanUI.listaProductos}"
+                                     var="pro"
+                                     selectionMode="single"
+                                     selection="#{productoBeanUI.productoSeleccionado}"
+                                     rowKey="#{pro.idItem}"
+                                     paginator="false"
+                                     emptyMessage="No hay productos registrados">
+
+                            <p:ajax event="rowDblselect"
+                                    listener="#{tiendaBeanUI.agregarAlCarritoDesdeProductos}"
+                                    update=":formProductos:tablaCarrito :formProductos:totalBox :formProductos:msgs :formProductos:tablaProductosMini" />
+
                             <p:column headerText="ID">
                                 <h:outputText value="#{pro.idItem}" />
                             </p:column>
@@ -556,12 +571,23 @@
                         </p:dataTable>
                     </div>
 
-
-                    <!-- Carrito -->
+                    <!-- Bloque del carrito -->
                     <div class="tienda-box">
                         <h2>Carrito</h2>
-                        <p:dataTable id="tablaCarrito" value="#{tiendaBeanUI.carrito}" var="item"
-                                     paginator="false" emptyMessage="No hay productos en el carrito">
+
+                        <p:dataTable id="tablaCarrito"
+                                     value="#{tiendaBeanUI.carrito}"
+                                     var="item"
+                                     paginator="false"
+                                     emptyMessage="No hay productos en el carrito"
+                                     selectionMode="single"
+                                     selection="#{tiendaBeanUI.itemSeleccionado}"
+                                     rowKey="#{item.id}">
+
+                            <p:ajax event="rowDblselect"
+                                    listener="#{tiendaBeanUI.devolverProductoAlInventario}"
+                                    update=":formProductos:tablaCarrito :formProductos:tablaProductosMini :formProductos:totalBox :formProductos:msgs" />
+
                             <p:column headerText="ID">
                                 <h:outputText value="#{item.id}" />
                             </p:column>
@@ -576,17 +602,23 @@
                             </p:column>
                         </p:dataTable>
 
-                        <div class="total-box">
-                            <span>Total:</span>
-                            <span>$#{tiendaBeanUI.total}</span>
-                        </div>
 
-                        <p:commandButton value="Cobrar" icon="pi pi-check"
+                        <h:panelGroup id="totalBox" layout="block" styleClass="total-box">
+                            <span>Total:</span>
+                            <h:outputText value="#{tiendaBeanUI.total}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                            </h:outputText>
+                        </h:panelGroup>
+
+                        <p:commandButton value="Cobrar"
+                                         icon="pi pi-check"
                                          action="#{tiendaBeanUI.cobrar}"
-                                         update="tablaCarrito"
+                                         update="tablaCarrito totalBox msgs"
                                          styleClass="btn-cobrar" />
                     </div>
+
                 </div>
+
 
                 <div class="action-buttons" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
                     <h:outputLabel for="txtFiltroProducto" value="ID Producto:"/>

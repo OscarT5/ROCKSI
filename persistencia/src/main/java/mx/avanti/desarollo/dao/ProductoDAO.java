@@ -123,6 +123,33 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         }
     }
 
+    public void reducirStock(String idProducto) {
+        EntityTransaction tx = em.getTransaction();
+        try {
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            Producto producto = em.find(Producto.class, idProducto);
+            if (producto == null) {
+                throw new RuntimeException("No se encontró el producto con ID: " + idProducto);
+            }
+
+            if (producto.getStock() <= 0) {
+                throw new RuntimeException("El producto " + producto.getNombre() + " no tiene stock disponible.");
+            }
+
+            producto.setStock(producto.getStock() - 1);
+            em.merge(producto);
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw new RuntimeException("Error al reducir el stock del producto " + idProducto, e);
+        }
+    }
+
+
     /*
    Con esta funcion se listan todos los productos registrados
     */

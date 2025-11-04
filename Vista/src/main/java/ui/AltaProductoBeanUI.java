@@ -28,8 +28,8 @@ public class AltaProductoBeanUI implements Serializable {
             if (nombre == null || nombre.trim().isEmpty())
                 throw new Exception("El campo Nombre es obligatorio.");
 
-            if (stock == null || stock <= 0)
-                throw new Exception("El campo Stock debe ser mayor a 0.");
+            if (stock == null || stock < 0)
+                throw new Exception("El campo Stock debe ser nuemeros positivos.");
 
             if (precio == null || precio <= 0)
                 throw new Exception("El campo Precio debe ser mayor a 0.");
