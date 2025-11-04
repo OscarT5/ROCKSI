@@ -25,7 +25,6 @@ public class MembresiaDelegate {
         String nuevoId = Membresia.generarNuevoId();
         membresia.setIdItem(nuevoId);
         membresia.setIdUsuarioAdmin("ADM1000");
-        membresia.setTipo("Membresia");
         membresia.setIdCliente(cliente);
         membresia.setFechaVencimiento(LocalDate.now().plusDays(30));
 

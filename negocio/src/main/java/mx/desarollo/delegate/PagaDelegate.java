@@ -21,8 +21,8 @@ public class PagaDelegate {
         if (paga.getMonto() == null) {
             throw new Exception("Se debe ingresar el monto del pago");
         }
-        if (paga.getMonto() <= 0) {
-            throw new Exception("El monto del pago debe ser mayor que 0");
+        if (paga.getMonto() < 0) {
+            throw new Exception("El monto del pago no pude ser menor que 0");
         }
         if (paga.getPorPagar() < 0) {
             throw new Exception("El monto por pagar no debe ser menor que 0");
@@ -34,9 +34,7 @@ public class PagaDelegate {
             pagaDAO.crear(paga);
         }
         else if ("clase".equalsIgnoreCase(tipo)) {
-            Item item = new Clase();
-            item.setIdItem("CLA1000");
-            paga.setIdItem(item);
+            paga.setIdItem(membresia);
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);
         }

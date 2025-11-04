@@ -89,10 +89,23 @@
                   modal="true" resizable="false" closable="false" draggable="false" width="360">
             <h:panelGrid columns="1" style="width:100%; text-align:center;">
 
+                <!-- CAMPO PARA INGRESAR DESCUENTO -->
+                <div class="form-group">
+                    <h:outputLabel for="descuento" value="Descuento (opcional)" style="font-weight:bold;"/>
+                    <p:inputText id="descuento"
+                                 value="#{RealizarPagoBeanUI.descuento}"
+                                 maxlength="5"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 placeholder="$200"
+                                 styleClass="form-control">
+                        <p:ajax event="blur" listener="#{RealizarPagoBeanUI.descuento}" update="@form"/>
+                    </p:inputText>
+                </div>
+
                 <!-- BOTÓN PAGO EN EFECTIVO -->
                 <p:commandButton value="Pago en Efectivo"
                                  icon="pi pi-money-bill"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago('membresia')}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
                                  process="@this"
                                  update=":formPrincipal"
                                  oncomplete="PF('dlgMetodoPago').hide(); PF('dlgPagoInteractivo').show();"
@@ -101,7 +114,7 @@
                 <!-- BOTÓN PAGO CON TARJETA -->
                 <p:commandButton value="Pago con Tarjeta"
                                  icon="pi pi-credit-card"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago('membresia')}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
                                  process="@this"
                                  update=":formPrincipal"
                                  oncomplete="PF('dlgMetodoPago').hide(); PF('dlgPagoTarjeta').show();"
@@ -160,7 +173,7 @@
                                      value="Pagar"
                                      process="@this"
                                      update="msgsTarjeta"
-                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjeta('membresia')}"/>
+                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjetaClase()}"/>
 
                     <p:commandButton value="Cancelar"
                                      icon="pi pi-times"
@@ -229,7 +242,7 @@
                 </div>
 
                 <p:commandButton value="Pagar"
-                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivo('membresia')}"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivoClase()}"
                                  update="msgsPagoInteractivo faltante"
                                  styleClass="ui-button"
                                  process="@this montoIngresado"
