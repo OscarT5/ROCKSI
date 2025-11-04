@@ -17,26 +17,28 @@ import java.util.Date;
 @SessionScoped
 public class RealizarPagoBeanUI implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    Membresia nueva = new Membresia();
-
+    // Variables globales
     private Double montoTotal = 0.0;
     private Double montoIngresado = 0.0;
     private Double montoFaltante = 0.0;
     private Double montoVenta = 0.0;
     private Double montoCambio = 0.0;
     private Double descuento = 0.0;
-
-    private Paga paga = new Paga();
-    private Cliente cliente;
     private Date fecha;
     private Double monto;
     private byte porPagar;
 
+    // Clases para completar el pago
+    private Paga paga = new Paga();
+    private Cliente cliente;
+    Membresia nueva = new Membresia();
+
+    // Usuario recepcionista
     private String idUR;
     private String contrasenaUR;
     private Usuariorecepcionista usuarioRecepcionista;
 
+    // Helpers necesarios
     private final PagaHelper pagaHelper = new PagaHelper();
     private final UsuarioRHelper usuarioHelper = new UsuarioRHelper();
     private final ClienteHelper clienteHelper = new ClienteHelper();
@@ -44,44 +46,57 @@ public class RealizarPagoBeanUI implements Serializable {
     private final ClaseHelper claseHelper = new ClaseHelper();
     private final MembresiaHelper membresiaHelper = new MembresiaHelper();
 
+    // Esta funcion verifica si el ID del recepcionista es valido o existente
     public void verificarUsuario() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
+            // Si el ID se deja vacio
             if (idUR == null || idUR.trim().isEmpty())
                 throw new Exception("Debe ingresar el ID del usuario recepcionista.");
 
+            // Si se ingreso algo en campo de ID en el xhtml entonces obtiene al usuario con su ID
             usuarioRecepcionista = usuarioHelper.obtenerUsuarioR(idUR.trim());
+            // Si el usuario es null quiere decir que no se encontro un usuario con ese ID
             if (usuarioRecepcionista == null)
                 throw new Exception("No se encontró un usuario con ese ID.");
 
+            // Si se ecuentra un usuario entonces devuelve el mensaje Usuario verificado...
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario verificado", "Recepcionista encontrado."));
         } catch (Exception e) {
+            // Si no se encontro entonces vuelve nula la instancia de usuarioRecepcionista y no preocede al modal de ingresar contraseña
             usuarioRecepcionista = null;
             fc.validationFailed();
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al verificar usuario", e.getMessage()));
         }
     }
 
+    // Esta funcion verifica la contraseña del usuarioRecepcionista anteriormente encontrado (Para mas seguridad)
     public void validarContrasena() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
+            // Si el usuario es nulo quiere decir que primeramte no se ah encontrado el usuarioRecepcionista y que se debe enontrar para poder ingresar su contraseña
             if (usuarioRecepcionista == null)
                 throw new Exception("Debe verificar primero al usuario recepcionista antes de validar la contraseña.");
 
+            // Si la contraseña esta vacia entonces muestra el mensaje
             if (contrasenaUR == null || contrasenaUR.trim().isEmpty())
                 throw new Exception("Debe ingresar la contraseña del recepcionista.");
 
+            // Si contraseña no es agual a la contraseña que tiene el usuarioRecepcionita entonces muestra el mensaje
             if (!usuarioRecepcionista.getContrasena().equals(contrasenaUR)) {
                 fc.validationFailed();
                 throw new Exception("Contraseña incorrecta.");
             }
 
+            // Si se identifica correctamente entoces muestra el siguiente mensaje
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Acceso autorizado", "El recepcionista ha sido autenticado correctamente."));
         } catch (Exception e) {
+            // Si no, entonces muestra el siguiente mensaje
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de autenticación", e.getMessage()));
         }
     }
 
+    // Esta funcion calculta el faltante del dinero que ingreso el usuarioRecepcionista en el pago interactivo contra el monto total
     private void calcularFaltante() {
         if (montoIngresado == null) montoIngresado = 0.0;
         if (montoTotal == null) montoTotal = 0.0;
@@ -95,32 +110,40 @@ public class RealizarPagoBeanUI implements Serializable {
         }
     }
 
+    // Esta funcion realiza el pago interactivo de membresia
     public void realizarPagoInteractivoMembresia() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
+            // Esta funcion guarda en una variable String el tipo de pago que se va arealizar y ademas inicializa los montos totales
             String tipo = obtenerTotal("membresia");
 
+            // Si el usuarioRcepcionista es nulo entonces muestro el siguiente mensaje
             if (usuarioRecepcionista == null)
                 throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
 
+            // Si el monto total el menor a 0 muestra el siguiente mensaje
             if (montoTotal < 0)
                 throw new Exception("Monto total inválido. Seleccione un tipo de pago o calcule el total.");
 
+            // Si el monto ingresado esta vacio menor que 0 muestra el siguiente mensaje
             if (montoIngresado == null || montoIngresado < 0)
                 throw new Exception("Debe ingresar un monto para continuar.");
 
+            // La funcion que realiza la logica de calcular el faltante del monto total contra lo que ingreso el usuarioRecepcionista(UR)
             calcularFaltante();
 
+            // Si el montro ingresado es menor al monto total entonces muestra el siguiente mensaje
             if (montoIngresado < montoTotal) {
                 fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Monto insuficiente", "Faltan " + montoFaltante + " pesos."));
-                return;
+                return; // Sale de la funcion
             }
 
+            // Calcular el monto de cambio cuando sera 0.0
             montoCambio = montoIngresado - montoTotal;
             if (montoCambio < 0) montoCambio = 0.0;
 
-            // Obtener cliente desde la sesión si no está asignado
+            // Obtener cliente desde la alta de clase
             if (cliente == null) {
                 cliente = (Cliente) FacesContext.getCurrentInstance()
                         .getExternalContext()
@@ -128,9 +151,11 @@ public class RealizarPagoBeanUI implements Serializable {
                         .get("clienteSeleccionado");
             }
 
+            // Si el cliente es igual a null no sigue el flujo y muestra el siguiente mensaje
             if (cliente == null)
                 throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
 
+            // Si llego hasta aqui obtiene el cliente con su ID y lo asigna a un cliente auxiliar
             Cliente clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
             if (clienteExistente == null) {
                 clienteHelper.AltaCliente(cliente);
@@ -138,16 +163,19 @@ public class RealizarPagoBeanUI implements Serializable {
                 cliente = clienteExistente;
             }
 
-
+            // Si el tipo es membresia entonces realizo lo siguiente (Anteriormente estaba pensado de otra manera)
             if (tipo.equalsIgnoreCase("membresia")) {
+                // Obtiene la membresia por el cliente para ver si este ya tiene una membresia
                 Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
 
+                // boleano para verificacion
                 boolean tieneActiva = false;
 
-                // Verificar si ya tiene una membresia
+                // Verifico si tiene membresia
                 if (membresiaActual != null && membresiaActual.getFechaVencimiento() != null) {
                     LocalDate fechaV = membresiaActual.getFechaVencimiento();
 
+                    // Si si la tiene entonces muestro el siguiente mensaje
                     if (fechaV.isAfter(LocalDate.now())) {
                         tieneActiva = true;
                         fc.addMessage(null, new FacesMessage(
@@ -166,18 +194,21 @@ public class RealizarPagoBeanUI implements Serializable {
                         cliente = clienteExistente;
                     }
 
+                    // Creo membresia y desde la membresia el Item
                     nueva = new Membresia();
                     nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
                     nueva.setIdCliente(cliente);
                     nueva.setTipo("membresia");
                     membresiaHelper.registrarMembresia(nueva, cliente);
 
+                    // Creo el pago
                     paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
                     paga.setFecha(LocalDate.now());
                     paga.setIdCliente(cliente);
                     paga.setMonto(montoTotal);
                     paga.setPorPagar(porPagar);
 
+                    // Ralizo el pago
                     pagaHelper.RealizarPago(paga, tipo, nueva);
 
                 } else {
@@ -185,18 +216,23 @@ public class RealizarPagoBeanUI implements Serializable {
                 }
             }
 
+            // actualizo el cambio
             PrimeFaces.current().ajax().update("formPrincipal:dlgCambio");
+            // Oculto el pago interactivo y muestro el cambio
             PrimeFaces.current().executeScript("PF('dlgPagoInteractivo').hide(); PF('dlgCambio').show();");
 
+            // Reinicio las variables a 0.0
             montoIngresado = 0.0;
             montoFaltante = 0.0;
 
         } catch (Exception e) {
+            // Si hay una excepcion, entonces muesro el siguiente mensaje
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error al realizar el pago", e.getMessage()));
         }
     }
 
+    // Esta funcion realiza el pago con tarjeta de una membresia
     public void realizarPagoTarjetaMembresia() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -241,7 +277,7 @@ public class RealizarPagoBeanUI implements Serializable {
 
                 boolean tieneActiva = false;
 
-                // Verificar si ya tiene una membresia
+                // Verifico si tiene membresia
                 if (membresiaActual != null && membresiaActual.getFechaVencimiento() != null) {
                     LocalDate fechaV = membresiaActual.getFechaVencimiento();
 
@@ -517,7 +553,7 @@ public class RealizarPagoBeanUI implements Serializable {
                 break;
         }
 
-        // Aplica descuento (ya validado)
+        // Aplica descuento
         if (descuento != null && descuento > 0) {
             montoTotal -= descuento;
             if (montoTotal < 0) montoTotal = 0.0;
@@ -527,6 +563,7 @@ public class RealizarPagoBeanUI implements Serializable {
         return tipo;
     }
 
+    // Getters y Setters
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
