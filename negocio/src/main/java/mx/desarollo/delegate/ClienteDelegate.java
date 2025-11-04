@@ -46,7 +46,17 @@ public class ClienteDelegate {
         }
         cliente.setTelefono(normal);
 
-
+        String st = cliente.getSegundoTelefono();
+        if (st != null && !st.trim().isEmpty()) {
+            // limpiar formato
+            String onlyDigits = st.replaceAll("[^0-9]", "");
+            if (!onlyDigits.matches("\\d{7,15}")) {
+                throw new Exception("Segundo teléfono inválido. Debe contener entre 7 y 15 dígitos.");
+            }
+            cliente.setSegundoTelefono(onlyDigits);
+        } else {
+            cliente.setSegundoTelefono(null);
+        }
 
         cliente.setFechaRegistro(new Date());
         clienteDAO.crear(cliente);
@@ -127,9 +137,26 @@ public class ClienteDelegate {
             throw new Exception("El nombre solo puede contener letras y espacios.");
         }
 
+        String sx = (cliente.getSexo() == null) ? "" : cliente.getSexo().trim().toLowerCase();
+        if (!sx.equals("masculino") && !sx.equals("femenino")) {
+            throw new Exception("Sexo inválido. Debe ser 'masculino' o 'femenino'.");
+        }
+
+        String st = cliente.getSegundoTelefono();
+        String stNorm = null;
+        if (st != null && !st.trim().isEmpty()) {
+            String onlyDigits = st.replaceAll("[^0-9]", "");
+            if (!onlyDigits.matches("\\d{7,15}")) {
+                throw new Exception("Segundo teléfono inválido. Debe contener entre 7 y 15 dígitos.");
+            }
+            stNorm = onlyDigits;
+        }
+
         // Aplicar cambios
         existente.setNombreCompleto(cliente.getNombreCompleto().trim());
         existente.setTelefono(normal);
+        existente.setSexo(sx);
+        existente.setSegundoTelefono(stNorm);
 
         clienteDAO.actualizar(existente);
     }

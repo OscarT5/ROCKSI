@@ -22,6 +22,8 @@ public class ModificarClienteBeanUI implements Serializable {
     private String nombre;
     private String apellido;
     private String telefono;
+    private String segundoTelefono;
+    private String sexo;
 
     //campo donde el usuario ingresa el ID a buscar
     private String busquedaId;
@@ -58,7 +60,10 @@ public class ModificarClienteBeanUI implements Serializable {
                 this.nombre = parts.length > 0 ? parts[0] : "";
                 this.apellido = parts.length > 1 ? parts[1] : "";
             }
+
             this.telefono = c.getTelefono();
+            this.segundoTelefono = c.getSegundoTelefono();
+            this.sexo = c.getSexo();
 
             // indicar al cliente que se encontro el cliente
             PrimeFaces.current().ajax().addCallbackParam("found", true);
@@ -82,6 +87,12 @@ public class ModificarClienteBeanUI implements Serializable {
             this.cliente.setNombreCompleto(((this.nombre == null) ? "" : this.nombre.trim()) + " " + ((this.apellido == null) ? "" : this.apellido.trim()));
             this.cliente.setTelefono(this.telefono);
 
+            String st = (this.segundoTelefono == null) ? "" : this.segundoTelefono.trim();
+            this.cliente.setSegundoTelefono(st.isEmpty() ? null : st);
+
+            String sx = (this.sexo == null) ? "" : this.sexo.trim().toLowerCase();
+            this.cliente.setSexo(sx);
+
             guardarCliente.ModificarCliente(this.cliente);
 
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación exitosa", "Cliente modificado correctamente."));
@@ -99,6 +110,12 @@ public class ModificarClienteBeanUI implements Serializable {
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getSegundoTelefono() { return segundoTelefono; }
+    public void setSegundoTelefono(String segundoTelefono) { this.segundoTelefono = segundoTelefono; }
+
+    public String getSexo() { return sexo; }
+    public void setSexo(String sexo) { this.sexo = sexo; }
 
     public String getBusquedaId() { return busquedaId; }
     public void setBusquedaId(String busquedaId) { this.busquedaId = busquedaId; }

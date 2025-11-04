@@ -28,6 +28,13 @@ public class ProductoDelegate {
             throw new Exception("El stock debe ser mayor que cero.");
         }
 
+        if (producto.getPrecio() <= 0) {
+            throw new Exception("El precio debe ser mayor que cero.");
+        }
+
+        if (producto.getProveedor() == null || producto.getProveedor().trim().isEmpty()) {
+            throw new Exception("El proveedor no puede estar vacío.");
+        }
 
         //genera un nuevo id
         producto.setIdItem(productoDAO.generarNuevoIdProducto());
@@ -35,6 +42,24 @@ public class ProductoDelegate {
         //Aqui se guarda en la BD
         productoDAO.crear(producto);
     }
+
+    public void reducirStock(String idProducto) throws Exception {
+        if (idProducto == null || idProducto.trim().isEmpty()) {
+            throw new Exception("El ID del producto no puede estar vacío.");
+        }
+
+        Producto producto = productoDAO.buscarProductoPorId(idProducto);
+        if (producto == null) {
+            throw new Exception("No existe un producto con el ID: " + idProducto);
+        }
+
+        if (producto.getStock() <= 0) {
+            throw new Exception("El producto " + producto.getNombre() + " no tiene stock disponible.");
+        }
+
+        productoDAO.reducirStock(idProducto);
+    }
+
 
     /**
      * Metodo para eliminar un producto por su ID que llamara a la instancia de ProductoDAO
@@ -68,56 +93,26 @@ public class ProductoDelegate {
         if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
             throw new Exception("El nombre no puede estar vacío.");
         }
-        if (producto.getStock() <= 0) {
-            throw new Exception("El Stock debe ser mayor que cero.");
+        if (producto.getStock() < 0) {
+            throw new Exception("El Stock debe ser numeros positivos.");
+        }
+
+        if (producto.getPrecio() <= 0) {
+            throw new Exception("El precio debe ser mayor que cero.");
+        }
+
+        if (producto.getProveedor() == null || producto.getProveedor().trim().isEmpty()) {
+            throw new Exception("El proveedor no puede estar vacío.");
         }
 
         // Aplicar cambios
         existente.setNombre(producto.getNombre());
         existente.setStock(producto.getStock());
+        existente.setPrecio(producto.getPrecio());
+        existente.setProveedor(producto.getProveedor());
 
         productoDAO.actualizarProducto(existente);
     }
-
-    //Actualiza los datos de un producto existente
-    /*public void actualizarProducto(Producto p) throws Exception {
-        if (p == null || p.getIdProducto() == null || p.getIdProducto().trim().isEmpty()) {
-            throw new Exception("Producto inválido para actualización: ID nulo o vacío.");
-        }
-
-        // Buscar producto existente por su ID
-        Producto existente = productoDAO.buscarProductoPorId(p.getIdProducto());
-        if (existente == null) {
-            throw new Exception("No existe ningún producto con el ID: " + p.getIdProducto());
-        }
-
-        // Validaciones de datos
-        if (p.getNombre() == null || p.getNombre().trim().isEmpty()) {
-            throw new Exception("El nombre no puede estar vacío.");
-        }
-        if (p.getStock() == null || p.getStock() < 0) {
-            throw new Exception("El stock debe ser 0 o mayor.");
-        }
-        if (p.getPrecio() < 0) {
-            throw new Exception("El precio debe ser mayor o igual a 0.");
-        }
-
-        //asignar los nuevos valores
-        existente.setNombre(p.getNombre().trim());
-        existente.setStock(p.getStock());
-        existente.setPrecio(p.getPrecio());
-
-        //sincronizar precio con el item relacionado
-        if (existente.getItem() != null) {
-            try {
-                existente.getItem().setPrecio(BigDecimal.valueOf(p.getPrecio()));
-            } catch (Exception ignored) {
-                System.out.println("Advertencia: no se pudo sincronizar el precio con Item.");
-            }
-        }
-
-        productoDAO.actualizarProducto(existente);
-    }*/
 
     /**
      * Metodo para obtener un producto por su ID que llamara a la instancia de ProductoDAO

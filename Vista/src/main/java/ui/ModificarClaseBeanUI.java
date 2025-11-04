@@ -31,6 +31,7 @@ public class ModificarClaseBeanUI implements Serializable {
     private String horaFinal;
     private int cupoMaximo;
     private String maestro;
+    private String diasImpartidos;
     private Date horaInicioDate;
     private Date horaFinalDate;
 
@@ -62,6 +63,7 @@ public class ModificarClaseBeanUI implements Serializable {
             this.nombre = cla.getNombre();
             this.cupoMaximo = cla.getCupoMaximo();
             this.maestro = cla.getMaestro();
+            this.diasImpartidos = cla.getDias();
 
             String horario = cla.getHorario();
 
@@ -149,6 +151,7 @@ public class ModificarClaseBeanUI implements Serializable {
             this.clase.setHorario(horaInicio + " a " + horaFinal);
             this.clase.setCupoMaximo(cupoMaximo);
             this.clase.setMaestro(((this.maestro == null) ? "" : this.maestro.trim()));
+            this.clase.setDias(((this.diasImpartidos == null) ? "" : this.diasImpartidos.trim()));
 
             guardarClase.ModificarClase(this.clase);
 
@@ -179,4 +182,7 @@ public class ModificarClaseBeanUI implements Serializable {
 
     public String getBusquedaId() { return busquedaId; }
     public void setBusquedaId(String busquedaId) { this.busquedaId = busquedaId; }
+
+    public String getDiasImpartidos() { return diasImpartidos; }
+    public void setDiasImpartidos(String diasImpartidos) { this.diasImpartidos = diasImpartidos; }
 }

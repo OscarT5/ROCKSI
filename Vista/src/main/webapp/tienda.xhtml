@@ -320,6 +320,143 @@
         .ui-widget-overlay {
             z-index: 1000 !important;
         }
+
+        /* === NUEVAS TABLAS (Productos / Carrito) === */
+        .tienda-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        /* Contenedores de cada tabla */
+        .tienda-box {
+            flex: 1;
+            min-width: 400px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            padding: 20px 25px;
+        }
+
+        /* Encabezado de cada bloque */
+        .tienda-box h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #000;
+            margin: 0 0 10px 0;
+        }
+
+        /* Input de búsqueda */
+        .tienda-box input[type="text"],
+        .tienda-box .ui-inputfield {
+            width: 100% !important;
+            border: 1px solid #ccc !important;
+            border-radius: 6px !important;
+            padding: 8px 10px !important;
+            font-size: 14px !important;
+            box-shadow: none !important;
+            margin-bottom: 12px !important;
+            transition: border-color 0.2s;
+        }
+        .tienda-box input[type="text"]:focus,
+        .tienda-box .ui-inputfield.ui-state-focus {
+            border-color: #007bcb !important;
+        }
+
+        /* Tablas internas */
+        .tienda-box .ui-datatable {
+            width: 100% !important;
+            border-radius: 8px !important;
+            border: none !important;
+            overflow: hidden !important;
+        }
+
+        .tienda-box .ui-datatable thead th {
+            background-color: #f4f6f8 !important;
+            color: #000 !important;
+            text-align: left !important;
+            font-weight: 600 !important;
+            padding: 8px 12px !important;
+            border-bottom: 2px solid #e0e0e0 !important;
+            font-size: 14px !important;
+        }
+
+        .tienda-box .ui-datatable tbody td {
+            padding: 10px 12px !important;
+            font-size: 14px !important;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0 !important;
+        }
+
+        /* Hover de fila */
+        .tienda-box .ui-datatable tbody tr:hover {
+            background-color: #eef7ff !important;
+        }
+
+        /* Bloque de total */
+        .total-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #007bcb;
+            color: white;
+            padding: 10px 16px;
+            margin-top: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Botón de Cobrar */
+        .btn-cobrar {
+            margin-top: 12px;
+            background: #007bcb !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            padding: 8px 18px !important;
+            float: right;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-cobrar:hover {
+            background: #005c96 !important;
+            transform: scale(1.05);
+        }
+
+        /* Encabezado de la sección "Productos" con buscador en la misma línea */
+        .header-tienda {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        /* Título */
+        .header-tienda h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #000;
+            margin: 0;
+        }
+
+        /* Campo de búsqueda */
+        .buscar-producto {
+            width: 220px !important;
+            border: 2px solid #d8d8d8 !important;
+            border-radius: 8px !important;
+            padding: 8px 10px !important;
+            font-size: 14px !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease;
+        }
+        .buscar-producto:focus,
+        .buscar-producto.ui-state-focus {
+            border-color: #007bcb !important;
+        }
+
+
     </style>
 </h:head>
 
@@ -382,6 +519,107 @@
             <h:form id="formProductos">
                 <h1>Productos</h1>
 
+                <!-- Tienda -->
+                <div class="tienda-container">
+
+                    <!-- Bloque de productos -->
+                    <div class="tienda-box">
+                        <div class="header-tienda">
+                            <h2>Productos</h2>
+
+                            <!-- Campo de búsqueda -->
+                            <p:inputText id="buscarProducto"
+                                         value="#{productoBeanUI.filtro}"
+                                         placeholder="Buscar por ID Clase"
+                                         styleClass="form-control buscar-producto">
+                                <p:ajax event="input"
+                                        listener="#{productoBeanUI.filtrarPorId}"
+                                        update="tablaProductosMini"
+                                        delay="300"/>
+                            </p:inputText>
+                        </div>
+
+                        <!-- Mensajes -->
+                        <p:growl id="msgs" showDetail="true" life="3000" />
+
+                        <!-- Tabla de productos existentes -->
+                        <p:dataTable id="tablaProductosMini"
+                                     value="#{productoBeanUI.listaProductos}"
+                                     var="pro"
+                                     selectionMode="single"
+                                     selection="#{productoBeanUI.productoSeleccionado}"
+                                     rowKey="#{pro.idItem}"
+                                     paginator="false"
+                                     emptyMessage="No hay productos registrados">
+
+                            <p:ajax event="rowDblselect"
+                                    listener="#{tiendaBeanUI.agregarAlCarritoDesdeProductos}"
+                                    update=":formProductos:tablaCarrito :formProductos:totalBox :formProductos:msgs :formProductos:tablaProductosMini" />
+
+                            <p:column headerText="ID">
+                                <h:outputText value="#{pro.idItem}" />
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{pro.nombre}" />
+                            </p:column>
+                            <p:column headerText="Precio">
+                                <h:outputText value="$#{pro.precio}" />
+                            </p:column>
+                            <p:column headerText="Stock">
+                                <h:outputText value="#{pro.stock}" />
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+
+                    <!-- Bloque del carrito -->
+                    <div class="tienda-box">
+                        <h2>Carrito</h2>
+
+                        <p:dataTable id="tablaCarrito"
+                                     value="#{tiendaBeanUI.carrito}"
+                                     var="item"
+                                     paginator="false"
+                                     emptyMessage="No hay productos en el carrito"
+                                     selectionMode="single"
+                                     selection="#{tiendaBeanUI.itemSeleccionado}"
+                                     rowKey="#{item.id}">
+
+                            <p:ajax event="rowDblselect"
+                                    listener="#{tiendaBeanUI.devolverProductoAlInventario}"
+                                    update=":formProductos:tablaCarrito :formProductos:tablaProductosMini :formProductos:totalBox :formProductos:msgs" />
+
+                            <p:column headerText="ID">
+                                <h:outputText value="#{item.id}" />
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{item.nombre}" />
+                            </p:column>
+                            <p:column headerText="Precio">
+                                <h:outputText value="$#{item.precio}" />
+                            </p:column>
+                            <p:column headerText="Cantidad">
+                                <h:outputText value="#{item.cantidad}" />
+                            </p:column>
+                        </p:dataTable>
+
+
+                        <h:panelGroup id="totalBox" layout="block" styleClass="total-box">
+                            <span>Total:</span>
+                            <h:outputText value="#{tiendaBeanUI.total}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                            </h:outputText>
+                        </h:panelGroup>
+
+                        <p:commandButton value="Cobrar"
+                                         icon="pi pi-check"
+                                         action="#{tiendaBeanUI.cobrar}"
+                                         update="tablaCarrito totalBox msgs"
+                                         styleClass="btn-cobrar" />
+                    </div>
+
+                </div>
+
+
                 <div class="action-buttons" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
                     <h:outputLabel for="txtFiltroProducto" value="ID Producto:"/>
                     <p:inputText id="txtFiltroProducto"
@@ -415,7 +653,7 @@
 
                 </div>
 
-                <!-- Tabla -->
+                <!--Tabla-->
                 <p:dataTable id="tablaProductos" value="#{productoBeanUI.listaProductos}" var="pro"
                              paginator="true" rows="8" emptyMessage="No hay productos registrados"
                              paginatorPosition="bottom" style="margin-top:20px;">
@@ -431,6 +669,9 @@
                     <p:column headerText="Precio por unidad" sortBy="#{pro.precio}">
                         <h:outputText value="#{pro.precio}"/>
                     </p:column>
+                    <p:column headerText="Proveedor" sortBy="#{pro.proveedor}">
+                        <h:outputText value="#{pro.proveedor}"/>
+                    </p:column> <!--Proveedor agregado por sugerencia del cliente-->
                 </p:dataTable>
             </h:form>
         </div>
@@ -474,6 +715,15 @@
                     <f:validateDoubleRange minimum="0.01"/>
                 </p:inputText>
             </div>
+
+            <div class="form-group">
+                <h:outputLabel for="proveedorProducto" value="Proveedor"/>
+                <p:inputText id="proveedorProducto"
+                             value="#{altaProdBeanUI.proveedor}"
+                             placeholder="Ej. cocacola, nestle"
+                             required="true"
+                             requiredMessage="El campo Proveedor es obligatorio"/>
+            </div> <!--Proveedor gagregado-->
 
             <div class="boton-registrar">
                 <p:commandButton id="registrarProductoBtn"
@@ -543,6 +793,15 @@
                                placeholder="Precio del producto" style="width:100%"
                                decimalPlaces="2" minValue="0"
                                required="true" requiredMessage="El precio es obligatorio."/>
+
+                <h:outputLabel for="proveedor" value="Proveedor"/>
+                <p:inputText id="proveedor"
+                             value="#{modificarProdBeanUI.proveedor}"
+                             placeholder="Proveedor del producto"
+                             style="width:100%"
+                             required="true"
+                             requiredMessage="El proveedor es obligatorio."/>
+
             </h:panelGrid>
 
             <div style="text-align:center; margin-top:15px;">

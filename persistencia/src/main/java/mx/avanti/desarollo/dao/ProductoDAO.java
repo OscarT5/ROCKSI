@@ -26,10 +26,34 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         return em;
     }
 
+    //Se agrego el metodo de crear y no se uso save, puesto que al usar save, hibernate lanzaba error aun cuando todo estaba bien
     public void crear(Producto producto) {
-        save(producto);
-        sincronizarContador();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            if (producto.getTipo() == null) {
+                producto.setTipo("producto");
+            }
+            if (producto.getIdUsuarioAdmin() == null) {
+                producto.setIdUsuarioAdmin("ADM1000");
+            }
+
+            em.persist(producto);
+            tx.commit();
+
+            sincronizarContador();
+
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Error al registrar el producto", e);
+        }
     }
+
 
     /*
     En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
@@ -98,6 +122,33 @@ public class ProductoDAO extends AbstractDAO<Producto> {
             throw new RuntimeException("Error al buscar el producto por ID...", e);
         }
     }
+
+    public void reducirStock(String idProducto) {
+        EntityTransaction tx = em.getTransaction();
+        try {
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            Producto producto = em.find(Producto.class, idProducto);
+            if (producto == null) {
+                throw new RuntimeException("No se encontró el producto con ID: " + idProducto);
+            }
+
+            if (producto.getStock() <= 0) {
+                throw new RuntimeException("El producto " + producto.getNombre() + " no tiene stock disponible.");
+            }
+
+            producto.setStock(producto.getStock() - 1);
+            em.merge(producto);
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw new RuntimeException("Error al reducir el stock del producto " + idProducto, e);
+        }
+    }
+
 
     /*
    Con esta funcion se listan todos los productos registrados

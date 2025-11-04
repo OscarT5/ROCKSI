@@ -18,6 +18,7 @@ public class AltaProductoBeanUI implements Serializable {
     private String nombre;
     private Integer stock;
     private Double precio;
+    private String proveedor;
 
     private final ProductoHelper productoHelper = new ProductoHelper();
 
@@ -27,19 +28,21 @@ public class AltaProductoBeanUI implements Serializable {
             if (nombre == null || nombre.trim().isEmpty())
                 throw new Exception("El campo Nombre es obligatorio.");
 
-            if (stock == null || stock <= 0)
-                throw new Exception("El campo Stock debe ser mayor a 0.");
+            if (stock == null || stock < 0)
+                throw new Exception("El campo Stock debe ser nuemeros positivos.");
 
             if (precio == null || precio <= 0)
                 throw new Exception("El campo Precio debe ser mayor a 0.");
+            if(proveedor == null || proveedor.trim().isEmpty())
+                throw new Exception("El campo Proveedor es obligatorio.");
 
-            Producto nuevoProducto = new Producto(
-                    Producto.generarNuevoId(),
-                    precio,
-                    nombre.trim(),
-                    stock
-            );
-
+            Producto nuevoProducto = new Producto();
+            nuevoProducto.setNombre(nombre.trim());
+            nuevoProducto.setStock(stock);
+            nuevoProducto.setPrecio(precio);
+            nuevoProducto.setProveedor(proveedor.trim());
+            nuevoProducto.setTipo("producto");
+            nuevoProducto.setIdUsuarioAdmin("ADM1000"); //Admin que despues se cambiara
             productoHelper.altaProducto(nuevoProducto);
 
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -66,9 +69,13 @@ public class AltaProductoBeanUI implements Serializable {
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
 
+    public String getProveedor() { return proveedor; }
+    public void setProveedor(String proveedor) { this.proveedor = proveedor; }
+
     private void limpiarCampos() {
         nombre = "";
         stock = null;
         precio = null;
+        proveedor = "";
     }
 }
