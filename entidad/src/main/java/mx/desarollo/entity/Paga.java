@@ -9,6 +9,20 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "paga")
 public class Paga {
+
+    //Contador utilizado para la generacion de ids
+    private static int contador = 1000;
+
+    //Esto se utiliza para obtener el ID creado en el dao (solo el numero)
+    public static void setContador(int valor) {
+        contador = valor;
+    }
+
+    //Aqui se genera el id
+    public static synchronized String generarNuevoId() {
+        return "PA" + (contador++);
+    }
+
     @Id
     @Size(max = 45)
     @Column(name = "ID_Paga", nullable = false, length = 45)
@@ -40,6 +54,9 @@ public class Paga {
     @NotNull
     @Column(name = "porPagar", nullable = false)
     private Byte porPagar;
+
+    public Paga() {
+    }
 
     public String getIdPaga() {
         return idPaga;
