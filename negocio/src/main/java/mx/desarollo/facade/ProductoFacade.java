@@ -31,6 +31,10 @@ public class ProductoFacade {
         }
     }
 
+    public void reducirStock(String idProducto) throws Exception {
+        productoDelegate.reducirStock(idProducto);
+    }
+
     public void actualizarProducto(Producto producto) throws Exception {
         productoDelegate.actualizarProducto(producto);
     }
