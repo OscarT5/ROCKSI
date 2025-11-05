@@ -38,6 +38,9 @@ public class RealizarPagoBeanUI implements Serializable {
     private String idUR;
     private String contrasenaUR;
     private Usuariorecepcionista usuarioRecepcionista;
+    private String siguienteDialogo;
+    private boolean clienteTieneCredito = false;
+    private double creditoAplicado = 0.0;
 
     // Helpers necesarios
     private final PagaHelper pagaHelper = new PagaHelper();
@@ -115,8 +118,6 @@ public class RealizarPagoBeanUI implements Serializable {
     public void realizarPagoInteractivoMembresia() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            // Esta funcion guarda en una variable String el tipo de pago que se va arealizar y ademas inicializa los montos totales
-            String tipo = obtenerTotal("membresia");
 
             // Si el usuarioRcepcionista es nulo entonces muestro el siguiente mensaje
             if (usuarioRecepcionista == null)
@@ -156,8 +157,6 @@ public class RealizarPagoBeanUI implements Serializable {
                 cliente = clienteExistente;
             }
 
-            // Si el tipo es membresia entonces realizo lo siguiente (Anteriormente estaba pensado de otra manera)
-            if (tipo.equalsIgnoreCase("membresia")) {
                 // Obtiene la membresia por el cliente para ver si este ya tiene una membresia
                 Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
 
@@ -207,12 +206,11 @@ public class RealizarPagoBeanUI implements Serializable {
                     paga.setPorPagar(porPagar);
 
                     // Ralizo el pago
-                    pagaHelper.RealizarPago(paga, tipo, nueva);
+                    pagaHelper.RealizarPago(paga,"membresia", nueva);
 
                 } else {
                     return;
                 }
-            }
 
             // actualizo el cambio
             PrimeFaces.current().ajax().update("formPrincipal:dlgCambio");
@@ -250,8 +248,6 @@ public class RealizarPagoBeanUI implements Serializable {
                 cliente = clienteExistente;
             }
 
-            String tipo = obtenerTotal("membresia");
-
             if (cliente == null)
                 throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
 
@@ -262,8 +258,6 @@ public class RealizarPagoBeanUI implements Serializable {
                 cliente = clienteExistente;
             }
 
-
-            if (tipo.equalsIgnoreCase("membresia")) {
                 Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
 
                 boolean tieneActiva = false;
@@ -306,12 +300,11 @@ public class RealizarPagoBeanUI implements Serializable {
                     paga.setMonto(montoTotal);
                     paga.setPorPagar(porPagar);
 
-                    pagaHelper.RealizarPago(paga, tipo, nueva);
+                    pagaHelper.RealizarPago(paga, "membresia", nueva);
 
                 } else {
                     return;
                 }
-            }
 
             PrimeFaces.current().executeScript("PF('dlgPagoTarjeta').hide(); PF('dlgExitoTarjeta').show();");
 
@@ -469,27 +462,88 @@ public class RealizarPagoBeanUI implements Serializable {
     public void prepararPago(String tipo) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
+            String proximoDialogoWidgetVar = fc.getExternalContext().getRequestParameterMap().get("proximo");
+            if (proximoDialogoWidgetVar == null || proximoDialogoWidgetVar.isEmpty()) {
+                throw new Exception("Error interno: No se especificó el diálogo de pago.");
+            }
+            this.siguienteDialogo = proximoDialogoWidgetVar;
+
+            this.creditoAplicado = 0.0;
             this.cliente = null;
+            String idClienteParaBuscar = null;
+
             if (this.idCliente != null && !this.idCliente.trim().isEmpty()) {
-                this.cliente = clienteHelper.obtenerCliente(this.idCliente.trim());
-                if (this.cliente == null) {
-                    throw new Exception("No se encontró ningún cliente con el ID: " + this.idCliente);
-                }
+                idClienteParaBuscar = this.idCliente.trim();
             } else {
-                this.cliente = (Cliente) FacesContext.getCurrentInstance()
+                Cliente clienteEnSesion = (Cliente) FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
                         .get("clienteSeleccionado");
+
+                if (clienteEnSesion != null) {
+                    idClienteParaBuscar = clienteEnSesion.getIdCliente();
+                }
             }
-            if (this.cliente == null) {
+
+            if (idClienteParaBuscar == null) {
                 throw new Exception("Debe seleccionar un cliente o ingresar un ID de cliente válido.");
             }
+
+            this.cliente = clienteHelper.obtenerCliente(idClienteParaBuscar);
+
+            if (this.cliente == null) {
+                throw new Exception("No se encontró el cliente con ID: " + idClienteParaBuscar);
+            }
+
+            if (this.cliente.getCredito() > 0.01) {
+                this.clienteTieneCredito = true;
+            } else {
+                this.clienteTieneCredito = false;
+            }
+
             obtenerTotal(tipo);
             this.fecha = new Date();
+            PrimeFaces.current().ajax().addCallbackParam("tieneCredito", this.clienteTieneCredito);
+
         } catch (Exception e) {
             fc.validationFailed();
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error al preparar pago", e.getMessage()));
+        }
+    }
+
+    public void aplicarCredito() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            if (cliente == null || montoTotal == null || cliente.getCredito() == 0.00) {
+                throw new Exception("No se puede aplicar el crédito. Faltan datos del cliente o del monto.");
+            }
+
+            double creditoDisponible = cliente.getCredito();
+            if (creditoDisponible <= 0.01) {
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Sin crédito", "El cliente no tiene crédito disponible."));
+                return;
+            }
+
+            if (creditoDisponible >= montoTotal) {
+                this.creditoAplicado = montoTotal;
+                cliente.setCredito(creditoDisponible - montoTotal);
+                montoTotal = 0.0;
+            } else {
+                this.creditoAplicado = creditoDisponible;
+                montoTotal = montoTotal - creditoDisponible;
+                cliente.setCredito(0.0);
+            }
+
+            clienteHelper.ModificarCliente(cliente);
+            calcularFaltante();
+
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Crédito aplicado",
+                    String.format("Se aplicaron $%.2f. Total a pagar: $%.2f", this.creditoAplicado, this.montoTotal)));
+
+        } catch (Exception e) {
+            fc.validationFailed();
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al aplicar crédito", e.getMessage()));
         }
     }
 
@@ -517,6 +571,9 @@ public class RealizarPagoBeanUI implements Serializable {
         montoIngresado = 0.0;
         montoFaltante = 0.0;
         descuento = 0.0;
+        siguienteDialogo = null;
+        clienteTieneCredito = false;
+        creditoAplicado = 0.0;
     }
 
     private String obtenerTotal(String tipo) {
@@ -599,10 +656,7 @@ public class RealizarPagoBeanUI implements Serializable {
     public Double getMontoTotal() { return montoTotal; }
     public Double getMontoIngresado() { return montoIngresado; }
 
-    public void setMontoIngresado(Double montoIngresado) {
-        this.montoIngresado = montoIngresado;
-        calcularFaltante();
-    }
+    public void setMontoIngresado(Double montoIngresado) { this.montoIngresado = montoIngresado; calcularFaltante(); }
 
     public Double getMontoCambio() { return montoCambio; }
     public void setMontoCambio(Double montoCambio) { this.montoCambio = montoCambio; }
@@ -611,4 +665,7 @@ public class RealizarPagoBeanUI implements Serializable {
 
     public Double getDescuento() { return descuento; }
     public void setDescuento(Double descuento) { this.descuento = descuento; }
+
+    public String getSiguienteDialogo() { return siguienteDialogo; }
+    public boolean isClienteTieneCredito() { return clienteTieneCredito; }
 }
