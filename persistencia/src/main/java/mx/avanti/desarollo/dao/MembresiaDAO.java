@@ -113,7 +113,7 @@ public class MembresiaDAO extends AbstractDAO<Membresia> {
         }
     }
 
-    public void actualizarMembresia(Membresia membresia) {
+    public void modificarMembresia(Membresia membresia) {
         EntityTransaction tx = null;
 
         try {
@@ -142,13 +142,23 @@ public class MembresiaDAO extends AbstractDAO<Membresia> {
 
     }
 
-    public Membresia obtenerMembresiaPorCliente(String idCliente) {
+    /**
+     * Obtiene la membresia mas reciente de un cliente, filtrando por un tipo especifico ("membresia" o "clase").
+     * @param idCliente El ID del cliente.
+     * @param tipo El tipo de membresía a buscar.
+     * @return La membresia más reciente de ese tipo, o null si no se encuentra.
+     */
+    public Membresia obtenerMembresiaPorCliente(String idCliente, String tipo) {
         EntityManager em = getEntityManager();
         try {
             return em.createQuery(
-                            "SELECT m FROM Membresia m WHERE m.idCliente.idCliente = :idCliente ORDER BY m.fechaVencimiento DESC",
+                            "SELECT m FROM Membresia m " +
+                                    "WHERE m.idCliente.idCliente = :idCliente " +
+                                    "AND m.tipo = :tipoMembresia " +
+                                    "ORDER BY m.fechaVencimiento DESC",
                             Membresia.class)
                     .setParameter("idCliente", idCliente)
+                    .setParameter("tipoMembresia", tipo)
                     .setMaxResults(1)
                     .getSingleResult();
         } catch (NoResultException e) {

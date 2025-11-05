@@ -14,9 +14,9 @@ public class MembresiaHelper implements Serializable {
      * @Param Objeto de tipo Cliente
      * @return Una lista de clientes
      */
-    public Membresia obtenerMembresiaPorCliente(String idCliente) {
+    public Membresia obtenerMembresiaPorCliente(String idCliente,String membresia) {
         try {
-            return ServiceFacadeLocator.getInstanceMembresiaFacade().obtenerMembresiaPorCliente(idCliente);
+            return ServiceFacadeLocator.getInstanceMembresiaFacade().obtenerMembresiaPorCliente(idCliente,membresia);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -29,6 +29,10 @@ public class MembresiaHelper implements Serializable {
         } catch (Exception e) {
             throw new Exception("Error al registrar la membresia: " + e.getMessage());
         }
+    }
+
+    public void modificarMembresia(Membresia membresia) throws Exception {
+        ServiceFacadeLocator.getInstanceMembresiaFacade().modificarMembresia(membresia);
     }
 
 

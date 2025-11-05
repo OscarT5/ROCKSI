@@ -40,6 +40,13 @@ public class MembresiaDelegate {
         return membresiaDAO.eliminarMembresia(idMembresia);
     }
 
+    public void modificarMembresia(Membresia membresia) throws Exception {
+        if(membresia == null || membresia.getIdItem().trim().isEmpty()) {
+            throw new Exception("La membresia esta vacio");
+        }
+        membresiaDAO.modificarMembresia(membresia);
+    }
+
     /*public Membresia obtenerMembresia(String idMembresia) throws Exception {
         try {
             if (idMembresia == null) return null;
@@ -54,13 +61,13 @@ public class MembresiaDelegate {
         }
     }*/
 
-    public Membresia obtenerMembresiaPorCliente(String idCliente) throws Exception {
+    public Membresia obtenerMembresiaPorCliente(String idCliente, String m) throws Exception {
         try {
             if (idCliente == null) return null;
             idCliente = idCliente.trim();
             if (idCliente.isEmpty()) return null;
 
-            Membresia membresia = membresiaDAO.obtenerMembresiaPorCliente(idCliente);
+            Membresia membresia = membresiaDAO.obtenerMembresiaPorCliente(idCliente,m);
 
             return membresia;
         } catch (Exception e) {

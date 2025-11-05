@@ -115,14 +115,14 @@
 
                 <p:commandButton value="Pago en Efectivo"
                                  icon="pi pi-money-bill"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago('membresia')}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
                                  process="@this cliente descuento"
                                  update="panelMetodoPago :formPrincipal:panelPagoInteractivo :formPrincipal:panelAplicarCredito"
                                  oncomplete="if (!args.validationFailed) {
                                     PF('dlgMetodoPago').hide();
                                     if (args.tieneCredito) {
-                                        PF('dlgAplicarCredito').show();
-                                    } else {
+                                   PF('dlgAplicarCredito').show();
+                                         } else {
                                         PF('dlgPagoInteractivo').show();
                                     }
                                 }"
@@ -132,7 +132,7 @@
 
                 <p:commandButton value="Pago con Tarjeta"
                                  icon="pi pi-credit-card"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago('membresia')}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
                                  process="@this cliente descuento"
                                  update="panelMetodoPago :formPrincipal:panelPagoTarjeta :formPrincipal:panelAplicarCredito"
                                  oncomplete="if (!args.validationFailed) {
@@ -235,7 +235,7 @@
                                      value="Pagar"
                                      process="@this"
                                      update="msgsTarjeta"
-                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjetaMembresia()}"/>
+                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjetaClase()}"/>
 
                     <p:commandButton value="Cancelar"
                                      icon="pi pi-times"
@@ -304,7 +304,7 @@
                 </div>
 
                 <p:commandButton value="Pagar"
-                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivoMembresia()}"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivoClase()}"
                                  update="msgsPagoInteractivo faltante"
                                  styleClass="ui-button"
                                  process="@this montoIngresado"

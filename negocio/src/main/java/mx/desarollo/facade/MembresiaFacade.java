@@ -25,6 +25,14 @@ public class MembresiaFacade {
         }
     }
 
+    public void modificarMembresia(Membresia membresia) throws Exception {
+        try{
+            membresiaDelegate.modificarMembresia(membresia);
+        } catch(Exception e){
+            throw new Exception("Error al eliminar la membresia: " + e.getMessage());
+        }
+    }
+
     /**
      * Metodo para hacer busqueda por ID en las pagas, llamara a la instancia de PagaDelegate
      * @Throws Si la base de datos rechaza la peticion de busqueda por ID
@@ -32,11 +40,11 @@ public class MembresiaFacade {
      * @return Una paga con id de la paga especificado
      */
 
-    public Membresia obtenerMembresiaPorCliente(String idCliente) throws Exception {
+    public Membresia obtenerMembresiaPorCliente(String idCliente, String membresia) throws Exception {
         if (idCliente == null || idCliente.trim().isEmpty()) {
             return null;
         }
-        return membresiaDelegate.obtenerMembresiaPorCliente(idCliente);
+        return membresiaDelegate.obtenerMembresiaPorCliente(idCliente, membresia);
     }
 
     public List<Membresia> listarMembresias() throws Exception {

@@ -158,7 +158,7 @@ public class RealizarPagoBeanUI implements Serializable {
             }
 
                 // Obtiene la membresia por el cliente para ver si este ya tiene una membresia
-                Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
+                Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente(),"membresia");
 
                 // boleano para verificacion
                 boolean tieneActiva = false;
@@ -258,7 +258,7 @@ public class RealizarPagoBeanUI implements Serializable {
                 cliente = clienteExistente;
             }
 
-                Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente());
+                Membresia membresiaActual = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente(),"membresia");
 
                 boolean tieneActiva = false;
 
@@ -318,189 +318,232 @@ public class RealizarPagoBeanUI implements Serializable {
     public void realizarPagoInteractivoClase() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            if (usuarioRecepcionista == null)
-                throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
+            if (usuarioRecepcionista == null) throw new Exception("Debe validar un recepcionista.");
+            if (montoTotal < 0) throw new Exception("Monto total inválido.");
 
-            String idClase = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("idClase");
-            String idCliente = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("idCliente");
+            String idClase = (String) fc.getExternalContext().getSessionMap().get("idClase");
+            String idClienteSesion = (String) fc.getExternalContext().getSessionMap().get("idCliente");
+            if (idClase == null || idClienteSesion == null) throw new Exception("No se ha seleccionado una clase o cliente.");
 
-            if (idClase == null || idClase.trim().isEmpty())
-                throw new Exception("No se ha seleccionado ninguna clase.");
-
-            if (idCliente == null || idCliente.trim().isEmpty())
-                throw new Exception("No se ha seleccionado ningún cliente.");
-
-            Cliente clienteExistente = clienteHelper.obtenerCliente(idCliente);
-            if (clienteExistente == null)
-                throw new Exception("No se encontró el cliente con ID: " + idCliente);
-
-            this.cliente = clienteExistente;
+            this.cliente = clienteHelper.obtenerCliente(idClienteSesion);
+            if (cliente == null) throw new Exception("No se encontró el cliente con ID: " + idClienteSesion);
 
             Clase clase = claseHelper.obtenerClase(idClase);
-            if (clase == null)
-                throw new Exception("No se encontró la clase con ID: " + idClase);
+            if (clase == null) throw new Exception("No se encontró la clase con ID: " + idClase);
 
-            boolean yaAsignado = AsignarClasehelper.verificarClaseAsignadaACliente(idCliente, idClase);
-            if (yaAsignado) {
-                fc.addMessage(null, new FacesMessage(
-                        FacesMessage.SEVERITY_WARN,
-                        "Clase ya asignada",
-                        "El cliente ya está inscrito en la clase " + clase.getNombre() + "."));
-                return;
+            if (clase.getClientes().size() >= clase.getCupoMaximo()) {
+                throw new Exception("La clase " + clase.getNombre() + " ha alcanzado su cupo máximo.");
             }
 
-            int inscritos = clase.getClientes().size();
-            if (inscritos >= clase.getCupoMaximo())
-                throw new Exception("La clase " + clase.getNombre() + " ha alcanzado su cupo máximo de " + clase.getCupoMaximo() + " participantes.");
+            boolean yaAsignado = AsignarClasehelper.verificarClaseAsignadaACliente(cliente.getIdCliente(), clase.getIdClase());
 
-            AsignarClasehelper.asignarClaseACliente(idCliente, idClase);
+            Membresia membresiaClase = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente(), "clase");
+            boolean paseActivo = (membresiaClase != null && membresiaClase.getFechaVencimiento().isAfter(LocalDate.now()));
 
-            nueva = new Membresia();
-            nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
-            nueva.setTipo("clase");
-            nueva.setIdCliente(cliente);
-            membresiaHelper.registrarMembresia(nueva, cliente);
+            if (paseActivo) {
+                if (yaAsignado) {
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Clase ya asignada", "El cliente ya está inscrito y su membresia está activa."));
+                    return;
+                } else {
+                    AsignarClasehelper.asignarClaseACliente(cliente.getIdCliente(), clase.getIdClase());
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscrito con membresia", "El cliente tiene una membresia activa y ha sido inscrito."));
+                    PrimeFaces.current().executeScript("PF('dlgPagoInteractivo').hide();");
+                }
 
-            double gastoActual = cliente.getCantidadDineroMensual();
-            cliente.setCantidadDineroMensual(gastoActual + 500.0);
-            clienteHelper.ModificarCliente(cliente);
+            } else {
+                if (montoIngresado == null || montoIngresado < 0) throw new Exception("Debe ingresar un monto.");
+                calcularFaltante();
+                if (montoIngresado < montoTotal) {
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Monto insuficiente", "Faltan " + montoFaltante + " pesos."));
+                    return;
+                }
+                montoCambio = montoIngresado - montoTotal;
+                if (montoCambio < 0) montoCambio = 0.0;
 
-            paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
-            paga.setFecha(LocalDate.now());
-            paga.setIdCliente(cliente);
-            paga.setMonto(montoTotal);
-            paga.setPorPagar(porPagar);
+                paga = new Paga();
+                paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                paga.setFecha(LocalDate.now());
+                paga.setIdCliente(cliente);
+                paga.setMonto(montoTotal > 0 ? montoTotal : 500.00);
+                paga.setPorPagar(porPagar);
 
-            pagaHelper.RealizarPago(paga,"clase", nueva);
+                if (membresiaClase == null) {
+                    nueva = new Membresia();
+                    nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
+                    nueva.setTipo("clase");
+                    nueva.setIdCliente(cliente);
+                    membresiaHelper.registrarMembresia(nueva, cliente);
+                    pagaHelper.RealizarPago(paga, "clase", nueva);
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia creada", "Se ha creado la membresia de clase."));
+                } else {
+                    membresiaClase.setFechaVencimiento(LocalDate.now().plusDays(30));
+                    membresiaHelper.modificarMembresia(membresiaClase);
+                    pagaHelper.RealizarPago(paga, "clase", membresiaClase);
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia renovada", "Se ha renovado la membresia de clase."));
+                }
 
-            PrimeFaces.current().executeScript("PF('dlgPagoInteractivo').hide(); PF('dlgCambio').show();");
+                PrimeFaces.current().ajax().update("formPrincipal:dlgCambio");
+                PrimeFaces.current().executeScript("PF('dlgPagoInteractivo').hide(); PF('dlgCambio').show();");
+            }
 
-            limpiarCampos();
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("idClase");
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("idCliente");
+            if (!yaAsignado) {
+                AsignarClasehelper.asignarClaseACliente(cliente.getIdCliente(), clase.getIdClase());
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Asignacion Exitosa", "Cliente inscrito en " + clase.getNombre() + "."));
+            }
+
+            montoIngresado = 0.0;
+            montoFaltante = 0.0;
+            fc.getExternalContext().getSessionMap().remove("idClase");
+            fc.getExternalContext().getSessionMap().remove("idCliente");
 
         } catch (Exception e) {
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error al realizar pago de clase", e.getMessage()));
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al pagar clase", e.getMessage()));
         }
     }
 
     public void realizarPagoTarjetaClase() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            if (usuarioRecepcionista == null)
-                throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
+            if (usuarioRecepcionista == null) throw new Exception("Debe validar un recepcionista.");
 
             String idClase = (String) fc.getExternalContext().getSessionMap().get("idClase");
-            String idCliente = (String) fc.getExternalContext().getSessionMap().get("idCliente");
+            String idClienteSesion = (String) fc.getExternalContext().getSessionMap().get("idCliente");
+            if (idClase == null || idClienteSesion == null) throw new Exception("No se ha seleccionado una clase o cliente.");
 
-            if (idClase == null || idClase.trim().isEmpty())
-                throw new Exception("No se ha seleccionado ninguna clase.");
-
-            if (idCliente == null || idCliente.trim().isEmpty())
-                throw new Exception("No se ha seleccionado ningún cliente.");
-
-            Cliente clienteExistente = clienteHelper.obtenerCliente(idCliente);
-            if (clienteExistente == null)
-                throw new Exception("No se encontró el cliente con ID: " + idCliente);
-
-            this.cliente = clienteExistente;
+            this.cliente = clienteHelper.obtenerCliente(idClienteSesion);
+            if (cliente == null) throw new Exception("No se encontró el cliente con ID: " + idClienteSesion);
 
             Clase clase = claseHelper.obtenerClase(idClase);
-            if (clase == null)
-                throw new Exception("No se encontró la clase con ID: " + idClase);
+            if (clase == null) throw new Exception("No se encontró la clase con ID: " + idClase);
 
-            boolean yaAsignado = AsignarClasehelper.verificarClaseAsignadaACliente(idCliente, idClase);
-            if (yaAsignado) {
-                fc.addMessage(null, new FacesMessage(
-                        FacesMessage.SEVERITY_WARN,
-                        "Clase ya asignada",
-                        "El cliente ya está inscrito en la clase " + clase.getNombre() + "."));
-                return;
+            if (clase.getClientes().size() >= clase.getCupoMaximo()) {
+                throw new Exception("La clase " + clase.getNombre() + " ha alcanzado su cupo máximo.");
             }
 
-            int inscritos = clase.getClientes().size();
-            if (inscritos >= clase.getCupoMaximo())
-                throw new Exception("La clase " + clase.getNombre() + " ha alcanzado su cupo máximo de " + clase.getCupoMaximo() + " participantes.");
+            boolean yaAsignado = AsignarClasehelper.verificarClaseAsignadaACliente(cliente.getIdCliente(), clase.getIdClase());
 
-            AsignarClasehelper.asignarClaseACliente(idCliente, idClase);
+            Membresia membresiaClase = membresiaHelper.obtenerMembresiaPorCliente(cliente.getIdCliente(), "clase");
+            boolean paseActivo = (membresiaClase != null && membresiaClase.getFechaVencimiento().isAfter(LocalDate.now()));
 
-            nueva = new Membresia();
-            nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
-            nueva.setTipo("clase");
-            nueva.setIdCliente(cliente);
-            membresiaHelper.registrarMembresia(nueva, cliente);
+            if (paseActivo) {
+                if (yaAsignado) {
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Clase ya asignada", "El cliente ya está inscrito y su membresia está activa."));
+                    return;
+                } else {
+                    AsignarClasehelper.asignarClaseACliente(cliente.getIdCliente(), clase.getIdClase());
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscrito con membresia", "Se ha renovado la membresia de clase."));
+                    PrimeFaces.current().executeScript("PF('dlgPagoTarjeta').hide();");
+                }
+            } else {
+                paga = new Paga();
+                paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                paga.setFecha(LocalDate.now());
+                paga.setIdCliente(cliente);
+                paga.setMonto(montoTotal > 0 ? montoTotal : 500.00);
+                paga.setPorPagar(porPagar);
 
-            double gastoActual = cliente.getCantidadDineroMensual();
-            cliente.setCantidadDineroMensual(gastoActual + 500.0);
-            clienteHelper.ModificarCliente(cliente);
+                if (membresiaClase == null) {
+                    nueva = new Membresia();
+                    nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
+                    nueva.setTipo("clase");
+                    nueva.setIdCliente(cliente);
+                    membresiaHelper.registrarMembresia(nueva, cliente);
+                    pagaHelper.RealizarPago(paga, "clase", nueva);
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia creada", "Se ha creado la membresia de clase."));
 
-            paga = new Paga();
-            paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
-            paga.setFecha(LocalDate.now());
-            paga.setIdCliente(cliente);
-            paga.setMonto(montoTotal > 0 ? montoTotal : 500.00);
-            paga.setPorPagar(porPagar);
+                } else {
+                    membresiaClase.setFechaVencimiento(LocalDate.now().plusDays(30));
+                    membresiaHelper.modificarMembresia(membresiaClase);
+                    pagaHelper.RealizarPago(paga, "clase", membresiaClase);
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia renovada", "Se ha renovado la membresia de clase."));
+                }
 
-            pagaHelper.RealizarPago(paga, "clase", nueva);
+                PrimeFaces.current().executeScript("PF('dlgPagoTarjeta').hide(); PF('dlgExitoTarjeta').show();");
+            }
 
-            PrimeFaces.current().executeScript("PF('dlgPagoTarjeta').hide(); PF('dlgExitoTarjeta').show();");
+            if (!yaAsignado) {
+                AsignarClasehelper.asignarClaseACliente(cliente.getIdCliente(), clase.getIdClase());
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "¡Éxito!", "Cliente inscrito en " + clase.getNombre() + "."));
+            }
 
-            limpiarCampos();
+            if (!paseActivo) {
+                limpiarCampos();
+            }
             fc.getExternalContext().getSessionMap().remove("idClase");
             fc.getExternalContext().getSessionMap().remove("idCliente");
 
         } catch (Exception e) {
-            fc.addMessage(null, new FacesMessage(
-                    FacesMessage.SEVERITY_ERROR,
-                    "Error al realizar pago con tarjeta",
-                    e.getMessage()
-            ));
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al pagar clase", e.getMessage()));
         }
     }
 
     public void prepararPago(String tipo) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
+            // Obtiene el nombre del dialogo de pago
             String proximoDialogoWidgetVar = fc.getExternalContext().getRequestParameterMap().get("proximo");
             if (proximoDialogoWidgetVar == null || proximoDialogoWidgetVar.isEmpty()) {
                 throw new Exception("Error interno: No se especificó el diálogo de pago.");
             }
             this.siguienteDialogo = proximoDialogoWidgetVar;
 
+            // Reseta los valores
             this.creditoAplicado = 0.0;
             this.cliente = null;
-            String idClienteParaBuscar = null;
+            this.clienteTieneCredito = false;
 
+            // Se scribio un id cliente
             if (this.idCliente != null && !this.idCliente.trim().isEmpty()) {
-                idClienteParaBuscar = this.idCliente.trim();
+
+                // Si si se ecribio, ontiene el cleinte por su Id
+                String idClienteParaBuscar = this.idCliente.trim();
+                this.cliente = clienteHelper.obtenerCliente(idClienteParaBuscar);
+
+                if (this.cliente == null) {
+                    // El UR escribió un ID que no existe
+                    throw new Exception("No se encontró el cliente con ID: " + idClienteParaBuscar);
+                }
+
             } else {
-                Cliente clienteEnSesion = (Cliente) FacesContext.getCurrentInstance()
+
+                // Si viene de clases
+                String idClienteDeClase = (String) FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
-                        .get("clienteSeleccionado");
+                        .get("idCliente");
 
-                if (clienteEnSesion != null) {
-                    idClienteParaBuscar = clienteEnSesion.getIdCliente();
+                if (idClienteDeClase != null && !idClienteDeClase.trim().isEmpty()) {
+                    this.cliente = clienteHelper.obtenerCliente(idClienteDeClase);
+
+                    if (this.cliente == null) {
+                        throw new Exception("Error de sesión: El ID de cliente '" + idClienteDeClase + "' no se encontró en la BD.");
+                    }
+
+                } else {
+                    // Si viene de membresias
+                    Cliente clienteEnSesion = (Cliente) FacesContext.getCurrentInstance()
+                            .getExternalContext()
+                            .getSessionMap()
+                            .get("clienteSeleccionado");
+
+                    if (clienteEnSesion != null) {
+                        Cliente clienteFresco = clienteHelper.obtenerCliente(clienteEnSesion.getIdCliente());
+
+                        if (clienteFresco != null) {
+                            this.cliente = clienteFresco;
+                        } else {
+                            this.cliente = clienteEnSesion;
+                        }
+                    }
                 }
             }
 
-            if (idClienteParaBuscar == null) {
-                throw new Exception("Debe seleccionar un cliente o ingresar un ID de cliente válido.");
-            }
-
-            this.cliente = clienteHelper.obtenerCliente(idClienteParaBuscar);
-
-            if (this.cliente == null) {
-                throw new Exception("No se encontró el cliente con ID: " + idClienteParaBuscar);
-            }
-
-            if (this.cliente.getCredito() > 0.01) {
+            // Solo se revisa credito (si tenemos un cliente existente)
+            if (this.cliente != null && this.cliente.getCredito() > 0.01) {
                 this.clienteTieneCredito = true;
-            } else {
-                this.clienteTieneCredito = false;
             }
 
+            // Calcular total
             obtenerTotal(tipo);
             this.fecha = new Date();
             PrimeFaces.current().ajax().addCallbackParam("tieneCredito", this.clienteTieneCredito);
