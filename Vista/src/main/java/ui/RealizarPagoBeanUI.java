@@ -31,6 +31,7 @@ public class RealizarPagoBeanUI implements Serializable {
     // Clases para completar el pago
     private Paga paga = new Paga();
     private Cliente cliente;
+    private String idCliente;
     Membresia nueva = new Membresia();
 
     // Usuario recepcionista
@@ -143,14 +144,6 @@ public class RealizarPagoBeanUI implements Serializable {
             montoCambio = montoIngresado - montoTotal;
             if (montoCambio < 0) montoCambio = 0.0;
 
-            // Obtener cliente desde la alta de clase
-            if (cliente == null) {
-                cliente = (Cliente) FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getSessionMap()
-                        .get("clienteSeleccionado");
-            }
-
             // Si el cliente es igual a null no sigue el flujo y muestra el siguiente mensaje
             if (cliente == null)
                 throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
@@ -201,6 +194,11 @@ public class RealizarPagoBeanUI implements Serializable {
                     nueva.setTipo("membresia");
                     membresiaHelper.registrarMembresia(nueva, cliente);
 
+                    // Asigno el pago mensual a 800 si paga si paga su membresia
+                    double gastoActual = cliente.getCantidadDineroMensual();
+                    cliente.setCantidadDineroMensual(800.0);
+                    clienteHelper.ModificarCliente(cliente);
+
                     // Creo el pago
                     paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
                     paga.setFecha(LocalDate.now());
@@ -240,13 +238,6 @@ public class RealizarPagoBeanUI implements Serializable {
                 throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
 
             if (paga == null) paga = new Paga();
-
-            if (cliente == null) {
-                cliente = (Cliente) FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getSessionMap()
-                        .get("clienteSeleccionado");
-            }
 
             if (cliente == null)
                 throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
@@ -304,6 +295,10 @@ public class RealizarPagoBeanUI implements Serializable {
                     nueva.setIdCliente(cliente);
                     nueva.setTipo("membresia");
                     membresiaHelper.registrarMembresia(nueva, cliente);
+
+                    double gastoActual = cliente.getCantidadDineroMensual();
+                    cliente.setCantidadDineroMensual(800.0);
+                    clienteHelper.ModificarCliente(cliente);
 
                     paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
                     paga.setFecha(LocalDate.now());
@@ -373,6 +368,10 @@ public class RealizarPagoBeanUI implements Serializable {
             nueva.setIdCliente(cliente);
             membresiaHelper.registrarMembresia(nueva, cliente);
 
+            double gastoActual = cliente.getCantidadDineroMensual();
+            cliente.setCantidadDineroMensual(gastoActual + 500.0);
+            clienteHelper.ModificarCliente(cliente);
+
             paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
             paga.setFecha(LocalDate.now());
             paga.setIdCliente(cliente);
@@ -439,6 +438,10 @@ public class RealizarPagoBeanUI implements Serializable {
             nueva.setIdCliente(cliente);
             membresiaHelper.registrarMembresia(nueva, cliente);
 
+            double gastoActual = cliente.getCantidadDineroMensual();
+            cliente.setCantidadDineroMensual(gastoActual + 500.0);
+            clienteHelper.ModificarCliente(cliente);
+
             paga = new Paga();
             paga.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
             paga.setFecha(LocalDate.now());
@@ -466,21 +469,27 @@ public class RealizarPagoBeanUI implements Serializable {
     public void prepararPago(String tipo) {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
-            if (cliente == null) {
-                cliente = (Cliente) FacesContext.getCurrentInstance()
+            this.cliente = null;
+            if (this.idCliente != null && !this.idCliente.trim().isEmpty()) {
+                this.cliente = clienteHelper.obtenerCliente(this.idCliente.trim());
+                if (this.cliente == null) {
+                    throw new Exception("No se encontró ningún cliente con el ID: " + this.idCliente);
+                }
+            } else {
+                this.cliente = (Cliente) FacesContext.getCurrentInstance()
                         .getExternalContext()
                         .getSessionMap()
                         .get("clienteSeleccionado");
             }
-
+            if (this.cliente == null) {
+                throw new Exception("Debe seleccionar un cliente o ingresar un ID de cliente válido.");
+            }
             obtenerTotal(tipo);
-
             this.fecha = new Date();
-
         } catch (Exception e) {
             fc.validationFailed();
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error al preparar pago", "No se pudieron cargar los datos: " + e.getMessage()));
+                    "Error al preparar pago", e.getMessage()));
         }
     }
 
@@ -566,6 +575,9 @@ public class RealizarPagoBeanUI implements Serializable {
     // Getters y Setters
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
+
+    public String getIdCliente() { return idCliente; }
+    public void setIdCliente(String idCliente) { this.idCliente = idCliente; }
 
     public Date getFecha() { return fecha; }
     public void setFecha(Date fecha) { this.fecha = fecha; }
