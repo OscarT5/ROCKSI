@@ -2,10 +2,7 @@ package mx.desarollo.delegate;
 
 import mx.avanti.desarollo.dao.PagaDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
-import mx.desarollo.entity.Item;
-import mx.desarollo.entity.Membresia;
-import mx.desarollo.entity.Paga;
-import mx.desarollo.entity.Producto;
+import mx.desarollo.entity.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,30 +14,27 @@ public class PagaDelegate {
         this.pagaDAO = ServiceLocator.getInstancePagaDAO();
     }
 
-    public void registrarPago(Paga paga, String tipo) throws Exception {
+    public void registrarPago(Paga paga, String tipo,Membresia membresia) throws Exception {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
         }
         if (paga.getMonto() == null) {
             throw new Exception("Se debe ingresar el monto del pago");
         }
-        if (paga.getMonto() <= 0) {
-            throw new Exception("El monto del pago debe ser mayor que 0");
+        if (paga.getMonto() < 0) {
+            throw new Exception("El monto del pago no pude ser menor que 0");
         }
         if (paga.getPorPagar() < 0) {
             throw new Exception("El monto por pagar no debe ser menor que 0");
         }
 
         if ("membresia".equalsIgnoreCase(tipo)) {
-            Item item = new Producto();
-            item.setIdItem("CLI0002");
-            paga.setIdItem(item);
+            paga.setIdItem(membresia);
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);
-        } else if ("clase".equalsIgnoreCase(tipo)) {
-            Item item = new Producto();
-            item.setIdItem("CLA2");
-            paga.setIdItem(item);
+        }
+        else if ("clase".equalsIgnoreCase(tipo)) {
+            paga.setIdItem(membresia);
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);
         }

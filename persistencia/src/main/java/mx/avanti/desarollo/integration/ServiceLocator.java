@@ -45,6 +45,8 @@ public class ServiceLocator {
     public static UsuarioRDAO getInstanceURDAO() {
         return new UsuarioRDAO(getEntityManager());
     }
+
+    public static MembresiaDAO getInstanceMembresiaDAO() { return new MembresiaDAO(getEntityManager()); }
     /**
      * se crea la instancia de usuarioDAO si esta no existe
      */

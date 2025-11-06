@@ -3,7 +3,6 @@ package mx.desarollo.delegate;
 import mx.avanti.desarollo.dao.ClienteDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Cliente;
-import mx.desarollo.entity.Membresia;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -13,4 +13,8 @@ public class AsignarClaseHelper {
     public void eliminarAsignacionClienteClase(String idCliente, String idClase) throws Exception {
         dao.eliminarAsignacionClienteClase(idCliente, idClase);
     }
+
+    public boolean verificarClaseAsignadaACliente(String idCliente, String idClase) throws Exception {
+        return dao.verificarClaseAsignadaACliente(idCliente, idClase);
+    }
 }

@@ -1,6 +1,8 @@
 package mx.desarollo.facade;
 
 import mx.desarollo.delegate.PagaDelegate;
+import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Membresia;
 import mx.desarollo.entity.Paga;
 
 import java.util.List;
@@ -8,9 +10,9 @@ import java.util.List;
 public class PagaFacade {
     private final PagaDelegate pagaDelegate = new PagaDelegate();
 
-    public void registrarPago(Paga paga,String tipo) throws Exception {
+    public void registrarPago(Paga paga, String tipo, Membresia membresia) throws Exception {
         try {
-            pagaDelegate.registrarPago(paga,tipo);
+            pagaDelegate.registrarPago(paga, tipo, membresia);
         } catch (Exception e) {
             throw new Exception("Error al registrar el pago: " + e.getMessage());
         }

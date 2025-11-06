@@ -101,4 +101,27 @@ public class AsignacionDAO {
         }
     }
 
+    public boolean verificarClaseAsignadaACliente(String idCliente, String idClase) throws Exception {
+        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        boolean asignada = false;
+
+        try {
+            Long count = em.createQuery(
+                            "SELECT COUNT(c) FROM Cliente c JOIN c.clases cl " +
+                                    "WHERE c.idCliente = :idCliente AND cl.idItem = :idClase",
+                            Long.class)
+                    .setParameter("idCliente", idCliente)
+                    .setParameter("idClase", idClase)
+                    .getSingleResult();
+
+            asignada = count != null && count > 0;
+        } catch (Exception e) {
+            throw new Exception("Error al verificar si el cliente tiene la clase asignada: " + e.getMessage());
+        } finally {
+            if (em.isOpen()) em.close();
+        }
+
+        return asignada;
+    }
+
 }

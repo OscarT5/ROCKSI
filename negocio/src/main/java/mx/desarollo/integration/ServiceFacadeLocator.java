@@ -9,7 +9,7 @@ public class ServiceFacadeLocator {
     private static ProductoFacade ProductoFacade;
     private static PagaFacade PagaFacade;
     private static UsuarioRFacade UsuarioRFacade;
-
+    private static MembresiaFacade MembresiaFacade;
 
     public static ClienteFacade getInstanceClienteFacade() {
         if (ClienteFacade == null) {
@@ -53,6 +53,15 @@ public class ServiceFacadeLocator {
         }
         else{
             return UsuarioRFacade;
+        }
+    }
+    public static MembresiaFacade getInstanceMembresiaFacade() {
+        if(MembresiaFacade == null){
+            MembresiaFacade =  new MembresiaFacade();
+            return MembresiaFacade;
+        }
+        else{
+            return MembresiaFacade;
         }
     }
 
