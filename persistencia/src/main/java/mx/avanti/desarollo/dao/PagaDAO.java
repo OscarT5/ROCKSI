@@ -55,11 +55,11 @@ public class PagaDAO extends AbstractDAO<Paga> {
     private void sincronizarContador() {
         try {
             String ultimoId = em
-                    .createQuery("SELECT p.idPaga FROM Paga p WHERE p.idPaga LIKE 'P%' ORDER BY p.idPaga DESC", String.class)
+                    .createQuery("SELECT p.idPaga FROM Paga p WHERE p.idPaga LIKE 'PA%' ORDER BY p.idPaga DESC", String.class)
                     .setMaxResults(1)
                     .getSingleResult();
 
-            if (ultimoId != null && ultimoId.startsWith("P")) {
+            if (ultimoId != null && ultimoId.startsWith("PA")) {
                 int numero = Integer.parseInt(ultimoId.substring(2));
                 Paga.setContador(numero + 1);
                 System.out.println("Contador de pagos sincronizado: siguiente P" + (numero + 1));
@@ -103,6 +103,14 @@ public class PagaDAO extends AbstractDAO<Paga> {
             e.printStackTrace();
         }
         return eliminado;
+    }
+
+    public Paga buscarPagaPorId(String id) {
+        try {
+            return em.find(Paga.class, id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar el Pago por ID", e);
+        }
     }
 
     public List<Paga> buscarPagosPorId(String idParcial) {

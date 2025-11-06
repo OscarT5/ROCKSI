@@ -246,7 +246,6 @@
 <h:body>
 
     <!-- Barra lateral -->
-    <f:event type="preRenderView" listener="#{RealizarPagoBeanUI.verificarAutoAbrir}" />
     <div class="sidebar">
         <div class="menu">
             <h:form>
@@ -315,16 +314,22 @@
                     </p:inputText>
 
                     <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
+                                     actionListener="#{RealizarPagoBeanUI.recargar()}"
                                      action="#{pagoBeanUI.recargar}"
                                      update="tablaPagos"/>
 
-                    <p:commandButton value="Realizar Compra"
+                    <p:commandButton value="Realizar Pago clase"
                                      icon="pi pi-shopping-cart"
-                                     onclick="PF('dlgAskId').show();"
+                                     onclick="PF('dlgAskId2').show();"
+                                     type="button"/>
+
+                    <p:commandButton value="Realizar Pago Membresia"
+                                     icon="pi pi-shopping-cart"
+                                     onclick="PF('dlgAskId1').show();"
                                      type="button"/>
 
                     <p:commandButton value="Cancelar pago" icon="pi pi-times"
-                                     actionListener="#{pagoBeanUI.abrirDialogoCancelarPago}"
+                                     actionListener="#{pagoBeanUI.abrirDialogoCancelarPago()}"
                                      type="button"/>
 
                     <p:commandButton value="Abrir la caja" icon="pi pi-inbox"
@@ -367,369 +372,605 @@
         </div>
     </div>
     <h:form id="formPrincipal">
-        <!-- DIALOG 1: INGRESAR ID DEL RECEPCIONISTA -->
-    <p:dialog header="Identifícate" widgetVar="dlgAskId" modal="true"
-              resizable="false" closable="true" draggable="false" width="360">
-        <h:panelGrid columns="1" style="width:100%;">
-            <p:messages id="msgsId" showDetail="true" closable="true"/>
-            <div class="form-group">
-                <h:outputLabel for="searchId" value="ID Usuario Recepcionista"/>
-                <p:inputText id="searchId"
-                             value="#{RealizarPagoBeanUI.idUR}"
-                             placeholder="Ej. UR0001"
-                             styleClass="form-control"
-                             required="true"
-                             requiredMessage="El ID es obligatorio"/>
-            </div>
 
-            <p:commandButton value="Siguiente"
-                             icon="pi pi-search"
-                             action="#{RealizarPagoBeanUI.verificarUsuario}"
-                             update="msgsId"
-                             process="@this searchId"
-                             oncomplete="if (!args.validationFailed) { PF('dlgAskId').hide(); PF('dlgAskPass').show(); }"
-                             styleClass="ui-button"
-                             style="background:#007bff; color:#fff;"/>
+        <p:dialog header="Identifícate" widgetVar="dlgAskId1" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsId1" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="searchId1" value="ID Usuario Recepcionista"/>
+                    <p:inputText id="searchId1"
+                                 value="#{RealizarPagoBeanUI.idUR}"
+                                 placeholder="Ej. UR0001"
+                                 styleClass="form-control"
+                                 required="true"
+                                 requiredMessage="El ID es obligatorio"/>
+                </div>
 
-        </h:panelGrid>
-    </p:dialog>
+                <p:commandButton value="Siguiente"
+                                 icon="pi pi-search"
+                                 action="#{RealizarPagoBeanUI.verificarUsuario}"
+                                 update="msgsId1"
+                                 process="@this searchId1"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskId1').hide(); PF('dlgAskPass1').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#007bff; color:#fff;"/>
 
-        <!-- DIALOG 2: VALIDAR CONTRASEÑA -->
-    <p:dialog header="Validar contraseña" widgetVar="dlgAskPass" modal="true"
-              resizable="false" closable="true" draggable="false" width="360">
-        <h:panelGrid columns="1" style="width:100%;">
-            <p:messages id="msgsPass" showDetail="true" closable="true"/>
-            <div class="form-group">
-                <h:outputLabel for="pass" value="Contraseña del Recepcionista"/>
-                <p:password id="pass"
-                            value="#{RealizarPagoBeanUI.contrasenaUR}"
-                            feedback="false"
-                            styleClass="form-control"
-                            required="true"
-                            requiredMessage="Debe ingresar la contraseña"/>
-            </div>
+            </h:panelGrid>
+        </p:dialog>
 
-            <p:commandButton value="Validar"
-                             icon="pi pi-lock"
-                             action="#{RealizarPagoBeanUI.validarContrasena}"
-                             update="msgsPass"
-                             process="@this pass"
-                             oncomplete="if (!args.validationFailed) { PF('dlgAskPass').hide(); PF('dlgTipoPago').show(); }"
-                             styleClass="ui-button"
-                             style="background:#28a745; color:#fff;"/>
-        </h:panelGrid>
-    </p:dialog>
+        <p:dialog header="Validar contraseña" widgetVar="dlgAskPass1" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsPass1" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="pass1" value="Contraseña del Recepcionista"/>
+                    <p:password id="pass1"
+                                value="#{RealizarPagoBeanUI.contrasenaUR}"
+                                feedback="false"
+                                styleClass="form-control"
+                                required="true"
+                                requiredMessage="Debe ingresar la contraseña"/>
+                </div>
 
-    <p:dialog header="¿Qué desea pagar?" widgetVar="dlgTipoPago" modal="true"
-              resizable="false" closable="true" draggable="false" width="360">
-        <h:panelGrid columns="1" style="width:100%; text-align:center;">
-            <p:messages id="msgsTipoPago" showDetail="true" closable="true"/>
+                <p:commandButton value="Validar"
+                                 icon="pi pi-lock"
+                                 action="#{RealizarPagoBeanUI.validarContrasena}"
+                                 update="msgsPass1"
+                                 process="@this pass1"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPass1').hide(); PF('dlgMetodoPago1').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#28a745; color:#fff;"/>
+            </h:panelGrid>
+        </p:dialog>
 
-            <h:outputText value="Seleccione el tipo de pago a realizar."
-                          style="font-size:16px; margin-bottom: 20px; display:block;"/>
+        <p:dialog header="Seleccionar Método de Pago" widgetVar="dlgMetodoPago1"
+                  modal="true" resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid id="panelMetodoPago1" columns="1" style="width:100%; text-align:center;">
 
-            <p:commandButton value="Pagar Membresía"
-                             icon="pi pi-id-card"
-                             actionListener="#{RealizarPagoBeanUI.setTipoPago('membresia')}"
-                             process="@this"
-                             update="msgsTipoPago"
-                             oncomplete="PF('dlgTipoPago').hide(); PF('dlgMetodoPago').show();"
-                             style="margin-bottom:10px; background:#007bff; color:#fff;"/>
+                <p:messages id="msgsMetodoPago1" showDetail="true" closable="true"/>
 
-            <p:commandButton value="Pagar Clase"
-                             icon="pi pi-book"
-                             actionListener="#{RealizarPagoBeanUI.setTipoPago('clase')}"
-                             process="@this"
-                             update="msgsTipoPago"
-                             oncomplete="PF('dlgTipoPago').hide(); PF('dlgMetodoPago').show();"
-                             style="background:#17a2b8; color:#fff;"/>
-        </h:panelGrid>
-    </p:dialog>
+                <div class="form-group">
+                    <h:outputLabel for="cliente1" value="Cliente (opcional)" style="font-weight:bold;"/>
+                    <p:inputText id="cliente1"
+                                 value="#{RealizarPagoBeanUI.idCliente}"
+                                 maxlength="7"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 placeholder="CLI1000"
+                                 styleClass="form-control">
+                    </p:inputText>
+                </div>
 
-        <!-- DIALOG 3: METODO DE PAGO -->
-    <p:dialog header="Seleccionar Método de Pago" widgetVar="dlgMetodoPago"
-              modal="true" resizable="false" closable="false" draggable="false" width="360">
-        <h:panelGrid id="panelMetodoPago" columns="1" style="width:100%; text-align:center;">
+                <div class="form-group">
+                    <h:outputLabel for="descuento1" value="Descuento (opcional)" style="font-weight:bold;"/>
+                    <p:inputText id="descuento1"
+                                 value="#{RealizarPagoBeanUI.descuento}"
+                                 maxlength="5"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 placeholder="$200"
+                                 styleClass="form-control">
+                    </p:inputText>
+                </div>
 
-            <p:messages id="msgsMetodoPago" showDetail="true" closable="true"/>
+                <p:commandButton value="Pago en Efectivo"
+                                 icon="pi pi-money-bill"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('membresia')}"
+                                 process="@this cliente1 descuento1"
+                                 update="panelMetodoPago1 :formPrincipal:panelPagoInteractivo1 :formPrincipal:panelAplicarCredito1"
+                                 oncomplete="if (!args.validationFailed) {
+                            PF('dlgMetodoPago1').hide();
+                            if (args.tieneCredito) {
+                                PF('dlgAplicarCredito1').show();
+                            } else {
+                                PF('dlgPagoInteractivo1').show();
+                            }
+                        }"
+                                 style="margin-bottom:10px; background:#ffc107; color:#000;">
+                    <f:param name="proximo" value="dlgPagoInteractivo1" />
+                </p:commandButton>
 
-            <div class="form-group">
-                <h:outputLabel for="cliente" value="Cliente (opcional)" style="font-weight:bold;"/>
-                <p:inputText id="cliente"
-                             value="#{RealizarPagoBeanUI.idCliente}"
-                             maxlength="7"
-                             onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
-                             placeholder="CLI1000"
-                             styleClass="form-control">
-                </p:inputText>
-            </div>
+                <p:commandButton value="Pago con Tarjeta"
+                                 icon="pi pi-credit-card"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('membresia')}"
+                                 process="@this cliente1 descuento1"
+                                 update="panelMetodoPago1 :formPrincipal:panelPagoTarjeta1 :formPrincipal:panelAplicarCredito1"
+                                 oncomplete="if (!args.validationFailed) {
+                            PF('dlgMetodoPago1').hide();
+                            if (args.tieneCredito) {
+                                PF('dlgAplicarCredito1').show();
+                            } else {
+                                PF('dlgPagoTarjeta1').show();
+                            }
+                        }"
+                                 style="background:#17a2b8; color:#fff;">
+                    <f:param name="proximo" value="dlgPagoTarjeta1" />
+                </p:commandButton>
 
-            <div class="form-group">
-                <h:outputLabel for="descuento" value="Descuento (opcional)" style="font-weight:bold;"/>
-                <p:inputText id="descuento"
-                             value="#{RealizarPagoBeanUI.descuento}"
-                             maxlength="5"
-                             onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
-                             placeholder="$200"
-                             styleClass="form-control">
-                </p:inputText>
-            </div>
+            </h:panelGrid>
+        </p:dialog>
 
-            <p:commandButton value="Pago en Efectivo"
-                             icon="pi pi-money-bill"
-                             actionListener="#{RealizarPagoBeanUI.prepararPago}"
-                             process="@this cliente descuento"
-                             update="panelMetodoPago :formPrincipal:panelPagoInteractivo :formPrincipal:panelAplicarCredito"
-                             oncomplete="if (!args.validationFailed) {
-                                    PF('dlgMetodoPago').hide();
-                                    if (args.tieneCredito) {
-                                   PF('dlgAplicarCredito').show();
-                                         } else {
-                                        PF('dlgPagoInteractivo').show();
-                                    }
-                                }"
-                             style="margin-bottom:10px; background:#ffc107; color:#000;">
-                <f:param name="proximo" value="dlgPagoInteractivo" />
-            </p:commandButton>
+        <p:dialog header="Confirmar Crédito" widgetVar="dlgAplicarCredito1"
+                  modal="true" resizable="false" closable="false" draggable="false" width="420">
 
-            <p:commandButton value="Pago con Tarjeta"
-                             icon="pi pi-credit-card"
-                             actionListener="#{RealizarPagoBeanUI.prepararPago}"
-                             process="@this cliente descuento"
-                             update="panelMetodoPago :formPrincipal:panelPagoTarjeta :formPrincipal:panelAplicarCredito"
-                             oncomplete="if (!args.validationFailed) {
-                                    PF('dlgMetodoPago').hide();
-                                    if (args.tieneCredito) {
-                                        PF('dlgAplicarCredito').show();
-                                    } else {
-                                        PF('dlgPagoTarjeta').show();
-                                    }
-                                }"
-                             style="background:#17a2b8; color:#fff;">
-                <f:param name="proximo" value="dlgPagoTarjeta" />
-            </p:commandButton>
+            <h:panelGrid id="panelAplicarCredito1" columns="1" style="width:100%; text-align:center;">
+                <p:messages id="msgsCredito1" showDetail="true" closable="true"/>
 
-        </h:panelGrid>
-    </p:dialog>
+                <h:outputText value="El cliente tiene un crédito disponible de:"
+                              style="font-size:16px;"/>
 
-    <p:dialog header="Confirmar Crédito" widgetVar="dlgAplicarCredito"
-              modal="true" resizable="false" closable="false" draggable="false" width="420">
-        <h:panelGrid id="panelAplicarCredito" columns="1" style="width:100%; text-align:center;">
-            <p:messages id="msgsCredito" showDetail="true" closable="true"/>
-
-            <h:outputText value="El cliente tiene un crédito disponible de:"
-                          style="font-size:16px;"/>
-
-            <h:outputText value="#{RealizarPagoBeanUI.cliente.credito}"
-                          style="font-size:22px; font-weight:bold; color:#28a745; margin:5px 0;">
-                <f:convertNumber type="currency" currencySymbol="$"/>
-            </h:outputText>
-
-            <h:outputText value="Total actual de la compra:"
-                          style="font-size:16px; margin-top:10px;"/>
-            <h:outputText value="#{RealizarPagoBeanUI.montoTotal}"
-                          style="font-size:18px; font-weight:bold;">
-                <f:convertNumber type="currency" currencySymbol="$"/>
-            </h:outputText>
-
-            <h:outputText value="¿Desea aplicar el crédito a esta compra?"
-                          style="font-size:16px; margin-top:15px; font-weight:bold;"/>
-
-            <h:outputText value="Esta acción es irreversible y modificará el saldo del cliente."
-                          style="font-size:13px; font-style:italic; color:#777;"/>
-
-            <p:commandButton value="Sí, Aplicar Crédito"
-                             icon="pi pi-check"
-                             action="#{RealizarPagoBeanUI.aplicarCredito}"
-                             process="@this"
-                             update="panelAplicarCredito msgsCredito :formPrincipal:panelPagoTarjeta :formPrincipal:panelPagoInteractivo"
-                             oncomplete="if (!args.validationFailed) { PF('dlgAplicarCredito').hide(); PF('#{RealizarPagoBeanUI.siguienteDialogo}').show(); }"
-                             style="background:#28a745; color:#fff;"/>
-
-            <p:commandButton value="No, Pagar Completo"
-                             icon="pi pi-times"
-                             type="button"
-                             onclick="PF('dlgAplicarCredito').hide(); PF('#{RealizarPagoBeanUI.siguienteDialogo}').show();"
-                             style="background:#dc3545; color:#fff;"/>
-
-        </h:panelGrid>
-    </p:dialog>
-
-        <!-- DIALOG 4: CONFIRMACIÓN DE PAGO CON TARJETA -->
-    <p:dialog header="Pago con Tarjeta"
-              widgetVar="dlgPagoTarjeta"
-              modal="true"
-              resizable="false"
-              closable="false"
-              draggable="false"
-              width="420">
-
-        <h:panelGrid id="panelPagoTarjeta" columns="1" style="width:100%;">
-            <p:messages id="msgsTarjeta" showDetail="true" closable="true"/>
-
-            <h:outputText value="Información del Cliente:" style="font-weight:bold; margin-bottom:10px;"/>
-
-            <h:panelGrid columns="2" columnClasses="label,value" style="width:100%;">
-                <h:outputText value="ID Cliente:" style="color:#000000;"/>
-                <h:outputText value="#{RealizarPagoBeanUI.cliente.idCliente}" style="color:#000000;"/>
-
-                <h:outputText value="Nombre del cliente:" style="color:#000000;"/>
-                <h:outputText value="#{RealizarPagoBeanUI.cliente.nombreCompleto}" style="color:#000000;"/>
-
-                <h:outputText value="Monto Total:" style="color:#000000;"/>
-                <h:outputText value="#{RealizarPagoBeanUI.montoTotal}" style="color:#000000;"/>
-
-                <h:outputText value="Fecha:" style="color:#000000;"/>
-                <h:outputText value="#{RealizarPagoBeanUI.fecha}" style="color:#000000;">
-                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                <h:outputText value="#{RealizarPagoBeanUI.cliente.credito}"
+                              style="font-size:22px; font-weight:bold; color:#28a745; margin:5px 0;">
+                    <f:convertNumber type="currency" currencySymbol="$"/>
                 </h:outputText>
 
-                <h:outputText value="Método de pago:"/>
-                <h:outputText value="Tarjeta de crédito/débito" style="color:#17a2b8; font-weight:bold;"/>
-            </h:panelGrid>
+                <h:outputText value="Total actual de la compra:"
+                              style="font-size:16px; margin-top:10px;"/>
+                <h:outputText value="#{RealizarPagoBeanUI.montoTotal}"
+                              style="font-size:18px; font-weight:bold;">
+                    <f:convertNumber type="currency" currencySymbol="$"/>
+                </h:outputText>
 
-            <h:outputText value="Por favor, realice el cobro manual en la terminal bancaria."
-                          style="margin-top:10px; display:block; text-align:center; font-style:italic;"/>
+                <h:outputText value="¿Desea aplicar el crédito a esta compra?"
+                              style="font-size:16px; margin-top:15px; font-weight:bold;"/>
 
-            <h:panelGroup layout="block" style="margin-top:15px; text-align:center;">
-                <p:commandButton id="btnPagoTarjeta"
-                                 value="Pagar"
+                <h:outputText value="Esta acción es irreversible y modificará el saldo del cliente."
+                              style="font-size:13px; font-style:italic; color:#777;"/>
+
+                <p:commandButton value="Sí, Aplicar Crédito"
+                                 icon="pi pi-check"
+                                 action="#{RealizarPagoBeanUI.aplicarCredito}"
                                  process="@this"
-                                 update="msgsTarjeta"
-                                 actionListener="#{RealizarPagoBeanUI.realizarPagoTarjeta}"/>
+                                 update="panelAplicarCredito1 msgsCredito1 :formPrincipal:panelPagoTarjeta1 :formPrincipal:panelPagoInteractivo1"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAplicarCredito1').hide(); PF('#{RealizarPagoBeanUI.siguienteDialogo}').show(); }"
+                                 style="background:#28a745; color:#fff;"/>
 
-                <p:commandButton value="Cancelar"
+                <p:commandButton value="No, Pagar Completo"
                                  icon="pi pi-times"
-                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
-                                 update="@form"
-                                 process="@this"
-                                 oncomplete="PF('dlgPagoTarjeta').hide();"
-                                 style="background:#dc3545; color:#fff;"/>
-            </h:panelGroup>
-        </h:panelGrid>
-    </p:dialog>
-
-        <!-- DIALOG 5: CONFIRMACIÓN DE PAGO CON TARJETA -->
-    <p:dialog id="dlgExitoTarjeta"
-              header="Pago Realizado"
-              widgetVar="dlgExitoTarjeta"
-              modal="true"
-              resizable="false"
-              closable="false"
-              draggable="false"
-              width="300">
-
-        <h:panelGrid columns="1" style="width:100%; text-align:center;">
-            <h:outputText value="Pago realizado con éxito"
-                          style="font-weight:bold; font-size:18px; color:#28a745;"/>
-
-            <h:outputText value="El cobro con tarjeta se procesó correctamente."
-                          style="font-size:14px; color:#333; margin-top:10px;"/>
-
-            <p:commandButton value="Continuar"
-                             icon="pi pi-check"
-                             actionListener="#{RealizarPagoBeanUI.limpiarCampos}"
-                             onclick="PF('dlgExitoTarjeta').hide();"
-                             update="@form"
-                             style="margin-top:15px; background:#28a745; color:#fff; width:100%;"/>
-        </h:panelGrid>
-    </p:dialog>
-
-        <!-- DIALOG 6: REALIZAR PAGO EN EFECTIVO -->
-    <p:dialog header="Realizar Pago en Efectivo"
-              widgetVar="dlgPagoInteractivo"
-              modal="true"
-              resizable="false"
-              closable="true"
-              draggable="false"
-              width="400">
-
-        <h:panelGrid id="panelPagoInteractivo" columns="1" style="width:100%;">
-            <p:messages id="msgsPagoInteractivo" showDetail="true" closable="true"/>
-
-            <div class="form-group">
-                <h:outputLabel for="montoIngresado" value="Monto ingresado"/>
-
-                <p:inputText id="montoIngresado"
-                             value="#{RealizarPagoBeanUI.montoIngresado}"
-                             maxlength="5"
-                             onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
-                             style="text-align:left;">
-                    <p:ajax event="keyup" update="faltante" process="@this"/>
-                </p:inputText>
-            </div>
-
-            <div class="form-group">
-                <h:outputLabel value="Monto restante"/>
-                <h:outputText id="faltante" value="#{RealizarPagoBeanUI.montoFaltante}"/>
-            </div>
-
-            <p:commandButton value="Pagar"
-                             action="#{RealizarPagoBeanUI.realizarPagoInteractivo}"
-                             update="msgsPagoInteractivo faltante"
-                             styleClass="ui-button"
-                             process="@this montoIngresado"
-                             style="background:#28a745; color:#fff;"/>
-        </h:panelGrid>
-    </p:dialog>
-
-        <!-- DIALOG FINAL: MOSTRAR CAMBIO -->
-    <p:dialog id="dlgCambio"
-              header="Cambio Entregado"
-              widgetVar="dlgCambio"
-              modal="true"
-              resizable="false"
-              closable="false"
-              draggable="false"
-              width="300">
-
-        <h:panelGrid columns="1" style="width:100%; text-align:center;">
-            <h:outputText value="Cambio:" style="font-weight:bold; font-size:18px;"/>
-            <h:outputText value="$#{RealizarPagoBeanUI.montoCambio}"
-                          style="font-size:22px; color:#28a745; margin:10px 0; display:block;">
-                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-            </h:outputText>
-
-            <p:commandButton value="Continuar"
-                             icon="pi pi-check"
-                             actionListener="#{RealizarPagoBeanUI.limpiarCampos}"
-                             onclick="PF('dlgCambio').hide();"
-                             update="@form"
-                             style="margin-top:10px; background:#28a745; color:#fff; width:100%;"/>
-        </h:panelGrid>
-    </p:dialog>
-
-    <!-- dialog abrir caja -->
-    <p:dialog header="Caja"
-              widgetVar="dlgCaja"
-              modal="true"
-              resizable="false"
-              draggable="false"
-              closable="true"
-              width="380">
-
-        <h:form id="formCaja">
-            <div class="dialog-buttons">
-                <p:commandButton value="Aceptar pago por adelantado"
-                                 icon="pi pi-check-circle"
-                                 onclick="PF('dlgBuscarClienteAdelanto').show(); return false;"
                                  type="button"
-                                 style="background:#007bcb; color:#fff;"/>
+                                 onclick="PF('dlgAplicarCredito1').hide(); PF('#{RealizarPagoBeanUI.siguienteDialogo}').show();"
+                                 style="background:#dc3545; color:#fff;"/>
 
-                <p:commandButton value="Especificar con cuanto dinero inicia el corte"
-                                 icon="pi pi-clock"
-                                 actionListener="#{pagoBeanUI.inicioCorte}"
-                                 process="@form"
-                                 update="@form"/>
+            </h:panelGrid>
+        </p:dialog>
 
-                <p:commandButton value="Tomar dinero de caja"
-                                 icon="pi pi-dollar"
-                                 actionListener="#{pagoBeanUI.tomarDineroCaja}"
-                                 process="@form"
-                                 update="@form"/>
-            </div>
-        </h:form>
-    </p:dialog>
+        <p:dialog header="Pago con Tarjeta"
+                  widgetVar="dlgPagoTarjeta1"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="420">
+
+            <h:panelGrid id="panelPagoTarjeta1" columns="1" style="width:100%;">
+                <p:messages id="msgsTarjeta1" showDetail="true" closable="true"/>
+
+                <h:outputText value="Información del Cliente:" style="font-weight:bold; margin-bottom:10px;"/>
+
+                <h:panelGrid columns="2" columnClasses="label,value" style="width:100%;">
+                    <h:outputText value="ID Cliente:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.cliente.idCliente}" style="color:#000000;"/>
+
+                    <h:outputText value="Nombre del cliente:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.cliente.nombreCompleto}" style="color:#000000;"/>
+
+                    <h:outputText value="Monto Total:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.montoTotal}" style="color:#000000;"/>
+
+                    <h:outputText value="Fecha:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.fecha}" style="color:#000000;">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+
+                    <h:outputText value="Método de pago:" style="color:#000000;"/>
+                    <h:outputText value="Tarjeta de crédito/débito" style="color:#17a2b8; font-weight:bold;"/>
+                </h:panelGrid>
+
+                <h:outputText value="Por favor, realice el cobro manual en la terminal bancaria."
+                              style="margin-top:10px; display:block; text-align:center; font-style:italic;"/>
+
+                <h:panelGroup layout="block" style="margin-top:15px; text-align:center;">
+                    <p:commandButton id="btnPagoTarjeta1"
+                                     value="Pagar"
+                                     process="@this"
+                                     update="msgsTarjeta1"
+                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjetaMembresia()}"/>
+
+                    <p:commandButton value="Cancelar"
+                                     icon="pi pi-times"
+                                     actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
+                                     update="@form"
+                                     process="@this"
+                                     oncomplete="PF('dlgPagoTarjeta1').hide();"
+                                     style="background:#dc3545; color:#fff;"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog id="dlgExitoTarjeta1"
+                  header="Pago Realizado"
+                  widgetVar="dlgExitoTarjeta1"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="300">
+
+            <h:panelGrid columns="1" style="width:100%; text-align:center;">
+                <h:outputText value="Pago realizado con éxito"
+                              style="font-weight:bold; font-size:18px; color:#28a745;"/>
+
+                <h:outputText value="El cobro con tarjeta se procesó correctamente."
+                              style="font-size:14px; color:#333; margin-top:10px;"/>
+
+                <p:commandButton value="Continuar"
+                                 icon="pi pi-check"
+                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
+                                 onclick="PF('dlgExitoTarjeta1').hide();"
+                                 update="@form"
+                                 style="margin-top:15px; background:#28a745; color:#fff; width:100%;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog header="Realizar Pago en Efectivo"
+                  widgetVar="dlgPagoInteractivo1"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <h:panelGrid id="panelPagoInteractivo1" columns="1" style="width:100%;">
+                <p:messages id="msgsPagoInteractivo1" showDetail="true" closable="true"/>
+
+                <div class="form-group">
+                    <h:outputLabel for="montoIngresado1" value="Monto ingresado"/>
+                    <p:inputText id="montoIngresado1"
+                                 value="#{RealizarPagoBeanUI.montoIngresado}"
+                                 maxlength="5"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 style="text-align:left;">
+                        <p:ajax event="keyup" update="faltante1" process="@this"/>
+                    </p:inputText>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Monto restante"/>
+                    <h:outputText id="faltante1" value="#{RealizarPagoBeanUI.montoFaltante}"/>
+                </div>
+
+                <p:commandButton value="Pagar"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivoMembresia()}"
+                                 update="msgsPagoInteractivo1 faltante1"
+                                 styleClass="ui-button"
+                                 process="@this montoIngresado1"
+                                 style="background:#28a745; color:#fff;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog id="dlgCambio1"
+                  header="Cambio Entregado"
+                  widgetVar="dlgCambio1"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="300">
+
+            <h:panelGrid columns="1" style="width:100%; text-align:center;">
+                <h:outputText value="Cambio:" style="font-weight:bold; font-size:18px;"/>
+                <h:outputText value="$#{RealizarPagoBeanUI.montoCambio}"
+                              style="font-size:22px; color:#28a745; margin:10px 0; display:block;">
+                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                </h:outputText>
+
+                <p:commandButton value="Continuar"
+                                 icon="pi pi-check"
+                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
+                                 onclick="PF('dlgCambio1').hide();"
+                                 update="@form"
+                                 style="margin-top:10px; background:#28a745; color:#fff; width:100%;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+
+        <p:dialog header="Identifícate" widgetVar="dlgAskId2" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsId2" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="searchId2" value="ID Usuario Recepcionista"/>
+                    <p:inputText id="searchId2"
+                                 value="#{RealizarPagoBeanUI.idUR}"
+                                 placeholder="Ej. UR0001"
+                                 styleClass="form-control"
+                                 required="true"
+                                 requiredMessage="El ID es obligatorio"/>
+                </div>
+
+                <p:commandButton value="Siguiente"
+                                 icon="pi pi-search"
+                                 action="#{RealizarPagoBeanUI.verificarUsuario}"
+                                 update="msgsId2"
+                                 process="@this searchId2"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskId2').hide(); PF('dlgAskPass2').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#007bff; color:#fff;"/>
+
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog header="Validar contraseña" widgetVar="dlgAskPass2" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsPass2" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="pass2" value="Contraseña del Recepcionista"/>
+                    <p:password id="pass2"
+                                value="#{RealizarPagoBeanUI.contrasenaUR}"
+                                feedback="false"
+                                styleClass="form-control"
+                                required="true"
+                                requiredMessage="Debe ingresar la contraseña"/>
+                </div>
+
+                <p:commandButton value="Validar"
+                                 icon="pi pi-lock"
+                                 action="#{RealizarPagoBeanUI.validarContrasena}"
+                                 update="msgsPass2"
+                                 process="@this pass2"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPass2').hide(); PF('dlgMetodoPago2').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#28a745; color:#fff;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog header="Seleccionar Método de Pago" widgetVar="dlgMetodoPago2"
+                  modal="true" resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid id="panelMetodoPago2" columns="1" style="width:100%; text-align:center;">
+
+                <p:messages id="msgsMetodoPago2" showDetail="true" closable="true"/>
+
+                <div class="form-group">
+                    <h:outputLabel for="cliente2" value="Cliente (opcional)" style="font-weight:bold;"/>
+                    <p:inputText id="cliente2"
+                                 value="#{RealizarPagoBeanUI.idCliente}"
+                                 maxlength="7"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 placeholder="CLI1000"
+                                 styleClass="form-control">
+                    </p:inputText>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel for="descuento2" value="Descuento (opcional)" style="font-weight:bold;"/>
+                    <p:inputText id="descuento2"
+                                 value="#{RealizarPagoBeanUI.descuento}"
+                                 maxlength="5"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 placeholder="$200"
+                                 styleClass="form-control">
+                    </p:inputText>
+                </div>
+
+                <p:commandButton value="Pago en Efectivo"
+                                 icon="pi pi-money-bill"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
+                                 process="@this cliente2 descuento2"
+                                 update="panelMetodoPago2 :formPrincipal:panelPagoInteractivo2 :formPrincipal:panelAplicarCredito2"
+                                 oncomplete="if (!args.validationFailed) {
+                            PF('dlgMetodoPago2').hide();
+                            if (args.tieneCredito) {
+                                PF('dlgAplicarCredito2').show();
+                            } else {
+                                PF('dlgPagoInteractivo2').show();
+                            }
+                        }"
+                                 style="margin-bottom:10px; background:#ffc107; color:#000;">
+                    <f:param name="proximo" value="dlgPagoInteractivo2" />
+                </p:commandButton>
+
+                <p:commandButton value="Pago con Tarjeta"
+                                 icon="pi pi-credit-card"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
+                                 process="@this cliente2 descuento2"
+                                 update="panelMetodoPago2 :formPrincipal:panelPagoTarjeta2 :formPrincipal:panelAplicarCredito2"
+                                 oncomplete="if (!args.validationFailed) {
+                            PF('dlgMetodoPago2').hide();
+                            if (args.tieneCredito) {
+                                PF('dlgAplicarCredito2').show();
+                            } else {
+                                PF('dlgPagoTarjeta2').show();
+                            }
+                        }"
+                                 style="background:#17a2b8; color:#fff;">
+                    <f:param name="proximo" value="dlgPagoTarjeta2" />
+                </p:commandButton>
+
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog header="Confirmar Crédito" widgetVar="dlgAplicarCredito2"
+                  modal="true" resizable="false" closable="false" draggable="false" width="420">
+
+            <h:panelGrid id="panelAplicarCredito2" columns="1" style="width:100%; text-align:center;">
+                <p:messages id="msgsCredito2" showDetail="true" closable="true"/>
+
+                <h:outputText value="El cliente tiene un crédito disponible de:"
+                              style="font-size:16px;"/>
+
+                <h:outputText value="#{RealizarPagoBeanUI.cliente.credito}"
+                              style="font-size:22px; font-weight:bold; color:#28a745; margin:5px 0;">
+                    <f:convertNumber type="currency" currencySymbol="$"/>
+                </h:outputText>
+
+                <h:outputText value="Total actual de la compra:"
+                              style="font-size:16px; margin-top:10px;"/>
+                <h:outputText value="#{RealizarPagoBeanUI.montoTotal}"
+                              style="font-size:18px; font-weight:bold;">
+                    <f:convertNumber type="currency" currencySymbol="$"/>
+                </h:outputText>
+
+                <h:outputText value="¿Desea aplicar el crédito a esta compra?"
+                              style="font-size:16px; margin-top:15px; font-weight:bold;"/>
+
+                <h:outputText value="Esta acción es irreversible y modificará el saldo del cliente."
+                              style="font-size:13px; font-style:italic; color:#777;"/>
+
+                <p:commandButton value="Sí, Aplicar Crédito"
+                                 icon="pi pi-check"
+                                 action="#{RealizarPagoBeanUI.aplicarCredito}"
+                                 process="@this"
+                                 update="panelAplicarCredito2 msgsCredito2 :formPrincipal:panelPagoTarjeta2 :formPrincipal:panelPagoInteractivo2"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAplicarCredito2').hide(); PF('#{RealizarPagoBeanUI.siguienteDialogo}').show(); }"
+                                 style="background:#28a745; color:#fff;"/>
+
+                <p:commandButton value="No, Pagar Completo"
+                                 icon="pi pi-times"
+                                 type="button"
+                                 onclick="PF('dlgAplicarCredito2').hide(); PF('#{RealizarPagoBeanUI.siguienteDialogo}').show();"
+                                 style="background:#dc3545; color:#fff;"/>
+
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog header="Pago con Tarjeta"
+                  widgetVar="dlgPagoTarjeta2"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="420">
+
+            <h:panelGrid id="panelPagoTarjeta2" columns="1" style="width:100%;">
+                <p:messages id="msgsTarjeta2" showDetail="true" closable="true"/>
+
+                <h:outputText value="Información del Cliente:" style="font-weight:bold; margin-bottom:10px;"/>
+
+                <h:panelGrid columns="2" columnClasses="label,value" style="width:100%;">
+                    <h:outputText value="ID Cliente:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.cliente.idCliente}" style="color:#000000;"/>
+
+                    <h:outputText value="Nombre del cliente:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.cliente.nombreCompleto}" style="color:#000000;"/>
+
+                    <h:outputText value="Monto Total:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.montoTotal}" style="color:#000000;"/>
+
+                    <h:outputText value="Fecha:" style="color:#000000;"/>
+                    <h:outputText value="#{RealizarPagoBeanUI.fecha}" style="color:#000000;">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+
+                    <h:outputText value="Método de pago:"/>
+                    <h:outputText value="Tarjeta de crédito/débito" style="color:#17a2b8; font-weight:bold;"/>
+                </h:panelGrid>
+
+                <h:outputText value="Por favor, realice el cobro manual en la terminal bancaria."
+                              style="margin-top:10px; display:block; text-align:center; font-style:italic;"/>
+
+                <h:panelGroup layout="block" style="margin-top:15px; text-align:center;">
+                    <p:commandButton id="btnPagoTarjeta2"
+                                     value="Pagar"
+                                     process="@this"
+                                     update="msgsTarjeta2"
+                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjetaClase()}"/>
+
+                    <p:commandButton value="Cancelar"
+                                     icon="pi pi-times"
+                                     actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
+                                     update="@form"
+                                     process="@this"
+                                     oncomplete="PF('dlgPagoTarjeta2').hide();"
+                                     style="background:#dc3545; color:#fff;"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog id="dlgExitoTarjeta2"
+                  header="Pago Realizado"
+                  widgetVar="dlgExitoTarjeta2"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="300">
+
+            <h:panelGrid columns="1" style="width:100%; text-align:center;">
+                <h:outputText value="Pago realizado con éxito"
+                              style="font-weight:bold; font-size:18px; color:#28a745;"/>
+
+                <h:outputText value="El cobro con tarjeta se procesó correctamente."
+                              style="font-size:14px; color:#333; margin-top:10px;"/>
+
+                <p:commandButton value="Continuar"
+                                 icon="pi pi-check"
+                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
+                                 onclick="PF('dlgExitoTarjeta2').hide();"
+                                 update="@form"
+                                 style="margin-top:15px; background:#28a745; color:#fff; width:100%;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog header="Realizar Pago en Efectivo"
+                  widgetVar="dlgPagoInteractivo2"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="400">
+
+            <h:panelGrid id="panelPagoInteractivo2" columns="1" style="width:100%;">
+                <p:messages id="msgsPagoInteractivo2" showDetail="true" closable="true"/>
+
+                <div class="form-group">
+                    <h:outputLabel for="montoIngresado2" value="Monto ingresado"/>
+                    <p:inputText id="montoIngresado2"
+                                 value="#{RealizarPagoBeanUI.montoIngresado}"
+                                 maxlength="5"
+                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
+                                 style="text-align:left;">
+                        <p:ajax event="keyup" update="faltante2" process="@this"/>
+                    </p:inputText>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Monto restante"/>
+                    <h:outputText id="faltante2" value="#{RealizarPagoBeanUI.montoFaltante}"/>
+                </div>
+
+                <p:commandButton value="Pagar"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivoClase()}"
+                                 update="msgsPagoInteractivo2 faltante2"
+                                 styleClass="ui-button"
+                                 process="@this montoIngresado2"
+                                 style="background:#28a745; color:#fff;"/>
+            </h:panelGrid>
+        </p:dialog>
+
+        <p:dialog id="dlgCambio2"
+                  header="Cambio Entregado"
+                  widgetVar="dlgCambio2"
+                  modal="true"
+                  resizable="false"
+                  closable="false"
+                  draggable="false"
+                  width="300">
+
+            <h:panelGrid columns="1" style="width:100%; text-align:center;">
+                <h:outputText value="Cambio:" style="font-weight:bold; font-size:18px;"/>
+                <h:outputText value="$#{RealizarPagoBeanUI.montoCambio}"
+                              style="font-size:22px; color:#28a745; margin:10px 0; display:block;">
+                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                </h:outputText>
+
+                <p:commandButton value="Continuar"
+                                 icon="pi pi-check"
+                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
+                                 onclick="PF('dlgCambio2').hide();"
+                                 update="@form"
+                                 style="margin-top:10px; background:#28a745; color:#fff; width:100%;"/>
+            </h:panelGrid>
+        </p:dialog>
 
     <!-- dialog de adelantar pago -->
     <p:dialog header="Buscar Cliente" widgetVar="dlgBuscarClienteAdelanto"

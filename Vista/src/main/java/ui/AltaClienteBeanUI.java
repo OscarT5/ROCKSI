@@ -5,6 +5,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarollo.entity.Cliente;
+import org.primefaces.PrimeFaces;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,16 +34,11 @@ public class AltaClienteBeanUI implements Serializable {
             this.cliente.setSegundoTelefono(this.segundoTelefono);
             this.cliente.setCantidadDineroMensual(0);
 
-            // guarda el cliente temporal
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("clienteSeleccionado", this.cliente);
-
-            // guarda la bandera para abrir el dialog
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("autoAbrirPago", true);
 
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Datos Cargados", "Cliente temporal creado. Continúe con el pago."));
 
-            // redirige a pagos
             FacesContext.getCurrentInstance().getExternalContext().redirect("pagos.xhtml");
 
             this.nombre = "";
@@ -57,7 +53,6 @@ public class AltaClienteBeanUI implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Alta Inválida", e.getMessage()));
         }
     }
-
 
     public String getNombre() {
         return this.nombre;

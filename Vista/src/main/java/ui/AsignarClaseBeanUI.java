@@ -40,7 +40,7 @@ public class AsignarClaseBeanUI implements Serializable {
 
             PrimeFaces.current().executeScript("PF('dlgAsignarClase').hide();");
 
-            fc.getExternalContext().redirect("PBI-GPA-US1.xhtml");
+            fc.getExternalContext().redirect("pagos.xhtml");
 
         } catch (Exception e) {
             fc.addMessage(null, new FacesMessage(

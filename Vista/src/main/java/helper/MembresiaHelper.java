@@ -7,7 +7,6 @@ import mx.desarollo.integration.ServiceFacadeLocator;
 import java.io.Serializable;
 
 public class MembresiaHelper implements Serializable {
-
     /**
      * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteFacade
      * @Throws Si la base de datos rechaza la peticion de selec * from tabla
@@ -34,6 +33,5 @@ public class MembresiaHelper implements Serializable {
     public void modificarMembresia(Membresia membresia) throws Exception {
         ServiceFacadeLocator.getInstanceMembresiaFacade().modificarMembresia(membresia);
     }
-
 
 }
