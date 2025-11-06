@@ -524,6 +524,17 @@
                     </div>
 
                     <div class="form-group">
+                        <h:outputLabel for="sexoMod" value="Sexo"/>
+                        <p:selectOneMenu id="sexoMod" value="#{modificarCliBeanUI.sexo}" class="form-control" required="true"
+                                         requiredMessage="Debe seleccionar el sexo del cliente">
+                            <f:selectItem itemLabel="Seleccione..." itemValue=""/>
+                            <f:selectItem itemLabel="Masculino" itemValue="masculino"/>
+                            <f:selectItem itemLabel="Femenino" itemValue="femenino"/>
+                            <f:selectItem itemLabel="Otro" itemValue="otro"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="form-group">
                         <h:outputLabel for="telefonoMod" value="Teléfono"/>
                         <p:inputMask id="telefonoMod" value="#{modificarCliBeanUI.telefono}" mask="(999) 999-9999"
                                      placeholder="(686) 185 8942" class="form-control"
@@ -535,17 +546,6 @@
                         <p:inputMask id="segundoTel" value="#{modificarCliBeanUI.segundoTelefono}" mask="(999) 999-9999"
                                      placeholder="(686) 999 9999" class="form-control"
                                      required="false" maxlength="15"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="sexoMod" value="Sexo"/>
-                        <p:selectOneMenu id="sexoMod" value="#{modificarCliBeanUI.sexo}" class="form-control" required="true"
-                                         requiredMessage="Debe seleccionar el sexo del cliente">
-                            <f:selectItem itemLabel="Seleccione..." itemValue=""/>
-                            <f:selectItem itemLabel="Masculino" itemValue="masculino"/>
-                            <f:selectItem itemLabel="Femenino" itemValue="femenino"/>
-                            <f:selectItem itemLabel="Otro" itemValue="otro"/>
-                        </p:selectOneMenu>
                     </div>
 
                     <p:commandButton id="modificarBtn" value="Modificar al cliente"
