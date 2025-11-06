@@ -25,13 +25,11 @@
 
 <h:body>
     <h:form id="formPrincipal">
-        <!-- Botón inicial -->
         <p:commandButton value="Realizar Compra"
                          icon="pi pi-shopping-cart"
                          onclick="PF('dlgAskId').show();"
                          type="button"/>
 
-        <!-- DIALOG 1: INGRESAR ID DEL RECEPCIONISTA -->
         <p:dialog header="Identifícate" widgetVar="dlgAskId" modal="true"
                   resizable="false" closable="true" draggable="false" width="360">
             <h:panelGrid columns="1" style="width:100%;">
@@ -58,7 +56,6 @@
             </h:panelGrid>
         </p:dialog>
 
-        <!-- DIALOG 2: VALIDAR CONTRASEÑA -->
         <p:dialog header="Validar contraseña" widgetVar="dlgAskPass" modal="true"
                   resizable="false" closable="true" draggable="false" width="360">
             <h:panelGrid columns="1" style="width:100%;">
@@ -78,13 +75,38 @@
                                  action="#{RealizarPagoBeanUI.validarContrasena}"
                                  update="msgsPass"
                                  process="@this pass"
-                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPass').hide(); PF('dlgMetodoPago').show(); }"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPass').hide(); PF('dlgTipoPago').show(); }"
                                  styleClass="ui-button"
                                  style="background:#28a745; color:#fff;"/>
             </h:panelGrid>
         </p:dialog>
 
-        <!-- DIALOG 3: METODO DE PAGO -->
+        <p:dialog header="¿Qué desea pagar?" widgetVar="dlgTipoPago" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:panelGrid columns="1" style="width:100%; text-align:center;">
+                <p:messages id="msgsTipoPago" showDetail="true" closable="true"/>
+
+                <h:outputText value="Seleccione el tipo de pago a realizar."
+                              style="font-size:16px; margin-bottom: 20px; display:block;"/>
+
+                <p:commandButton value="Pagar Membresía"
+                                 icon="pi pi-id-card"
+                                 actionListener="#{RealizarPagoBeanUI.setTipoPago('membresia')}"
+                                 process="@this"
+                                 update="msgsTipoPago"
+                                 oncomplete="PF('dlgTipoPago').hide(); PF('dlgMetodoPago').show();"
+                                 style="margin-bottom:10px; background:#007bff; color:#fff;"/>
+
+                <p:commandButton value="Pagar Clase"
+                                 icon="pi pi-book"
+                                 actionListener="#{RealizarPagoBeanUI.setTipoPago('clase')}"
+                                 process="@this"
+                                 update="msgsTipoPago"
+                                 oncomplete="PF('dlgTipoPago').hide(); PF('dlgMetodoPago').show();"
+                                 style="background:#17a2b8; color:#fff;"/>
+            </h:panelGrid>
+        </p:dialog>
+
         <p:dialog header="Seleccionar Método de Pago" widgetVar="dlgMetodoPago"
                   modal="true" resizable="false" closable="false" draggable="false" width="360">
             <h:panelGrid id="panelMetodoPago" columns="1" style="width:100%; text-align:center;">
@@ -115,7 +137,7 @@
 
                 <p:commandButton value="Pago en Efectivo"
                                  icon="pi pi-money-bill"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago}"
                                  process="@this cliente descuento"
                                  update="panelMetodoPago :formPrincipal:panelPagoInteractivo :formPrincipal:panelAplicarCredito"
                                  oncomplete="if (!args.validationFailed) {
@@ -132,7 +154,7 @@
 
                 <p:commandButton value="Pago con Tarjeta"
                                  icon="pi pi-credit-card"
-                                 actionListener="#{RealizarPagoBeanUI.prepararPago('clase')}"
+                                 actionListener="#{RealizarPagoBeanUI.prepararPago}"
                                  process="@this cliente descuento"
                                  update="panelMetodoPago :formPrincipal:panelPagoTarjeta :formPrincipal:panelAplicarCredito"
                                  oncomplete="if (!args.validationFailed) {
@@ -152,7 +174,6 @@
 
         <p:dialog header="Confirmar Crédito" widgetVar="dlgAplicarCredito"
                   modal="true" resizable="false" closable="false" draggable="false" width="420">
-
             <h:panelGrid id="panelAplicarCredito" columns="1" style="width:100%; text-align:center;">
                 <p:messages id="msgsCredito" showDetail="true" closable="true"/>
 
@@ -194,7 +215,6 @@
             </h:panelGrid>
         </p:dialog>
 
-        <!-- DIALOG 4: CONFIRMACIÓN DE PAGO CON TARJETA -->
         <p:dialog header="Pago con Tarjeta"
                   widgetVar="dlgPagoTarjeta"
                   modal="true"
@@ -235,7 +255,7 @@
                                      value="Pagar"
                                      process="@this"
                                      update="msgsTarjeta"
-                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjetaClase()}"/>
+                                     actionListener="#{RealizarPagoBeanUI.realizarPagoTarjeta}"/>
 
                     <p:commandButton value="Cancelar"
                                      icon="pi pi-times"
@@ -248,7 +268,6 @@
             </h:panelGrid>
         </p:dialog>
 
-        <!-- DIALOG 5: CONFIRMACIÓN DE PAGO CON TARJETA -->
         <p:dialog id="dlgExitoTarjeta"
                   header="Pago Realizado"
                   widgetVar="dlgExitoTarjeta"
@@ -274,7 +293,6 @@
             </h:panelGrid>
         </p:dialog>
 
-        <!-- DIALOG 6: REALIZAR PAGO EN EFECTIVO -->
         <p:dialog header="Realizar Pago en Efectivo"
                   widgetVar="dlgPagoInteractivo"
                   modal="true"
@@ -304,7 +322,7 @@
                 </div>
 
                 <p:commandButton value="Pagar"
-                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivoClase()}"
+                                 action="#{RealizarPagoBeanUI.realizarPagoInteractivo}"
                                  update="msgsPagoInteractivo faltante"
                                  styleClass="ui-button"
                                  process="@this montoIngresado"
@@ -312,7 +330,6 @@
             </h:panelGrid>
         </p:dialog>
 
-        <!-- DIALOG FINAL: MOSTRAR CAMBIO -->
         <p:dialog id="dlgCambio"
                   header="Cambio Entregado"
                   widgetVar="dlgCambio"

@@ -33,12 +33,17 @@ public class AltaClienteBeanUI implements Serializable {
             this.cliente.setSegundoTelefono(this.segundoTelefono);
             this.cliente.setCantidadDineroMensual(0);
 
+            // guarda el cliente temporal
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("clienteSeleccionado", this.cliente);
+
+            // guarda la bandera para abrir el dialog
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("autoAbrirPago", true);
 
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Datos Cargados", "Cliente temporal creado. Continúe con el pago."));
 
-            FacesContext.getCurrentInstance().getExternalContext().redirect("PBI-GPA-US1.xhtml");
+            // redirige a pagos
+            FacesContext.getCurrentInstance().getExternalContext().redirect("pagos.xhtml");
 
             this.nombre = "";
             this.apellido = "";

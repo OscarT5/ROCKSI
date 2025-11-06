@@ -18,6 +18,15 @@ public class PagaDelegate {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
         }
+        if (paga.getIdItem() == null || paga.getIdItem().getIdItem().trim().isEmpty()) {
+            throw new Exception("Se debe ingresar el item de donde esta surgiedo la compra");
+        }
+        if (paga.getIdUsuariorecep() == null || paga.getIdUsuariorecep().trim().isEmpty()) {
+            throw new Exception("Se debe ingresar el item de donde esta surgiedo la compra");
+        }
+        if (paga.getFecha() == null) {
+            throw new Exception("Se debe ingresar la fecha del pago");
+        }
         if (paga.getMonto() == null) {
             throw new Exception("Se debe ingresar el monto del pago");
         }
@@ -34,14 +43,20 @@ public class PagaDelegate {
             pagaDAO.crear(paga);
         }
         else if ("clase".equalsIgnoreCase(tipo)) {
-            paga.setIdItem(membresia);
+            Item item = new Clase();
+            item.setIdItem("CLA1002");
+            paga.setIdItem(item);
             paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
             pagaDAO.crear(paga);
         }
+
+        // Se llama al metodo para asignar y crear un nuevoID
+        paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
+        pagaDAO.crear(paga);
     }
 
     public boolean eliminarPago(String id) throws Exception {
-        if(id == null || id.trim().isEmpty()) {
+        if (id == null || id.trim().isEmpty()) {
             throw new Exception("El id del pago esta vacio");
         }
         return pagaDAO.eliminarPaga(id);

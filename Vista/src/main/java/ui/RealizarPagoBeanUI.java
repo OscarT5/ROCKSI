@@ -42,6 +42,8 @@ public class RealizarPagoBeanUI implements Serializable {
     private boolean clienteTieneCredito = false;
     private double creditoAplicado = 0.0;
 
+    private String tipoPago;
+
     // Helpers necesarios
     private final PagaHelper pagaHelper = new PagaHelper();
     private final UsuarioRHelper usuarioHelper = new UsuarioRHelper();
@@ -111,6 +113,28 @@ public class RealizarPagoBeanUI implements Serializable {
         } else {
             montoFaltante = 0.0;
             montoCambio = montoIngresado - montoTotal;
+        }
+    }
+
+    public void realizarPagoInteractivo() {
+        if ("membresia".equals(this.tipoPago)) {
+            realizarPagoInteractivoMembresia();
+        } else if ("clase".equals(this.tipoPago)) {
+            realizarPagoInteractivoClase();
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error de flujo", "No se ha seleccionado un tipo de pago (membresía o clase)."));
+        }
+    }
+
+    public void realizarPagoTarjeta() {
+        if ("membresia".equals(this.tipoPago)) {
+            realizarPagoTarjetaMembresia();
+        } else if ("clase".equals(this.tipoPago)) {
+            realizarPagoTarjetaClase();
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error de flujo", "No se ha seleccionado un tipo de pago (membresía o clase)."));
         }
     }
 
@@ -204,6 +228,7 @@ public class RealizarPagoBeanUI implements Serializable {
                     paga.setIdCliente(cliente);
                     paga.setMonto(montoTotal);
                     paga.setPorPagar(porPagar);
+                    paga.setIdItem(nueva);
 
                     // Ralizo el pago
                     pagaHelper.RealizarPago(paga,"membresia", nueva);
@@ -299,6 +324,7 @@ public class RealizarPagoBeanUI implements Serializable {
                     paga.setIdCliente(cliente);
                     paga.setMonto(montoTotal);
                     paga.setPorPagar(porPagar);
+                    paga.setIdItem(nueva);
 
                     pagaHelper.RealizarPago(paga, "membresia", nueva);
 
@@ -477,8 +503,17 @@ public class RealizarPagoBeanUI implements Serializable {
         }
     }
 
-    public void prepararPago(String tipo) {
+    public void prepararPago() {
         FacesContext fc = FacesContext.getCurrentInstance();
+
+        // se revisa si venimos del flujo "Alta Cliente" (desde clientes.xhtml)
+        // esto TIENE PRIORIDAD y siempre es 'membresia'
+        Cliente clienteEnSesion = (Cliente) fc.getExternalContext().getSessionMap().get("clienteSeleccionado");
+        if (clienteEnSesion != null) {
+            this.tipoPago = "membresia"; // Forzar tipo
+        }
+
+        String tipo = this.tipoPago;
         try {
             // Obtiene el nombre del dialogo de pago
             String proximoDialogoWidgetVar = fc.getExternalContext().getRequestParameterMap().get("proximo");
@@ -492,53 +527,36 @@ public class RealizarPagoBeanUI implements Serializable {
             this.cliente = null;
             this.clienteTieneCredito = false;
 
-            // Se scribio un id cliente
-            if (this.idCliente != null && !this.idCliente.trim().isEmpty()) {
+            if (clienteEnSesion != null) {
+                Cliente clienteFresco = clienteHelper.obtenerCliente(clienteEnSesion.getIdCliente());
+                if (clienteFresco != null) {
+                    this.cliente = clienteFresco;
+                } else {
+                    this.cliente = clienteEnSesion; // Usar el cliente temporal
+                }
+                // limpia la sesion para que no se vuelva a usar
+                fc.getExternalContext().getSessionMap().remove("clienteSeleccionado");
 
-                // Si si se ecribio, ontiene el cleinte por su Id
+                // checa si se escribio un id
+            } else if (this.idCliente != null && !this.idCliente.trim().isEmpty()) {
                 String idClienteParaBuscar = this.idCliente.trim();
                 this.cliente = clienteHelper.obtenerCliente(idClienteParaBuscar);
-
                 if (this.cliente == null) {
-                    // El UR escribió un ID que no existe
                     throw new Exception("No se encontró el cliente con ID: " + idClienteParaBuscar);
                 }
 
-            } else {
-
-                // Si viene de clases
-                String idClienteDeClase = (String) FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getSessionMap()
-                        .get("idCliente");
-
+                // se checa si viene del flujo de clases
+            } else if ("clase".equals(this.tipoPago)) {
+                String idClienteDeClase = (String) fc.getExternalContext().getSessionMap().get("idCliente");
                 if (idClienteDeClase != null && !idClienteDeClase.trim().isEmpty()) {
                     this.cliente = clienteHelper.obtenerCliente(idClienteDeClase);
-
                     if (this.cliente == null) {
                         throw new Exception("Error de sesión: El ID de cliente '" + idClienteDeClase + "' no se encontró en la BD.");
-                    }
-
-                } else {
-                    // Si viene de membresias
-                    Cliente clienteEnSesion = (Cliente) FacesContext.getCurrentInstance()
-                            .getExternalContext()
-                            .getSessionMap()
-                            .get("clienteSeleccionado");
-
-                    if (clienteEnSesion != null) {
-                        Cliente clienteFresco = clienteHelper.obtenerCliente(clienteEnSesion.getIdCliente());
-
-                        if (clienteFresco != null) {
-                            this.cliente = clienteFresco;
-                        } else {
-                            this.cliente = clienteEnSesion;
-                        }
                     }
                 }
             }
 
-            // Solo se revisa credito (si tenemos un cliente existente)
+            // Se scribio un id cliente
             if (this.cliente != null && this.cliente.getCredito() > 0.01) {
                 this.clienteTieneCredito = true;
             }
@@ -617,6 +635,7 @@ public class RealizarPagoBeanUI implements Serializable {
         siguienteDialogo = null;
         clienteTieneCredito = false;
         creditoAplicado = 0.0;
+        tipoPago = null;
     }
 
     private String obtenerTotal(String tipo) {
@@ -672,12 +691,43 @@ public class RealizarPagoBeanUI implements Serializable {
         return tipo;
     }
 
+    /**
+     * este metodo se llama antes de que la página pagos.xhtml se cargue.
+     * revisa si venimos del flujo de "Alta Cliente" y abre el dialog de pago
+     * automaticamente.
+     */
+    public void verificarAutoAbrir() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+
+        if (!fc.isPostback()) {
+
+            // buscar la bandera
+            Boolean autoAbrir = (Boolean) fc.getExternalContext().getSessionMap().get("autoAbrirPago");
+
+            if (autoAbrir != null && autoAbrir) {
+                // si la bandera existe, ejecutar e dialog
+                PrimeFaces.current().executeScript("PF('dlgAskId').show();");
+
+                //    eliminar la bandera de la sesion para que no se vuelva a abrir si el usuario refresca la página
+                fc.getExternalContext().getSessionMap().remove("autoAbrirPago");
+            }
+        }
+    }
+
     // Getters y Setters
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
     public String getIdCliente() { return idCliente; }
     public void setIdCliente(String idCliente) { this.idCliente = idCliente; }
+
+    public String getTipoPago() {
+        return tipoPago;
+    }
+
+    public void setTipoPago(String tipoPago) {
+        this.tipoPago = tipoPago;
+    }
 
     public Date getFecha() { return fecha; }
     public void setFecha(Date fecha) { this.fecha = fecha; }

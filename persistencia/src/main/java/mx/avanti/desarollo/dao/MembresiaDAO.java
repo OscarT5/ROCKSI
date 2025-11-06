@@ -38,7 +38,6 @@ public class MembresiaDAO extends AbstractDAO<Membresia> {
         });
     }
 
-
     @Override
     public EntityManager getEntityManager() {
         return em;
