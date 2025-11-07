@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.*;
 import mx.avanti.desarollo.persistence.HibernateUtil;
 import mx.desarollo.entity.Producto;
+import mx.desarollo.entity.Usuariorecepcionista;
 
 /**
  * Proveedor central de DAOs y EntityManagers.
@@ -36,6 +37,16 @@ public class ServiceLocator {
     public static ProductoDAO getInstanceProductoDAO() {
         return new ProductoDAO(getEntityManager());
     }
+
+    public static PagaDAO getInstancePagaDAO() {
+        return new PagaDAO(getEntityManager());
+    }
+
+    public static UsuarioRDAO getInstanceURDAO() {
+        return new UsuarioRDAO(getEntityManager());
+    }
+
+    public static MembresiaDAO getInstanceMembresiaDAO() { return new MembresiaDAO(getEntityManager()); }
     /**
      * se crea la instancia de usuarioDAO si esta no existe
      */

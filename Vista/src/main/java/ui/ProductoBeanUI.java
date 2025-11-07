@@ -24,6 +24,7 @@ public class ProductoBeanUI implements Serializable {
     private List<Producto> listaProductos;      // lista filtrada que expone la UI
     private List<Producto> originalProductos;   // copia completa
     private String filtro;         // texto del filtro
+    private Producto productoSeleccionado;
 
     public ProductoBeanUI() {
         this.listaProductos = new ArrayList<>();
@@ -92,5 +93,9 @@ public class ProductoBeanUI implements Serializable {
     public void setFiltro(String filtro) {
         this.filtro = filtro;
     }
+
+    public Producto getProductoSeleccionado() {return productoSeleccionado;}
+
+    public void setProductoSeleccionado(Producto productoSeleccionado) {this.productoSeleccionado = productoSeleccionado;}
 
 }

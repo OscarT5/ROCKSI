@@ -43,6 +43,24 @@ public class ProductoDelegate {
         productoDAO.crear(producto);
     }
 
+    public void reducirStock(String idProducto) throws Exception {
+        if (idProducto == null || idProducto.trim().isEmpty()) {
+            throw new Exception("El ID del producto no puede estar vacío.");
+        }
+
+        Producto producto = productoDAO.buscarProductoPorId(idProducto);
+        if (producto == null) {
+            throw new Exception("No existe un producto con el ID: " + idProducto);
+        }
+
+        if (producto.getStock() <= 0) {
+            throw new Exception("El producto " + producto.getNombre() + " no tiene stock disponible.");
+        }
+
+        productoDAO.reducirStock(idProducto);
+    }
+
+
     /**
      * Metodo para eliminar un producto por su ID que llamara a la instancia de ProductoDAO
      * @Throws Si la base de datos rechaza la peticion, si no se encuentra un producto con el ID o si la cadena esta vacia
@@ -75,8 +93,8 @@ public class ProductoDelegate {
         if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
             throw new Exception("El nombre no puede estar vacío.");
         }
-        if (producto.getStock() <= 0) {
-            throw new Exception("El Stock debe ser mayor que cero.");
+        if (producto.getStock() < 0) {
+            throw new Exception("El Stock debe ser numeros positivos.");
         }
 
         if (producto.getPrecio() <= 0) {

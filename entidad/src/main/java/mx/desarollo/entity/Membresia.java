@@ -5,88 +5,76 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import mx.desarollo.entity.Item;
 
-import java.time.LocalDate;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "membresia")
-public class Membresia implements Serializable {
+@PrimaryKeyJoinColumn(name = "ID_Membresia", referencedColumnName = "ID_Item")
+public class Membresia extends Item implements Serializable {
 
-    @Id
-    @Size(max = 45)
-    @Column(name = "ID_Membresia", length = 45)
-    private String idMembresia;
+    //Contador utilizado para la generacion de ids
+    private static int contador = 1000;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fechaVencimiento")
-    private Date fechaVencimiento;
+    //Esto se utiliza para obtener el ID creado en el dao (solo el numero)
+    public static void setContador(int valor) {
+        contador = valor;
+    }
 
+    //Aqui se genera el id
+    public static synchronized String generarNuevoId() {
+        return "M" + (contador++);
+    }
 
-    /*
-    @OneToMany(mappedBy = "membresia", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Cliente> clientes = new ArrayList<>();
-    */
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "ID_Membresia", nullable = false)
+    private Item item;
 
-    public Membresia() { }
+    @NotNull
+    @Column(name = "fechaVencimiento", nullable = false)
+    private LocalDate fechaVencimiento;
 
-    public Membresia(String idMembresia, Date fechaVencimiento) {
-        this.idMembresia = idMembresia;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "ID_Cliente", nullable = false)
+    private Cliente idCliente;
+
+    public Membresia() {
+        super();
+    }
+
+    public Membresia(String id, Cliente idCliente, LocalDate fechaVencimiento ) {
+        super(id);
+        this.idCliente =  idCliente;
         this.fechaVencimiento = fechaVencimiento;
     }
 
-
-    /*
-    public void addCliente(Cliente c) {
-        if (c != null) {
-            clientes.add(c);
-        }
-    }
-
-    public void removeCliente(Cliente c) {
-        if (c != null) {
-            clientes.remove(c);
-        }
-    }
-     */
-
-    // Getters y setters
-    public String getIdMembresia() {
-        return idMembresia;
-    }
-
-    public void setIdMembresia(String idMembresia) {
-        this.idMembresia = idMembresia;
-    }
-
-    /*public Item getItem() {
+    public Item getItem() {
         return item;
     }
 
     public void setItem(Item item) {
         this.item = item;
-    }*/
+    }
 
-    public Date getFechaVencimiento() {
+    public LocalDate getFechaVencimiento() {
         return fechaVencimiento;
     }
 
-    public void setFechaVencimiento(Date fechaVencimiento) {
+    public void setFechaVencimiento(LocalDate fechaVencimiento) {
         this.fechaVencimiento = fechaVencimiento;
     }
 
-    /*
-    public List<Cliente> getClientes() {
-        return clientes;
+    public Cliente getIdCliente() {
+        return idCliente;
     }
 
-    public void setClientes(List<Cliente> clientes) {
-        this.clientes = clientes;
+    public void setIdCliente(Cliente idCliente) {
+        this.idCliente = idCliente;
     }
 
-     */
 }
