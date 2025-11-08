@@ -6,9 +6,13 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarollo.entity.Cliente;
+import helper.PagaHelper;
+import mx.desarollo.entity.Paga;
+import mx.desarollo.entity.Usuariorecepcionista;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Named("adelantarPagoBeanUI")
 @SessionScoped
@@ -17,8 +21,12 @@ public class AdelantarPagoBeanUI implements Serializable {
     private String idCliente;
     private Double montoAdelantado;
     private Cliente clienteEncontrado;
+    private String idUsuarioRecep;
 
     private final ClienteHelper clienteHelper = new ClienteHelper();
+    private final PagaHelper pagaHelper = new PagaHelper();
+
+    private static final String ID_ITEM_ADELANTO = "PAD1000";
 
     // metodo para buscar cliente por id
     public void buscarCliente() {
@@ -54,13 +62,29 @@ public class AdelantarPagoBeanUI implements Serializable {
                                 "Error", "Debe seleccionar un cliente valido."));
                 return;
             }
-
+            // se valida el ID de recepcionista
+            if (idUsuarioRecep == null || idUsuarioRecep.trim().isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage("msgsMontoAdelanto",
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Error", "ID de Recepcionista no encontrado. Vuelva a empezar el proceso."));
+                return;
+            }
             if (montoAdelantado == null || montoAdelantado <= 0) {
-                FacesContext.getCurrentInstance().addMessage(null,
+                FacesContext.getCurrentInstance().addMessage("msgsMontoAdelanto",
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                 "Error", "Debe ingresar un monto mayor a 0."));
                 return;
             }
+
+            // se crea el objeto de paga
+            Paga pagoAdelanto = new Paga();
+            pagoAdelanto.setIdCliente(clienteEncontrado);
+            pagoAdelanto.setMonto(montoAdelantado);
+            pagoAdelanto.setFecha(LocalDate.now());
+            pagoAdelanto.setIdUsuariorecep(idUsuarioRecep);
+            pagoAdelanto.setPorPagar((byte) 0);
+
+            pagaHelper.RealizarPago(pagoAdelanto, ID_ITEM_ADELANTO);
 
             double nuevoCredito = clienteEncontrado.getCredito() + montoAdelantado;
             clienteEncontrado.setCredito(nuevoCredito);
@@ -68,14 +92,17 @@ public class AdelantarPagoBeanUI implements Serializable {
 
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Exito", "Credito actualizado. Nuevo saldo: $" + nuevoCredito));
+                            "Exito", "Crédito actualizado y pago registrado. Nuevo saldo: $" + nuevoCredito));
+
+
+            PrimeFaces.current().ajax().update("formPagos:tablaPagos");
 
             PrimeFaces.current().executeScript("PF('dlgMontoAdelanto').hide(); PF('dlgConfirmacionAdelanto').show();");
 
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null,
+            FacesContext.getCurrentInstance().addMessage("msgsMontoAdelanto",
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Error", "No se pudo actualizar el credito."));
+                            "Error", "No se pudo registrar el adelanto: " + e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -87,6 +114,14 @@ public class AdelantarPagoBeanUI implements Serializable {
 
     public void setIdCliente(String idCliente) {
         this.idCliente = idCliente;
+    }
+
+    public String getIdUsuarioRecep() {
+        return idUsuarioRecep;
+    }
+
+    public void setIdUsuarioRecep(String idUsuarioRecep) {
+        this.idUsuarioRecep = idUsuarioRecep;
     }
 
     public Double getMontoAdelantado() {

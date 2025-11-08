@@ -206,7 +206,7 @@ public class RealizarPagoBeanUI implements Serializable {
                 paga.setPorPagar(porPagar);
 
                 // Ralizo el pago
-                pagaHelper.RealizarPago(paga,"membresia", nueva);
+                pagaHelper.RealizarPago(paga, nueva.getIdItem());
 
             } else {
                 return;
@@ -302,7 +302,7 @@ public class RealizarPagoBeanUI implements Serializable {
                 paga.setMonto(montoTotal);
                 paga.setPorPagar(porPagar);
 
-                pagaHelper.RealizarPago(paga, "membresia", nueva);
+                pagaHelper.RealizarPago(paga, nueva.getIdItem());
 
                 fc.getExternalContext().getSessionMap().remove("clienteSeleccionado");
                 limpiarCampos();
@@ -379,13 +379,12 @@ public class RealizarPagoBeanUI implements Serializable {
                     nueva.setTipo("clase");
                     nueva.setIdCliente(cliente);
                     membresiaHelper.registrarMembresia(nueva, cliente);
-                    pagaHelper.RealizarPago(paga, "clase", nueva);
+                    pagaHelper.RealizarPago(paga, nueva.getIdItem());
                     fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia creada", "Se ha creado la membresia de clase."));
                 } else {
                     membresiaClase.setFechaVencimiento(LocalDate.now().plusDays(30));
                     membresiaHelper.modificarMembresia(membresiaClase);
-                    pagaHelper.RealizarPago(paga, "clase", membresiaClase);
-                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia renovada", "Se ha renovado la membresia de clase."));
+                    pagaHelper.RealizarPago(paga, membresiaClase.getIdItem());                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia renovada", "Se ha renovado la membresia de clase."));
                 }
 
                 PrimeFaces.current().ajax().update("formPrincipal:dlgCambio2");
@@ -454,13 +453,13 @@ public class RealizarPagoBeanUI implements Serializable {
                     nueva.setTipo("clase");
                     nueva.setIdCliente(cliente);
                     membresiaHelper.registrarMembresia(nueva, cliente);
-                    pagaHelper.RealizarPago(paga, "clase", nueva);
+                    pagaHelper.RealizarPago(paga, nueva.getIdItem());
                     fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia creada", "Se ha creado la membresia de clase."));
 
                 } else {
                     membresiaClase.setFechaVencimiento(LocalDate.now().plusDays(30));
                     membresiaHelper.modificarMembresia(membresiaClase);
-                    pagaHelper.RealizarPago(paga, "clase", membresiaClase);
+                    pagaHelper.RealizarPago(paga, membresiaClase.getIdItem());
                     fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia renovada", "Se ha renovado la membresia de clase."));
                 }
 

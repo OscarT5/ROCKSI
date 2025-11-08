@@ -13,31 +13,35 @@ public class PagaDelegate {
     public PagaDelegate() {
         this.pagaDAO = ServiceLocator.getInstancePagaDAO();
     }
+    private static final String ID_ITEM_RETIRO = "RC1000";
 
-    public void registrarPago(Paga paga, String tipo,Membresia membresia) throws Exception {
+    public void registrarPago(Paga paga, String idItem) throws Exception {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
         }
-        if (paga.getMonto() == null) {
-            throw new Exception("Se debe ingresar el monto del pago");
+        if (!ID_ITEM_RETIRO.equals(idItem)) {
+            if (paga.getMonto() == null || paga.getMonto() <= 0) {
+                throw new Exception("Se debe ingresar un monto de pago válido");
+            }
         }
-        if (paga.getMonto() < 0) {
-            throw new Exception("El monto del pago no pude ser menor que 0");
+        if (idItem == null || idItem.trim().isEmpty()) {
+            throw new Exception("Se debe especificar un ID de Item válido");
         }
         if (paga.getPorPagar() < 0) {
             throw new Exception("El monto por pagar no debe ser menor que 0");
         }
 
-        if ("membresia".equalsIgnoreCase(tipo)) {
-            paga.setIdItem(membresia);
-            paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
-            pagaDAO.crear(paga);
+        Item item = pagaDAO.findItemById(idItem);
+
+        if (item == null) {
+            throw new Exception("El Item con ID " + idItem + " no existe en la base de datos.");
         }
-        else if ("clase".equalsIgnoreCase(tipo)) {
-            paga.setIdItem(membresia);
-            paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
-            pagaDAO.crear(paga);
-        }
+
+        paga.setIdItem(item);
+
+        paga.setIdPaga(pagaDAO.generarNuevoIdPaga());
+
+        pagaDAO.crear(paga);
     }
 
     public boolean eliminarPago(String id) throws Exception {

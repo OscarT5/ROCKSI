@@ -997,9 +997,11 @@
 
                     <p:commandButton value="Tomar dinero de caja"
                                      icon="pi pi-dollar"
-                                     actionListener="#{pagoBeanUI.tomarDineroCaja}"
-                                     process="@form"
-                                     update="@form"/>
+                                     actionListener="#{retirarDineroPagaBeanUI.limpiar()}"
+                                     oncomplete="PF('dlgAskIdRetiro').show(); PF('dlgCaja').hide();"
+                                     process="@this"
+                                     update="@none"
+                                     style="background:#dc3545; color:#fff;"/>
                 </div>
             </h:form>
         </p:dialog>
@@ -1073,6 +1075,94 @@
                              style="width:100%; background:#007bcb; color:#fff;"/>
         </h:form>
     </p:dialog>
+
+        <p:dialog header="Identifícate (Retiro)" widgetVar="dlgAskIdRetiro" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360"
+                  onShow="#{retirarDineroPagaBeanUI.limpiar()}">
+            <h:form id="formRetiroId">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsIdRetiro" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="searchIdRetiro" value="ID Usuario Recepcionista"/>
+                    <p:inputText id="searchIdRetiro"
+                                 value="#{retirarDineroPagaBeanUI.idUsuarioRecep}"
+                                 placeholder="Ej. UR0001"
+                                 styleClass="form-control"
+                                 required="true"
+                                 requiredMessage="El ID es obligatorio"/>
+                </div>
+
+                <p:commandButton value="Siguiente"
+                                 icon="pi pi-search"
+                                 action="#{retirarDineroPagaBeanUI.verificarUsuario}"
+                                 update="msgsIdRetiro"
+                                 process="@this searchIdRetiro"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskIdRetiro').hide(); PF('dlgAskPassRetiro').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#007bff; color:#fff;"/>
+            </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Contraseña (Retiro)" widgetVar="dlgAskPassRetiro" modal="true"
+                  resizable="false" closable="true" draggable="false" width="360">
+            <h:form id="formContrasenaRetiro">
+            <h:panelGrid columns="1" style="width:100%;">
+                <p:messages id="msgsPassRetiro" showDetail="true" closable="true"/>
+                <div class="form-group">
+                    <h:outputLabel for="passRetiro" value="Contraseña del Recepcionista"/>
+                    <p:password id="passRetiro"
+                                value="#{retirarDineroPagaBeanUI.contrasenaUR}"
+                                feedback="false"
+                                styleClass="form-control"
+                                required="true"
+                                requiredMessage="Debe ingresar la contraseña"/>
+                </div>
+
+                <p:commandButton value="Validar"
+                                 icon="pi pi-lock"
+                                 action="#{retirarDineroPagaBeanUI.validarContrasena}"
+                                 update="msgsPassRetiro"
+                                 process="@this passRetiro"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPassRetiro').hide(); PF('dlgMontoRetiro').show(); }"
+                                 styleClass="ui-button"
+                                 style="background:#28a745; color:#fff;"/>
+            </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Monto a Retirar" widgetVar="dlgMontoRetiro"
+                  modal="true" resizable="false" closable="true" width="380">
+            <h:form id="formMontoRetirar">
+            <p:messages id="msgsMontoRetiro" showDetail="true" closable="true"/>
+            <h:panelGrid columns="1" style="width:100%;">
+                <h:outputLabel for="montoRetirado" value="Monto"/>
+                <p:inputNumber id="montoRetirado"
+                               value="#{retirarDineroPagaBeanUI.montoRetirar}"
+                               symbol="$"
+                               minValue="1"
+                               required="true" requiredMessage="El monto es obligatorio."
+                               style="width:100%;"/>
+
+                <p:commandButton value="Registrar Retiro"
+                                 icon="pi pi-arrow-down"
+                                 actionListener="#{retirarDineroPagaBeanUI.registrarRetiro}"
+                                 process="@this montoRetirado"  update="msgsMontoRetiro"
+                                 style="margin-top:10px; background:#dc3545; color:#fff;"/>
+            </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Confirmación" widgetVar="dlgConfirmacionRetiro"
+                  modal="true" resizable="false" closable="true" width="360">
+            <h:outputText value="El retiro de caja se ha registrado exitosamente."
+                          style="display:block; text-align:center; margin:15px 0; font-weight:bold;"/>
+            <p:commandButton value="Aceptar"
+                             icon="pi pi-check-circle"
+                             onclick="PF('dlgConfirmacionRetiro').hide();"
+                             type="button"
+                             style="width:100%; background:#007bcb; color:#fff;"/>
+        </p:dialog>
 
     </h:form>
 

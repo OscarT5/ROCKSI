@@ -6,7 +6,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "item")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Item implements Serializable {
+public class Item implements Serializable {
 
     @Id
     @Column(name = "ID_Item", length = 45, nullable = false)
