@@ -972,49 +972,93 @@
             </h:panelGrid>
         </p:dialog>
 
-    <!-- dialog de adelantar pago -->
-    <p:dialog header="Buscar Cliente" widgetVar="dlgBuscarClienteAdelanto"
-              modal="true" resizable="false" closable="true" width="380">
-        <h:form id="formBuscarClienteAdelanto">
-            <p:messages id="msgsBuscarCliente" showDetail="true" closable="true"/>
-            <h:panelGrid columns="1" style="width:100%;">
-                <h:outputLabel for="idClienteAdelanto" value="ID Cliente"/>
-                <p:inputText id="idClienteAdelanto"
-                             value="#{adelantarPagoBeanUI.idCliente}"
-                             placeholder="Ej. CLI0001"
-                             required="true"
-                             style="width:100%;"/>
+        <!-- dialog abrir caja -->
+        <p:dialog header="Caja"
+                  widgetVar="dlgCaja"
+                  modal="true"
+                  resizable="false"
+                  draggable="false"
+                  closable="true"
+                  width="380">
 
-                <p:commandButton value="Buscar"
-                                 icon="pi pi-search"
-                                 actionListener="#{adelantarPagoBeanUI.buscarCliente}"
-                                 update="msgsBuscarCliente"
-                                 style="margin-top:10px; background:#007bcb; color:#fff;"/>
-            </h:panelGrid>
-        </h:form>
-    </p:dialog>
+            <h:form id="formCaja">
+                <div class="dialog-buttons">
+                    <p:commandButton value="Aceptar pago por adelantado"
+                                     icon="pi pi-check-circle"
+                                     onclick="PF('dlgBuscarClienteAdelanto').show(); return false;"
+                                     type="button"
+                                     style="background:#007bcb; color:#fff;"/>
+
+                    <p:commandButton value="Especificar con cuanto dinero inicia el corte"
+                                     icon="pi pi-clock"
+                                     actionListener="#{pagoBeanUI.inicioCorte}"
+                                     process="@form"
+                                     update="@form"/>
+
+                    <p:commandButton value="Tomar dinero de caja"
+                                     icon="pi pi-dollar"
+                                     actionListener="#{pagoBeanUI.tomarDineroCaja}"
+                                     process="@form"
+                                     update="@form"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    <!-- dialog de adelantar pago -->
+        <p:dialog header="Buscar Cliente" widgetVar="dlgBuscarClienteAdelanto"
+                  modal="true" resizable="false" closable="true" width="380">
+            <h:form id="formBuscarClienteAdelanto">
+                <p:messages id="msgsBuscarCliente" showDetail="true" closable="true"/>
+                <h:panelGrid columns="1" style="width:100%;">
+
+                    <h:outputLabel for="idRecepcionistaAdelanto" value="ID Recepcionista"/>
+                    <p:inputText id="idRecepcionistaAdelanto"
+                                 value="#{adelantarPagoBeanUI.idUsuarioRecep}"
+                                 placeholder="Ej. UR0001"
+                                 required="true"
+                                 requiredMessage="El ID de recepcionista es obligatorio"
+                                 style="width:100%; margin-bottom:10px;"/>
+
+                    <h:outputLabel for="idClienteAdelanto" value="ID Cliente"/>
+                    <p:inputText id="idClienteAdelanto"
+                                 value="#{adelantarPagoBeanUI.idCliente}"
+                                 placeholder="Ej. CLI0001"
+                                 required="true"
+                                 requiredMessage="El ID del cliente es obligatorio."
+                                 style="width:100%;"/>
+
+                    <p:commandButton value="Buscar"
+                                     icon="pi pi-search"
+                                     actionListener="#{adelantarPagoBeanUI.buscarCliente}"
+                                     process="@form"
+                                     update="msgsBuscarCliente :formPrincipal:formMontoAdelanto"
+                                     style="margin-top:10px; background:#007bcb; color:#fff;"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
 
     <!-- Ingresar monto a adelantar -->
-    <p:dialog header="Monto a Adelantar" widgetVar="dlgMontoAdelanto"
-              modal="true" resizable="false" closable="true" width="380">
-        <h:form id="formMontoAdelanto">
-            <p:messages id="msgsMontoAdelanto" showDetail="true" closable="true"/>
-            <h:panelGrid columns="1" style="width:100%;">
-                <h:outputLabel for="montoAdelantado" value="Monto"/>
-                <p:inputNumber id="montoAdelantado"
-                               value="#{adelantarPagoBeanUI.montoAdelantado}"
-                               symbol="$"
-                               minValue="1"
-                               style="width:100%;"/>
+        <p:dialog header="Monto a Adelantar" widgetVar="dlgMontoAdelanto"
+                  modal="true" resizable="false" closable="true" width="380">
+            <h:form id="formMontoAdelanto">
+                <p:messages id="msgsMontoAdelanto" showDetail="true" closable="true"/>
+                <h:panelGrid columns="1" style="width:100%;">
+                    <h:outputLabel for="montoAdelantado" value="Monto"/>
+                    <p:inputNumber id="montoAdelantado"
+                                   value="#{adelantarPagoBeanUI.montoAdelantado}"
+                                   symbol="$"
+                                   minValue="1"
+                                   required="true" requiredMessage="El monto es obligatorio."
+                                   style="width:100%;"/>
 
-                <p:commandButton value="Registrar Adelanto"
-                                 icon="pi pi-check"
-                                 actionListener="#{adelantarPagoBeanUI.registrarAdelanto}"
-                                 update="msgsMontoAdelanto"
-                                 style="margin-top:10px; background:#28a745; color:#fff;"/>
-            </h:panelGrid>
-        </h:form>
-    </p:dialog>
+                    <p:commandButton value="Registrar Adelanto"
+                                     icon="pi pi-check"
+                                     actionListener="#{adelantarPagoBeanUI.registrarAdelanto}"
+                                     process="@form"  update="msgsMontoAdelanto"
+                                     style="margin-top:10px; background:#28a745; color:#fff;"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
 
     <!-- confirmacion de pago adelantar -->
     <p:dialog header="Confirmación" widgetVar="dlgConfirmacionAdelanto"
