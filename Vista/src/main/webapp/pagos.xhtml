@@ -335,6 +335,13 @@
                     <p:commandButton value="Abrir la caja" icon="pi pi-inbox"
                                      onclick="PF('dlgCaja').show(); return false;"
                                      type="button"/>
+
+                    <p:commandButton value="Generar Reporte Diario"
+                                     icon="pi pi-file-pdf"
+                                     action="#{reporteBeanUI.descargarReporteDiario}"
+                                     ajax="false"
+                                     styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                                     style="background:#007bff; color:#fff; border:none;"/>
                 </div>
 
                 <!-- TABLA DE PAGOS -->
