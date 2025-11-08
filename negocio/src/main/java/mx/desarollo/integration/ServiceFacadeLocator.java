@@ -10,6 +10,8 @@ public class ServiceFacadeLocator {
     private static PagaFacade PagaFacade;
     private static UsuarioRFacade UsuarioRFacade;
     private static MembresiaFacade MembresiaFacade;
+    private static ReporteFacade reporteFacade;
+    private static InventarioDiarioFacade inventarioDiarioFacade;
 
     public static ClienteFacade getInstanceClienteFacade() {
         if (ClienteFacade == null) {
@@ -64,5 +66,20 @@ public class ServiceFacadeLocator {
             return MembresiaFacade;
         }
     }
+
+    public static ReporteFacade getInstanceReporteFacade() {
+        if (reporteFacade == null) {
+            reporteFacade = new ReporteFacade();
+        }
+        return reporteFacade;
+    }
+
+    public static InventarioDiarioFacade getInstanceInventarioDiarioFacade() {
+        if (inventarioDiarioFacade == null) {
+            inventarioDiarioFacade = new InventarioDiarioFacade();
+        }
+        return  inventarioDiarioFacade;
+    }
+
 
 }

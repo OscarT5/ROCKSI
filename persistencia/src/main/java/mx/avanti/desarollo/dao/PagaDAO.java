@@ -6,6 +6,7 @@ import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Paga;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PagaDAO extends AbstractDAO<Paga> {
@@ -157,4 +158,20 @@ public class PagaDAO extends AbstractDAO<Paga> {
             throw new RuntimeException("Error al modificar el pago.", e);
         }
     }
+
+    //Esta funcion busca los pagos de una fecha especifica para el reporte diario, trae info del cliente y del item
+    public List<Paga> findByFecha(LocalDate fecha) {
+        return execute(em -> {
+            em.clear();
+            return em.createQuery(
+                            "SELECT p FROM Paga p " +
+                                    "JOIN FETCH p.idCliente c " +
+                                    "JOIN FETCH p.idItem i " +
+                                    "WHERE p.fecha = :fecha", Paga.class)
+                    .setParameter("fecha", fecha)
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
+                    .getResultList();
+        });
+    }
+
 }

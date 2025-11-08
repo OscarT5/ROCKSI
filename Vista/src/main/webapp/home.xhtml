@@ -128,6 +128,7 @@
             font-size: 14px;
             cursor: pointer;
             transition: background 0.3s;
+            margin-left: 10px;
         }
 
         .register-btn:hover {
@@ -232,9 +233,26 @@
 
         <!-- Tabla de Clientes Ingresados -->
         <div class="card">
-            <h2>Clientes Ingresados
-                <button class="register-btn"> Registrar Ingreso</button>
-            </h2>
+            <h:form>
+                <h2>
+                    <span>Clientes Ingresados</span>
+
+                    <div>
+                        <button class="register-btn"> Registrar Ingreso</button>
+
+                        <h:commandButton value="Iniciar Día"
+                                         actionListener="#{homeBeanUI.iniciarDia}"
+                                         styleClass="register-btn" />
+                    </div>
+                </h2>
+            </h:form>
+            <h:form>
+                <h:commandButton value="Generar Reporte Diario"
+                                 action="#{reporteBeanUI.descargarReporteDiario}"
+                                 styleClass="register-btn"
+                                 ajax="false" />
+
+            </h:form>
             <table>
                 <thead>
                 <tr>
