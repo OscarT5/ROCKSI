@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
+import mx.desarollo.entity.Item;
 import mx.desarollo.entity.Paga;
 
 import java.time.LocalDate;
@@ -37,6 +38,15 @@ public class PagaDAO extends AbstractDAO<Paga> {
 
             return result;
         });
+    }
+
+    public Item findItemById(String idItem) {
+        try {
+            return em.find(Item.class, idItem);
+        } catch (Exception e) {
+            System.err.println("Error al buscar Item por ID (" + idItem + "): " + e.getMessage());
+            return null;
+        }
     }
 
 
