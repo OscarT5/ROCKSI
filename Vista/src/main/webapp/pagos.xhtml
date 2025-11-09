@@ -989,11 +989,14 @@
                                      type="button"
                                      style="background:#007bcb; color:#fff;"/>
 
-                    <p:commandButton value="Especificar con cuanto dinero inicia el corte"
+                    <p:commandButton value="Especificar con cuánto dinero inicia el corte"
                                      icon="pi pi-clock"
-                                     actionListener="#{pagoBeanUI.inicioCorte}"
-                                     process="@form"
-                                     update="@form"/>
+                                     actionListener="#{inicioCajaBeanUI.limpiar()}"
+                                     oncomplete="PF('dlgAskIdApertura').show(); PF('dlgCaja').hide();"
+                                     process="@this"
+                                     update="@none"
+                                     style="background:#28a745; color:#fff;"/>
+
 
                     <p:commandButton value="Tomar dinero de caja"
                                      icon="pi pi-dollar"
@@ -1074,6 +1077,7 @@
                              type="button"
                              style="width:100%; background:#007bcb; color:#fff;"/>
         </h:form>
+
     </p:dialog>
 
         <p:dialog header="Identifícate (Retiro)" widgetVar="dlgAskIdRetiro" modal="true"
@@ -1163,6 +1167,115 @@
                              type="button"
                              style="width:100%; background:#007bcb; color:#fff;"/>
         </p:dialog>
+
+        <!-- === PASO 1: IDENTIFICACIÓN DEL USUARIO === -->
+        <p:dialog header="Identifícate (Apertura de Caja)"
+                  widgetVar="dlgAskIdApertura"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="360"
+                  onShow="#{inicioCajaBeanUI.limpiar()}">
+
+            <h:form id="formAperturaId">
+                <h:panelGrid columns="1" style="width:100%;">
+                    <p:messages id="msgsIdApertura" showDetail="true" closable="true"/>
+
+                    <div class="form-group">
+                        <h:outputLabel for="searchIdApertura" value="ID Usuario Recepcionista"/>
+                        <p:inputText id="searchIdApertura"
+                                     value="#{inicioCajaBeanUI.idUsuarioRecep}"
+                                     placeholder="Ej. UR0001"
+                                     styleClass="form-control"
+                                     required="true"
+                                     requiredMessage="El ID es obligatorio"/>
+                    </div>
+
+                    <p:commandButton value="Siguiente"
+                                     icon="pi pi-search"
+                                     action="#{inicioCajaBeanUI.verificarUsuario}"
+                                     update="msgsIdApertura"
+                                     process="@this searchIdApertura"
+                                     oncomplete="if (!args.validationFailed) { PF('dlgAskIdApertura').hide(); PF('dlgAskPassApertura').show(); }"
+                                     style="background:#007bff; color:#fff;"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+
+
+        <!-- === PASO 2: VALIDAR CONTRASEÑA === -->
+        <p:dialog header="Contraseña (Apertura de Caja)"
+                  widgetVar="dlgAskPassApertura"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="360">
+
+            <h:form id="formContrasenaApertura">
+                <h:panelGrid columns="1" style="width:100%;">
+                    <p:messages id="msgsPassApertura" showDetail="true" closable="true"/>
+
+                    <div class="form-group">
+                        <h:outputLabel for="passApertura" value="Contraseña del Recepcionista"/>
+                        <p:password id="passApertura"
+                                    value="#{inicioCajaBeanUI.contrasenaUR}"
+                                    feedback="false"
+                                    styleClass="form-control"
+                                    required="true"
+                                    requiredMessage="Debe ingresar la contraseña"/>
+                    </div>
+
+                    <p:commandButton value="Validar"
+                                     icon="pi pi-lock"
+                                     action="#{inicioCajaBeanUI.validarContrasena}"
+                                     update="msgsPassApertura"
+                                     process="@this passApertura"
+                                     oncomplete="if (!args.validationFailed) { PF('dlgAskPassApertura').hide(); PF('dlgMontoApertura').show(); }"
+                                     style="background:#28a745; color:#fff;"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+
+
+        <!-- === PASO 3: MONTO DE APERTURA === -->
+        <p:dialog header="Monto de Apertura de Caja"
+                  widgetVar="dlgMontoApertura"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  draggable="false"
+                  width="360">
+
+            <h:form id="formMontoApertura">
+                <h:panelGrid columns="1" style="width:100%;">
+                    <p:messages id="msgsMontoApertura" showDetail="true" closable="true"/>
+
+                    <div class="form-group">
+                        <h:outputLabel for="montoApertura" value="Monto Inicial en Caja"/>
+                        <p:inputNumber id="montoApertura"
+                                       value="#{inicioCajaBeanUI.montoEnCaja}"
+                                       symbol="$"
+                                       symbolPosition="p"
+                                       minValue="0"
+                                       styleClass="form-control"
+                                       required="true"
+                                       requiredMessage="Debe ingresar el monto de apertura"/>
+                    </div>
+
+                    <p:commandButton value="Registrar Apertura"
+                                     icon="pi pi-check"
+                                     action="#{inicioCajaBeanUI.registrarAperturaCaja}"
+                                     update="msgsMontoApertura formPagos:tablaPagos"
+                                     process="@form"
+                                     style="background:#28a745; color:#fff;"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
 
     </h:form>
 
