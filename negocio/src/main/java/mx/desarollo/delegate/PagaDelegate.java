@@ -19,11 +19,6 @@ public class PagaDelegate {
         if (paga.getIdCliente() == null || paga.getIdCliente().getIdCliente().trim().isEmpty()) {
             throw new Exception("Se debe ingresar el cliente al que se le cargo el pago");
         }
-        if (!ID_ITEM_RETIRO.equals(idItem)) {
-            if (paga.getMonto() == null || paga.getMonto() <= 0) {
-                throw new Exception("Se debe ingresar un monto de pago válido");
-            }
-        }
         if (idItem == null || idItem.trim().isEmpty()) {
             throw new Exception("Se debe especificar un ID de Item válido");
         }
