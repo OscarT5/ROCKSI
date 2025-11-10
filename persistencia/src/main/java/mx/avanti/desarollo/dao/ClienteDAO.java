@@ -143,12 +143,16 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
             throw new RuntimeException("Error al modificar el cliente.", e);
         }
     }
-    /*public Cliente buscarPorTelefono(String Telefono) {
-        List<Cliente> resultados = entityManager
-                .createQuery("SELECT c FROM Cliente c WHERE c.telefono = :Telefono", Cliente.class)
-                .setParameter("Telefono", Telefono)
-                .getResultList();
-        return resultados.isEmpty() ? null : resultados.get(0);
+    public List<Cliente> findByFechaRegistroBetween(java.util.Date inicioMes, java.util.Date finMes) {
+        return execute(em -> {
+            em.clear();
+            return em.createQuery(
+                            "SELECT c FROM Cliente c " +
+                                    "WHERE c.fechaRegistro >= :inicio AND c.fechaRegistro <= :fin", Cliente.class)
+                    .setParameter("inicio", inicioMes, jakarta.persistence.TemporalType.DATE)
+                    .setParameter("fin", finMes, jakarta.persistence.TemporalType.DATE)
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
+                    .getResultList();
+        });
     }
-     */
 }

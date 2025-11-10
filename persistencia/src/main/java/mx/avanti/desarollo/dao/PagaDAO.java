@@ -183,5 +183,18 @@ public class PagaDAO extends AbstractDAO<Paga> {
                     .getResultList();
         });
     }
+    public List<Paga> findByFechaBetween(LocalDate inicioMes, LocalDate finMes) {
+        return execute(em -> {
+            em.clear();
+            return em.createQuery(
+                            "SELECT p FROM Paga p " +
+                                    "JOIN FETCH p.idItem i " +   // Trae el Item (Producto/Membresia)
+                                    "WHERE p.fecha >= :inicio AND p.fecha <= :fin", Paga.class)
+                    .setParameter("inicio", inicioMes)
+                    .setParameter("fin", finMes)
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
+                    .getResultList();
+        });
+    }
 
 }

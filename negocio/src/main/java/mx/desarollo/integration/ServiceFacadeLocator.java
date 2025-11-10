@@ -12,6 +12,7 @@ public class ServiceFacadeLocator {
     private static MembresiaFacade MembresiaFacade;
     private static ReporteFacade reporteFacade;
     private static InventarioDiarioFacade inventarioDiarioFacade;
+    private static ReporteMensualFacade reporteMensualFacade;
 
     public static ClienteFacade getInstanceClienteFacade() {
         if (ClienteFacade == null) {
@@ -81,5 +82,11 @@ public class ServiceFacadeLocator {
         return  inventarioDiarioFacade;
     }
 
+    public static ReporteMensualFacade getInstanceReporteMensualFacade() {
+        if (reporteMensualFacade == null) {
+            reporteMensualFacade = new ReporteMensualFacade();
+        }
+        return reporteMensualFacade;
+    }
 
 }
