@@ -1,45 +1,43 @@
 package ui;
 
-import helper.ReporteHelper;
+import helper.ReporteMensualHelper;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-// Importa el DTO desde el módulo 'negocio'
-import mx.desarollo.dto.ReporteDiarioDTO;
-import reportes.ReporteDiarioPDF;
-
-import java.io.IOException;
+import mx.desarollo.dto.ReporteMensualDTO;
+import reportes.ReporteMensualPDF;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
-@Named("reporteBeanUI")
-@RequestScoped // Usamos RequestScoped porque la generación es una sola acción
-public class ReporteBeanUI implements Serializable {
+@Named("reporteMensualBeanUI")
+@RequestScoped
+public class ReporteMensualBeanUI implements Serializable {
 
-    private final ReporteHelper reporteHelper = new ReporteHelper();
+    private final ReporteMensualHelper reporteHelper = new ReporteMensualHelper();
 
-    public void descargarReporteDiario() {
+    public void descargarReporteMensual() {
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
 
         LocalDate hoy = LocalDate.now();
-        String nombreArchivo = "Reporte_Diario_" + hoy.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".pdf";
-
+        String nombreArchivo = "Reporte_Mensual_" +
+                hoy.format(DateTimeFormatter.ofPattern("MMMM_yyyy", new Locale("es", "ES"))) +
+                ".pdf";
         ec.setResponseContentType("application/pdf");
         ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + nombreArchivo + "\"");
 
         try (OutputStream outputStream = ec.getResponseOutputStream()) {
 
-            ReporteDiarioDTO datos = reporteHelper.obtenerDatosReporte(hoy);
-
-            ReporteDiarioPDF generadorPDF = new ReporteDiarioPDF();
-
+            //Obtener los datos
+            ReporteMensualDTO datos = reporteHelper.obtenerDatosReporteMensual(hoy);
+            ReporteMensualPDF generadorPDF = new ReporteMensualPDF();
+            //HGebera el pdf
             generadorPDF.generarReporte(datos, outputStream);
-
             fc.responseComplete();
 
         } catch (Exception e) {
