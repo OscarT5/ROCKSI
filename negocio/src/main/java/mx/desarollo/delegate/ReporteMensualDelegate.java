@@ -5,10 +5,8 @@ import mx.avanti.desarollo.dao.ClienteDAO;
 import mx.avanti.desarollo.dao.PagaDAO;
 import mx.avanti.desarollo.dao.ProductoDAO;
 import mx.avanti.desarollo.persistence.HibernateUtil;
-import mx.desarollo.entity.Cliente;
-import mx.desarollo.entity.Membresia;
-import mx.desarollo.entity.Paga;
-import mx.desarollo.entity.Producto;
+import mx.desarollo.dto.PagoReporteDTO;
+import mx.desarollo.entity.*;
 import mx.desarollo.dto.ClienteNuevoDTO;
 import mx.desarollo.dto.ProductoMensualDTO;
 import mx.desarollo.dto.ReporteMensualDTO;
@@ -48,6 +46,12 @@ public class ReporteMensualDelegate {
             List<Cliente> clientesNuevos = clienteDAO.findByFechaRegistroBetween(inicioMesDate, finMesDate);
             List<Producto> todosLosProductos = productoDAO.findAll();
 
+            List<PagoReporteDTO> pagosDTO = new ArrayList<>();
+            for (Paga p : pagosDelMes) {
+                if (!"RC1000".equals(p.getIdItem().getIdItem())) {
+                    pagosDTO.add(crearPagoDTO(p));
+                }
+            }
             //Procesar datos y convertirlos a los dtos con ayuda de las clases que se crearon
             List<ProductoMensualDTO> productosDTO = procesarProductosMensual(todosLosProductos, pagosDelMes);
             List<ClienteNuevoDTO> clientesDTO = procesarClientesNuevos(clientesNuevos, pagosDelMes);
@@ -55,7 +59,7 @@ public class ReporteMensualDelegate {
             //Crear el tituto
             String mesFormateado = capitalizar(fechaActual.getMonth().getDisplayName(TextStyle.FULL, new Locale("es", "ES")));
             String mesYAnio = mesFormateado + " " + fechaActual.getYear();
-            return new ReporteMensualDTO(mesYAnio, productosDTO, clientesDTO);
+            return new ReporteMensualDTO(mesYAnio, productosDTO, clientesDTO, pagosDTO);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,5 +127,30 @@ public class ReporteMensualDelegate {
     private String capitalizar(String texto) {
         if (texto == null || texto.isEmpty()) return texto;
         return texto.substring(0, 1).toUpperCase() + texto.substring(1);
+    }
+
+    private PagoReporteDTO crearPagoDTO(Paga p) {
+        String idCliente = p.getIdCliente().getIdCliente();
+        String nombreCliente = p.getIdCliente().getNombreCompleto(); // Asumo Cliente.java tiene getNombreCompleto()
+        String idPago = p.getIdPaga();
+        double total = p.getMonto();
+        String articulo;
+
+        Item item = p.getIdItem();
+
+        if (item instanceof Producto) {
+            articulo = ((Producto) item).getNombre();
+        } else if (item instanceof Clase) {
+            articulo = ((Clase) item).getNombre(); // Asumo Clase.java tiene getNombre()
+        } else if (item instanceof Membresia) {
+            articulo = "Membresía";
+        } else {
+            if ("PAD1000".equals(item.getIdItem())) {
+                articulo = "Pago Adelantado";
+            } else {
+                articulo = "Item Desconocido id: " + item.getIdItem() + ")";
+            }
+        }
+        return new PagoReporteDTO(idCliente, nombreCliente, idPago, articulo, total);
     }
 }
