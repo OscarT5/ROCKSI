@@ -296,24 +296,9 @@ public class TiendaBeanUI implements Serializable {
                 // Aplico un redondedeo de 2 decimales
                 double montoRedondeado = Math.round(montoItemPagado * 100.0) / 100.0;
 
-                // String builder para items iguales
-                StringBuilder sbItems = new StringBuilder();
-                String idItem = item.getId();
-                int cantidad = item.getCantidad();
-
-                for (int i = 0; i < cantidad; i++) {
-                    sbItems.append(idItem);
-                    // Añadir - si no es el ultimo
-                    if (i < cantidad - 1) {
-                        sbItems.append(" - ");
-                    }
-                }
-                // Convierto el StringBuilder a String
-                String itemsString = sbItems.toString();
-
                 pagaItem.setMonto(montoRedondeado);
                 pagaItem.setPorPagar(pagado);
-                pagaHelper.RealizarPago(pagaItem, itemsString);
+                pagaHelper.RealizarPago(pagaItem, item.getId());
             }
 
             this.pagoRealizado = true;
@@ -390,24 +375,9 @@ public class TiendaBeanUI implements Serializable {
                 // Aplico un redondedeo de 2 decimales
                 double montoRedondeado = Math.round(montoItemPagado * 100.0) / 100.0;
 
-                // String builder para items iguales
-                StringBuilder sbItems = new StringBuilder();
-                String idItem = item.getId();
-                int cantidad = item.getCantidad();
-
-                for (int i = 0; i < cantidad; i++) {
-                    sbItems.append(idItem);
-                    // Añadir - si no es el ultimo
-                    if (i < cantidad - 1) {
-                        sbItems.append(" - ");
-                    }
-                }
-                // Convierto el StringBuilder a String
-                String itemsString = sbItems.toString();
-
                 pagaItem.setMonto(montoRedondeado);
                 pagaItem.setPorPagar(pagado);
-                pagaHelper.RealizarPago(pagaItem, itemsString);
+                pagaHelper.RealizarPago(pagaItem, item.getId());
             }
 
             // Indico que el pago se realizo con exito
@@ -482,24 +452,9 @@ public class TiendaBeanUI implements Serializable {
                 // Aplico un redondedeo de 2 decimales
                 double montoRedondeado = Math.round(montoItemPagado * 100.0) / 100.0;
 
-                // String builder para items iguales
-                StringBuilder sbItems = new StringBuilder();
-                String idItem = item.getId();
-                int cantidad = item.getCantidad();
-
-                for (int i = 0; i < cantidad; i++) {
-                    sbItems.append(idItem);
-                    // Añadir - si no es el ultimo
-                    if (i < cantidad - 1) {
-                        sbItems.append(" - ");
-                    }
-                }
-                // Convierto el StringBuilder a String
-                String itemsString = sbItems.toString();
-
                 pagaItem.setMonto(montoRedondeado);
-                pagaItem.setPorPagar(porPagar);
-                pagaHelper.RealizarPago(pagaItem, itemsString);
+                pagaItem.setPorPagar(Byte.parseByte("1"));
+                pagaHelper.RealizarPago(pagaItem, item.getId());
             }
 
             // Indico que el pago se realizo con exito

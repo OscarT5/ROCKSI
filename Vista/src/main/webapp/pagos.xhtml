@@ -240,6 +240,22 @@
             display: block;
         }
 
+        .status-pendiente {
+            color: #D32F2F; /* Rojo o Naranja */
+            font-weight: bold;
+            background-color: #FFEBEE;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .status-pagado {
+            color: #2E7D32; /* Verde */
+            font-weight: bold;
+            background-color: #E8F5E9;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
     </style>
 </h:head>
 
@@ -364,7 +380,8 @@
                     </p:column>
 
                     <p:column headerText="A pagar" sortBy="#{pa.porPagar}">
-                        <h:outputText value="#{pa.porPagar}" />
+                        <h:outputText value="#{pa.porPagar == 1 ? 'Por Pagar' : 'Pagado'}"
+                                      styleClass="#{pa.porPagar == 1 ? 'status-pendiente' : 'status-pagado'}" />
                     </p:column>
                 </p:dataTable>
 
