@@ -1,16 +1,18 @@
 package ui;
 
-import helper.ProductoHelper;
+import helper.*;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import mx.desarollo.entity.ItemCarrito;
-import mx.desarollo.entity.Producto;
+import mx.desarollo.entity.*;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +26,36 @@ public class TiendaBeanUI implements Serializable {
     private double total;
     private ItemCarrito itemSeleccionado;
 
+    // Variables globales
+    private Double montoTotal = 0.0;
+    private Double montoIngresado = 0.0;
+    private Double montoFaltante = 0.0;
+    private Double montoCambio = 0.0;
+    private Double descuento = 0.0;
+    private Date fecha;
+    private Double monto;
+    private byte porPagar = 1;
+    private byte pagado = 0;
 
+
+    // Clases para completar el pago
+    private Paga paga = new Paga();
+    private Cliente cliente;
+    private String idCliente;
+
+    // Usuario recepcionista
+    private String idUR;
+    private String contrasenaUR;
+    private Usuariorecepcionista usuarioRecepcionista;
+    private String siguienteDialogo;
+    private boolean clienteTieneCredito = false;
+    private double creditoAplicado = 0.0;
+    private boolean pagoRealizado = false;
+
+    // Helpers necesarios
+    private final PagaHelper pagaHelper = new PagaHelper();
+    private final UsuarioRHelper usuarioHelper = new UsuarioRHelper();
+    private final ClienteHelper clienteHelper = new ClienteHelper();
     private final ProductoHelper productoHelper = new ProductoHelper();
 
     public TiendaBeanUI() {
@@ -94,11 +125,16 @@ public class TiendaBeanUI implements Serializable {
             return;
         }
 
-        carrito.clear();
-        total = 0.0;
+        if(pagoRealizado) {
+            carrito.clear();
+            total = 0.0;
 
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Compra realizada correctamente."));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Compra realizada correctamente."));
+        } else if (!pagoRealizado) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "No realizado", "No se realizó la compra."));
+        }
     }
 
     public void devolverProductoAlInventario() {
@@ -139,6 +175,460 @@ public class TiendaBeanUI implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualizado", "Se devolvió una unidad al inventario."));
     }
 
+    // Esta funcion verifica si el ID del recepcionista es valido o existente
+    public void verificarUsuario() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            // Si el ID se deja vacio
+            if (idUR == null || idUR.trim().isEmpty())
+                throw new Exception("Debe ingresar el ID del usuario recepcionista.");
+
+            // Si se ingreso algo en campo de ID en el xhtml entonces obtiene al usuario con su ID
+            usuarioRecepcionista = usuarioHelper.obtenerUsuarioR(idUR.trim());
+            // Si el usuario es null quiere decir que no se encontro un usuario con ese ID
+            if (usuarioRecepcionista == null)
+                throw new Exception("No se encontró un usuario con ese ID.");
+
+            // Si se ecuentra un usuario entonces devuelve el mensaje Usuario verificado...
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario verificado", "Recepcionista encontrado."));
+        } catch (Exception e) {
+            // Si no se encontro entonces vuelve nula la instancia de usuarioRecepcionista y no preocede al modal de ingresar contraseña
+            usuarioRecepcionista = null;
+            fc.validationFailed();
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al verificar usuario", e.getMessage()));
+        }
+    }
+
+    // Esta funcion verifica la contraseña del usuarioRecepcionista anteriormente encontrado (Para mas seguridad)
+    public void validarContrasena() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            // Si el usuario es nulo quiere decir que primeramte no se ah encontrado el usuarioRecepcionista y que se debe enontrar para poder ingresar su contraseña
+            if (usuarioRecepcionista == null)
+                throw new Exception("Debe verificar primero al usuario recepcionista antes de validar la contraseña.");
+
+            // Si la contraseña esta vacia entonces muestra el mensaje
+            if (contrasenaUR == null || contrasenaUR.trim().isEmpty())
+                throw new Exception("Debe ingresar la contraseña del recepcionista.");
+
+            // Si contraseña no es agual a la contraseña que tiene el usuarioRecepcionita entonces muestra el mensaje
+            if (!usuarioRecepcionista.getContrasena().equals(contrasenaUR)) {
+                fc.validationFailed();
+                throw new Exception("Contraseña incorrecta.");
+            }
+
+            // Si se identifica correctamente entoces muestra el siguiente mensaje
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Acceso autorizado", "El recepcionista ha sido autenticado correctamente."));
+        } catch (Exception e) {
+            // Si no, entonces muestra el siguiente mensaje
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de autenticación", e.getMessage()));
+        }
+    }
+
+    // Esta funcion realiza el pago en efectivo del carrito
+    public void realizarPagoInteractivoCarrito() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            // Valida recepcionista
+            if (usuarioRecepcionista == null)
+                throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
+
+            // Valida productos en el carrito
+            if (carrito == null || carrito.isEmpty()) {
+                throw new Exception("No hay productos en el carrito para pagar.");
+            }
+
+            // Valida monto ingresado
+            if (montoIngresado == null || montoIngresado < 0)
+                throw new Exception("Debe ingresar un monto para continuar.");
+
+            // Compara monto ingresado contra el monto total a pagar
+            if (montoIngresado < this.montoTotal) {
+                montoFaltante = this.montoTotal - montoIngresado;
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Monto insuficiente", "Faltan " + montoFaltante + " pesos."));
+                return;
+            }
+
+            // Calcula el cambio
+            montoCambio = montoIngresado - this.montoTotal;
+            if (montoCambio < 0) montoCambio = 0.0;
+
+            // Valida cliente
+            if (cliente == null)
+                throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
+
+            // Obtener cliente de la BD con la funcion obtenerCliente() del clienteHelper
+            Cliente clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+            if (clienteExistente == null) {
+                throw new Exception("El cliente seleccionado no existe...");
+            } else {
+                cliente = clienteExistente;
+            }
+
+            // Calcula el total
+            calcularTotal();
+
+            double ratioDePago = 1.0;
+
+            // Calcula el ratio de pago (evitando division por cero)
+            if (this.total > 0.01) {
+                ratioDePago = this.montoTotal / this.total;
+            } else if (this.montoTotal > 0.01) {
+                // Subtotal 0 pero se cobra algo
+                // Por seguridad no aplicamos ratio
+            } else {
+                // Gratis
+            }
+
+            for (ItemCarrito item : carrito) {
+                Paga pagaItem = new Paga();
+                pagaItem.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                pagaItem.setFecha(LocalDate.now());
+                pagaItem.setIdCliente(cliente);
+
+                // Calcula el monto original del item
+                double montoItemOriginal = item.getPrecio() * item.getCantidad();
+
+                // Aplica el ratio para obtener el monto real pagado por este item
+                double montoItemPagado = montoItemOriginal * ratioDePago;
+
+                // Aplico un redondedeo de 2 decimales
+                double montoRedondeado = Math.round(montoItemPagado * 100.0) / 100.0;
+
+                pagaItem.setMonto(montoRedondeado);
+                pagaItem.setPorPagar(pagado);
+                pagaHelper.RealizarPago(pagaItem, item.getId());
+            }
+
+            this.pagoRealizado = true;
+            cobrar();
+
+            // Actualizo la UI y limpio las variables utilizadas
+            PrimeFaces.current().ajax().update("formPrincipal:dlgCambio1");
+            PrimeFaces.current().executeScript("PF('dlgPagoInteractivo1').hide(); PF('dlgCambio1').show();");
+            PrimeFaces.current().ajax().update("formProductos");
+
+            montoIngresado = 0.0;
+            montoFaltante = 0.0;
+            limpiarCampos();
+            carrito.clear();
+            calcularTotal();
+
+        } catch (Exception e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al realizar el pago", e.getMessage()));
+        }
+    }
+
+    // Esta funcion realiza el pago con tarjeta del carrito
+    public void realizarPagoTarjetaCarrito() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            // Valida recepcionista
+            if (usuarioRecepcionista == null)
+                throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
+
+            // Valida cliente
+            if (cliente == null)
+                throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
+
+            // Obtener cliente de la BD con la funcion obtenerCliente() del clienteHelper
+            Cliente clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+            if (clienteExistente == null) {
+                throw new Exception("El cliente seleccionado no existe...");
+            }
+            cliente = clienteExistente;
+
+            // Valida productos en el carrito
+            if (carrito.isEmpty()) {
+                throw new Exception("No hay productos en el carrito para pagar.");
+            }
+
+            // Calcula el total
+            calcularTotal();
+
+            double ratioDePago = 1.0;
+
+            // Calcula el ratio de pago (evitando division por cero)
+            if (this.total > 0.01) {
+                ratioDePago = this.montoTotal / this.total;
+            } else if (this.montoTotal > 0.01) {
+                // Subtotal 0 pero se cobra algo
+                // Por seguridad no aplicamos ratio
+            } else {
+                // Gratis
+            }
+
+            for (ItemCarrito item : carrito) {
+                Paga pagaItem = new Paga();
+                pagaItem.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                pagaItem.setFecha(LocalDate.now());
+                pagaItem.setIdCliente(cliente);
+
+                // Calculo el monto original del item
+                double montoItemOriginal = item.getPrecio() * item.getCantidad();
+
+                // Aplica el ratio para obtener el monto real pagado por este item
+                double montoItemPagado = montoItemOriginal * ratioDePago;
+
+                // Aplico un redondedeo de 2 decimales
+                double montoRedondeado = Math.round(montoItemPagado * 100.0) / 100.0;
+
+                pagaItem.setMonto(montoRedondeado);
+                pagaItem.setPorPagar(pagado);
+                pagaHelper.RealizarPago(pagaItem, item.getId());
+            }
+
+            // Indico que el pago se realizo con exito
+            this.pagoRealizado = true;
+            cobrar();
+
+            // Actualizo la UI y limpio las variables utilizadas
+            PrimeFaces.current().executeScript("PF('dlgPagoTarjeta1').hide(); PF('dlgExitoTarjeta1').show();");
+            PrimeFaces.current().ajax().update("formProductos");
+
+            limpiarCampos();
+            carrito.clear();
+            calcularTotal();
+
+        } catch (Exception e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al realizar el pago con tarjeta", e.getMessage()));
+        }
+    }
+
+    // Esta funcion realiza el pago por pagar
+    public void realizarPagoPorPagar() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            // Valida recepcionista
+            if (usuarioRecepcionista == null)
+                throw new Exception("Debe validar un recepcionista antes de realizar el pago.");
+
+            // Valida cliente
+            if (cliente == null)
+                throw new Exception("Debe seleccionar un cliente antes de realizar el pago.");
+
+            // Obtener cliente de la BD con la funcion obtenerCliente() del clienteHelper
+            Cliente clienteExistente = clienteHelper.obtenerCliente(cliente.getIdCliente());
+            if (clienteExistente == null) {
+                throw new Exception("El cliente seleccionado no existe...");
+            }
+            cliente = clienteExistente;
+
+            // Valida productos en el carrito
+            if (carrito.isEmpty()) {
+                throw new Exception("No hay productos en el carrito para pagar.");
+            }
+
+            // Calcula el total
+            calcularTotal();
+
+            double ratioDePago = 1.0;
+
+            // Calcula el ratio de pago (evitando division por cero)
+            if (this.total > 0.01) {
+                ratioDePago = this.montoTotal / this.total;
+            } else if (this.montoTotal > 0.01) {
+                // Subtotal 0 pero se cobra algo
+                // Por seguridad no aplicamos ratio
+            } else {
+                // Gratis
+            }
+
+            for (ItemCarrito item : carrito) {
+                Paga pagaItem = new Paga();
+                pagaItem.setIdUsuariorecep(usuarioRecepcionista.getIdUsuariorecep());
+                pagaItem.setFecha(LocalDate.now());
+                pagaItem.setIdCliente(cliente);
+
+                // Calculo el monto original del item
+                double montoItemOriginal = item.getPrecio() * item.getCantidad();
+
+                // Aplica el ratio para obtener el monto real pagado por este item
+                double montoItemPagado = montoItemOriginal * ratioDePago;
+
+                // Aplico un redondedeo de 2 decimales
+                double montoRedondeado = Math.round(montoItemPagado * 100.0) / 100.0;
+
+                pagaItem.setMonto(montoRedondeado);
+                pagaItem.setPorPagar(Byte.parseByte("1"));
+                pagaHelper.RealizarPago(pagaItem, item.getId());
+            }
+
+            // Indico que el pago se realizo con exito
+            this.pagoRealizado = true;
+            cobrar();
+
+            // Actualizo la UI y limpio las variables utilizadas
+            PrimeFaces.current().executeScript("PF('dlgPagoPorPagarM').hide(); PF('dlgExitoPorPagar').show();");
+            PrimeFaces.current().ajax().update("formProductos");
+
+            limpiarCampos();
+            carrito.clear();
+            calcularTotal();
+
+        } catch (Exception e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al realizar el pago con tarjeta", e.getMessage()));
+        }
+    }
+
+    public void prepararPago() {
+
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            // Obtiene el nombre del dialogo de pago
+            String proximoDialogoWidgetVar = fc.getExternalContext().getRequestParameterMap().get("proximo");
+            if (proximoDialogoWidgetVar == null || proximoDialogoWidgetVar.isEmpty()) {
+                throw new Exception("Error interno: No se especificó el diálogo de pago.");
+            }
+            this.siguienteDialogo = proximoDialogoWidgetVar;
+
+            // Reinicia los valores
+            this.creditoAplicado = 0.0;
+            this.cliente = null;
+            this.clienteTieneCredito = false;
+
+            // Si se escribio un id cliente
+            if (this.idCliente != null && !this.idCliente.trim().isEmpty()) {
+
+                // Si si se ecribio, obtiene el cliente por su Id
+                String idClienteParaBuscar = this.idCliente.trim();
+                this.cliente = clienteHelper.obtenerCliente(idClienteParaBuscar);
+
+                if (this.cliente == null) {
+                    // El UR escribió un ID que no existe
+                    throw new Exception("No se encontró el cliente con ID: " + idClienteParaBuscar);
+                }
+
+            }else{
+                    throw new Exception("Se debe seleccionar un cliente...");
+            }
+
+            // Solo se revisa credito (si tenemos un cliente existente)
+            if (this.cliente != null && this.cliente.getCredito() > 0.01) {
+                this.clienteTieneCredito = true;
+            }
+
+            // Calcular total
+            obtenerTotal();
+
+            this.fecha = new Date();
+            PrimeFaces.current().ajax().addCallbackParam("tieneCredito", this.clienteTieneCredito);
+
+        } catch (Exception e) {
+            fc.validationFailed();
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al preparar pago", e.getMessage()));
+        }
+    }
+
+    public void aplicarCredito() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            if (cliente == null || montoTotal == null || cliente.getCredito() == 0.00) {
+                throw new Exception("No se puede aplicar el crédito. Faltan datos del cliente o del monto.");
+            }
+
+            double creditoDisponible = cliente.getCredito();
+            if (creditoDisponible <= 0.01) {
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Sin crédito", "El cliente no tiene crédito disponible."));
+                return;
+            }
+
+            if (creditoDisponible >= montoTotal) {
+                this.creditoAplicado = montoTotal;
+                cliente.setCredito(creditoDisponible - montoTotal);
+                montoTotal = 0.0;
+            } else {
+                this.creditoAplicado = creditoDisponible;
+                montoTotal = montoTotal - creditoDisponible;
+                cliente.setCredito(0.0);
+            }
+
+            clienteHelper.ModificarCliente(cliente);
+            calcularFaltante();
+
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Crédito aplicado",
+                    String.format("Se aplicaron $%.2f. Total a pagar: $%.2f", this.creditoAplicado, this.montoTotal)));
+
+        } catch (Exception e) {
+            fc.validationFailed();
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al aplicar crédito", e.getMessage()));
+        }
+    }
+
+    public void cancelarPago() {
+        try {
+            limpiarCampos();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago cancelado", "El proceso de pago ha sido cancelado."));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cancelar pago", e.getMessage()));
+        }
+    }
+
+    public void limpiarCampos() {
+        cliente = null;
+        monto = null;
+        fecha = null;
+        porPagar = 0;
+        contrasenaUR = null;
+        idUR = null;
+        usuarioRecepcionista = null;
+        paga = new Paga();
+        montoTotal = 0.0;
+        montoIngresado = 0.0;
+        montoFaltante = 0.0;
+        descuento = 0.0;
+        siguienteDialogo = null;
+        clienteTieneCredito = false;
+        creditoAplicado = 0.0;
+    }
+
+    private void obtenerTotal() {
+
+        // Obtiene el subtotal del carrito
+        calcularTotal(); // Aseguro que el total este actualizado
+
+        // Establesco el monto base a pagar
+        montoTotal = this.total;
+
+        // Valida y ajusta el descuento (si es mayor al total)
+        if (descuento != null && descuento > montoTotal) {
+            descuento = montoTotal;
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Descuento ajustado",
+                            "El descuento no puede ser mayor al monto de la venta."));
+        }
+
+        // Aplica el descuento al monto total
+        if (descuento != null && descuento > 0) {
+            montoTotal -= descuento;
+            if (montoTotal < 0) montoTotal = 0.0;
+        }
+
+        // Calcular lo que falta por pagar (basado en el monto ya con descuento)
+        calcularFaltante();
+    }
+
+    // Esta funcion calculta el faltante del dinero que ingreso el usuarioRecepcionista en el pago interactivo contra el monto total
+    private void calcularFaltante() {
+        if (montoIngresado == null) montoIngresado = 0.0;
+        if (montoTotal == null) montoTotal = 0.0;
+
+        if (montoIngresado < montoTotal) {
+            montoFaltante = montoTotal - montoIngresado;
+            montoCambio = 0.0;
+        } else {
+            montoFaltante = 0.0;
+            montoCambio = montoIngresado - montoTotal;
+        }
+    }
 
     // Getters y setters
 
@@ -164,4 +654,43 @@ public class TiendaBeanUI implements Serializable {
     public void setItemSeleccionado(ItemCarrito itemSeleccionado) {
         this.itemSeleccionado = itemSeleccionado;
     }
+
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+
+    public String getIdCliente() { return idCliente; }
+    public void setIdCliente(String idCliente) { this.idCliente = idCliente; }
+
+    public Date getFecha() { return fecha; }
+    public void setFecha(Date fecha) { this.fecha = fecha; }
+
+    public Double getMonto() { return monto; }
+    public void setMonto(Double monto) { this.monto = monto; }
+
+    public byte getPorPagar() { return porPagar; }
+    public void setPorPagar(byte porPagar) { this.porPagar = porPagar; }
+
+    public String getIdUR() { return idUR; }
+    public void setIdUR(String idUR) { this.idUR = idUR; }
+
+    public String getContrasenaUR() { return contrasenaUR; }
+    public void setContrasenaUR(String contrasenaUR) { this.contrasenaUR = contrasenaUR; }
+
+    public Usuariorecepcionista getUsuarioRecepcionista() { return usuarioRecepcionista; }
+
+    public Double getMontoTotal() { return montoTotal; }
+    public Double getMontoIngresado() { return montoIngresado; }
+
+    public void setMontoIngresado(Double montoIngresado) { this.montoIngresado = montoIngresado; calcularFaltante(); }
+
+    public Double getMontoCambio() { return montoCambio; }
+    public void setMontoCambio(Double montoCambio) { this.montoCambio = montoCambio; }
+
+    public Double getMontoFaltante() { return montoFaltante; }
+
+    public Double getDescuento() { return descuento; }
+    public void setDescuento(Double descuento) { this.descuento = descuento; }
+
+    public String getSiguienteDialogo() { return siguienteDialogo; }
+    public boolean isClienteTieneCredito() { return clienteTieneCredito; }
 }
