@@ -125,7 +125,7 @@ public class TiendaBeanUI implements Serializable {
             return;
         }
 
-        if(!pagoRealizado) {
+        if(pagoRealizado) {
             carrito.clear();
             total = 0.0;
 
