@@ -17,7 +17,7 @@ public class ReporteDelegate {
 
     public ReporteDelegate() {}
 
-    private static final double DINERO_INICIAL_CAJA = 200.0;//Esto se va a cambiar cuando quede lo de abrir caja
+    private static final double DINERO_INICIAL_CAJA = 0;//Esto se va a cambiar cuando quede lo de abrir caja
     //Metodo principal que recolecta, procesa y empaqueta toda la informacion necesaria para el reporte diario.
     public ReporteDiarioDTO generarDatosReporteDiario(LocalDate fecha) {
 
@@ -31,7 +31,7 @@ public class ReporteDelegate {
 
             //Procesar los pagos
             List<Paga> pagosDelDia = pagaDAO.findByFecha(fecha);
-            List<PagoReporteDTO> pagosDTO = procesarPagos(pagosDelDia);
+            List<PagoReporteDTO> pagosDTO = new ArrayList<>();
             List<RetiroReporteDTO> retirosDTO = new ArrayList<>();
 
             //Procesar los productos
