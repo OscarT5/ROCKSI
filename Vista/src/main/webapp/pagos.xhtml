@@ -344,9 +344,42 @@
                                      onclick="PF('dlgAskId1').show();"
                                      type="button"/>
 
-                    <p:commandButton value="Cancelar pago" icon="pi pi-times"
-                                     actionListener="#{pagoBeanUI.abrirDialogoCancelarPago()}"
-                                     type="button"/>
+                    <p:commandButton value="Cancelar pago"
+                                     icon="pi pi-times"
+                                     type="button"
+                                     onclick="PF('dlgCancelarPago').show()" />
+
+                    <p:dialog header="Cancelar Pago"
+                              widgetVar="dlgCancelarPago"
+                              modal="true"
+                              closable="false"
+                              resizable="false"
+                              draggable="false">
+
+                        <h:panelGrid columns="2" cellpadding="5">
+
+                            <h:outputLabel for="pagoId" value="ID del Pago:" />
+                            <p:inputText id="pagoId"
+                                         value="#{pagoBeanUI.idPagoCancelar}"
+                                         required="true"
+                                         requiredMessage="Debes ingresar un ID de pago." />
+
+                        </h:panelGrid>
+
+                        <p:separator />
+
+                        <p:commandButton value="Aceptar"
+                                         icon="pi pi-check"
+                                         actionListener="#{pagoBeanUI.cancelarPago()}"
+                                         update=":formPagos"
+                                         oncomplete="if (!args.validationFailed) PF('dlgCancelarPago').hide();" />
+
+                        <p:commandButton value="Cerrar"
+                                         icon="pi pi-times"
+                                         type="button"
+                                         onclick="PF('dlgCancelarPago').hide()" />
+
+                    </p:dialog>
 
                     <p:commandButton value="Abrir la caja" icon="pi pi-inbox"
                                      onclick="PF('dlgCaja').show(); return false;"

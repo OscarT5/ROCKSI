@@ -10,6 +10,8 @@ import mx.desarollo.entity.Paga;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class PagaBeanUI implements Serializable {
 
     private List<Paga> listaPagos;
     private String filtro;
-
+    private String idPagoCancelar;
     private final PagaHelper pagaHelper = new PagaHelper();
 
     @PostConstruct
@@ -60,7 +62,50 @@ public class PagaBeanUI implements Serializable {
         }
     }
 
-    // metodos placeholders para acciones de la caja
+    public void abrirDialogoCancelarPago() {
+        PrimeFaces.current().executeScript("PF('dlgCancelarPago').show()");
+    }
+
+    public void cancelarPago() {
+        try {
+            if (idPagoCancelar == null || idPagoCancelar.trim().isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso", "Debe ingresar un ID de pago."));
+                return;
+            }
+
+            Paga original = pagaHelper.obtenerPaga(idPagoCancelar.trim());
+            if (original == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se encontró el pago con ese ID."));
+                return;
+            }
+
+            Paga inverso = new Paga();
+            inverso.setIdUsuariorecep(original.getIdUsuariorecep());
+            inverso.setFecha(LocalDate.now());
+            inverso.setIdCliente(original.getIdCliente());
+            inverso.setMonto(-1*original.getMonto());
+            inverso.setPorPagar(original.getPorPagar());
+            // Registrar el pago inverso
+            pagaHelper.RealizarPago(inverso, original.getIdItem().getIdItem());
+
+            cargarPagos();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Pago cancelado correctamente."));
+            PrimeFaces.current().ajax().update("formPagos");
+
+            PrimeFaces.current().executeScript("PF('dlgCancelarPago').hide();");
+
+            idPagoCancelar = null;
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un error al cancelar el pago."));
+        }
+    }
+
     public void aceptarPagoAdelantado() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pago adelantado aceptado."));
     }
@@ -73,7 +118,6 @@ public class PagaBeanUI implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Dinero tomado de la caja."));
     }
 
-    // Getters y setters
     public List<Paga> getListaPagos() {
         return listaPagos;
     }
@@ -88,5 +132,13 @@ public class PagaBeanUI implements Serializable {
 
     public void setFiltro(String filtro) {
         this.filtro = filtro;
+    }
+
+    public String getIdPagoCancelar() {
+        return idPagoCancelar;
+    }
+
+    public void setIdPagoCancelar(String idPagoCancelar) {
+        this.idPagoCancelar = idPagoCancelar;
     }
 }
