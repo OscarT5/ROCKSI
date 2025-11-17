@@ -28,6 +28,10 @@ public class Producto extends Item implements Serializable {
     @Column(name = "proveedor", nullable = false)
     private String proveedor;//Se agrego el campo de proveedor que faltaba antes
 
+    @NotNull
+    @Column(name = "status", nullable = false)
+    private Byte status;
+
     private static int contador = 1000;
 
     public static void setContador(int nuevoContador) {
@@ -48,6 +52,7 @@ public class Producto extends Item implements Serializable {
         this.nombre = nombre;
         this.stock = stock;
         this.proveedor = proveedor;
+        this.status = 1;
     }
 
     public String getNombre() {
@@ -77,4 +82,8 @@ public class Producto extends Item implements Serializable {
     public String getProveedor() { return proveedor; }
 
     public void setProveedor(String proveedor) { this.proveedor = proveedor; }
+
+    public Byte getStatus() { return status; }
+
+    public void setStatus(Byte status) { this.status = status; }
 }

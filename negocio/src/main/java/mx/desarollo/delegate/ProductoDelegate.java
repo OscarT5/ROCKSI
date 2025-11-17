@@ -126,7 +126,7 @@ public class ProductoDelegate {
             id = id.trim();
             if (id.isEmpty()) return null;
 
-            Producto producto = productoDAO.find(id).orElse(null);
+            Producto producto = productoDAO.buscarProductoPorId(id);
 
             return producto;
         } catch (Exception e) {
@@ -140,6 +140,6 @@ public class ProductoDelegate {
      * @return Una lista de productos que contendra todos los productos de la base de datos
      */
     public List<Producto> listarProductos() {
-        return productoDAO.findAll();
+        return productoDAO.listarTodosLosProductos();
     }
 }

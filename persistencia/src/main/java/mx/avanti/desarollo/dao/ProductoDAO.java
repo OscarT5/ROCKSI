@@ -40,6 +40,8 @@ public class ProductoDAO extends AbstractDAO<Producto> {
                 producto.setIdUsuarioAdmin("ADM1000");
             }
 
+            producto.setStatus((byte) 1);
+
             em.persist(producto);
             tx.commit();
 
@@ -83,31 +85,47 @@ public class ProductoDAO extends AbstractDAO<Producto> {
     }
 
     /*
-   Con esta funcion se elimina un producto por su ID
+    Con esta funcion se realiza una BAJA LÓGICA de un producto por su ID
     */
     public boolean eliminarProducto(String idProducto) {
-        EntityTransaction et = null;
+        EntityTransaction tx = null;
         boolean eliminado = false;
 
-        try{
-            et = em.getTransaction();
-            et.begin();//Se inicializa la transaccion
+        try {
+            // Primero buscamos el producto
+            Producto producto = em.find(Producto.class, idProducto);
 
-            Producto producto = em.find(Producto.class, idProducto);//Encuentra el id del producto
-
-            if(producto != null){
-                if(!em.contains(producto)){
-                    producto = em.merge(producto);
-                }
-                em.remove(producto);
-                eliminado = true;//Se confirma la eliminacion
+            // Si el producto es nulo (no existe) retornamos false
+            if (producto == null) {
+                return false;
             }
-            et.commit();//Se manda lo realizado
-            return eliminado;
 
-        } catch (Exception e){
-            if(et != null && et.isActive()) et.rollback();
+            if (producto.getStatus() == (byte) 0) {
+                return false;
+            }
+
+            tx = em.getTransaction();
+
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            // Baja logica esto quiere decir cambiar el estatus a 0
+            producto.setStatus((byte) 0);
+
+            em.merge(producto);
+
+            tx.commit();
+
+            // Si todo salio bien entonces
+            eliminado = true;
+
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             e.printStackTrace();
+            throw new RuntimeException("Error al eliminar el producto (Baja Lógica).", e);
         }
         return eliminado;
     }
@@ -117,7 +135,11 @@ public class ProductoDAO extends AbstractDAO<Producto> {
     */
     public Producto buscarProductoPorId(String id) {
         try {
-            return em.find(Producto.class, id);
+            Producto producto = em.find(Producto.class, id);
+            if (producto.getStatus() == (byte) 0) {
+                return null;
+            }
+            return producto;
         } catch (Exception e) {
             throw new RuntimeException("Error al buscar el producto por ID...", e);
         }
@@ -151,16 +173,28 @@ public class ProductoDAO extends AbstractDAO<Producto> {
 
 
     /*
-   Con esta funcion se listan todos los productos registrados
-    */
+     Con esta función se listan todos los productos activos (status = 1)
+     */
     public List<Producto> listarTodosLosProductos() {
-        return findAll();
+        return execute(em -> {
+            em.clear();
+
+            return em.createQuery(
+                            "SELECT p FROM Producto p WHERE p.status = :status", Producto.class)
+                    .setParameter("status", (byte) 1)
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
+                    .getResultList();
+        });
     }
 
     public void actualizarProducto(Producto producto) {
         EntityTransaction tx = null;
 
         try {
+            if (producto.getStatus().equals((byte) 0)) {
+                throw new RuntimeException("Este producto ya a sido eliminado.");
+            }
+
             tx = em.getTransaction();
 
             // Iniciar transaccion si no está activa
