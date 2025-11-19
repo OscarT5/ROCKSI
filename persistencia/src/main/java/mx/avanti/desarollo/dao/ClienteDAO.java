@@ -31,6 +31,7 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         EntityTransaction tx = null;
         try {
             sincronizarContador();
+            cliente.setEstatus(1);
 
             if (cliente.getIdCliente() == null || cliente.getIdCliente().isEmpty()) {
                 cliente.setIdCliente(Cliente.generarNuevoId());
@@ -88,10 +89,9 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
             Cliente cliente = entityManager.find(Cliente.class, idCliente);//Encuentra el id del cliente
 
             if (cliente != null) {
-                if (!entityManager.contains(cliente)) {
-                    cliente = entityManager.merge(cliente);
-                }
-                entityManager.remove(cliente);
+                cliente.setEstatus(0); //0, es decir, eliminado
+                entityManager.merge(cliente); //Se guarda el cambio
+
                 eliminado = true;
             }
 
@@ -113,8 +113,13 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
         }
     }
 
+    //Aqui solo se despliegan los activos
     public List<Cliente> listarTodos() {
-        return findAll();
+        return execute(em -> {
+            em.clear();
+            return em.createQuery("SELECT c FROM Cliente c WHERE c.estatus = 1", Cliente.class)
+                    .getResultList();
+        });
     }
 
     public void actualizar(Cliente cliente) {
