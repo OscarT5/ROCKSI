@@ -30,7 +30,7 @@ public class Producto extends Item implements Serializable {
 
     @NotNull
     @Column(name = "status", nullable = false)
-    private Byte status;
+    private Byte status;// Necesario para la baja logica
 
     private static int contador = 1000;
 

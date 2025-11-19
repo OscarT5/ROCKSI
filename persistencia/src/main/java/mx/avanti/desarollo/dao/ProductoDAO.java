@@ -84,9 +84,12 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         return Producto.generarNuevoId();
     }
 
-    /*
-    Con esta funcion se realiza una BAJA LÓGICA de un producto por su ID
-    */
+    /**
+     * Metodo para eliminar un producto por su ID
+     * @Throws Si la base de datos rechaza la peticion, o no se encuentra el producto con el ID
+     * @Params Un String id del producto
+     * @return Una respuesta de tipo boolean
+     */
     public boolean eliminarProducto(String idProducto) {
         EntityTransaction tx = null;
         boolean eliminado = false;
@@ -130,15 +133,21 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         return eliminado;
     }
 
-    /*
-   Con esta funcion se obtiene un producto por su ID
-    */
+    /**
+     * Metodo para buscar un producto por su ID
+     * @Throws Si la base de datos rechaza la peticion, o no se encuentra el producto con el ID
+     * @Params Un String id del producto
+     * @return Un objeto de tipo Producto
+     */
     public Producto buscarProductoPorId(String id) {
         try {
+            // Busca el producto por el id y si lo encuentra lo guarda en un objeto de tipo Producto
             Producto producto = em.find(Producto.class, id);
+            // Si el status del producto es 0 entonces
             if (producto.getStatus() == (byte) 0) {
-                return null;
+                return null; // retorna null
             }
+            // Si no entonces retorna el producto
             return producto;
         } catch (Exception e) {
             throw new RuntimeException("Error al buscar el producto por ID...", e);
@@ -172,8 +181,10 @@ public class ProductoDAO extends AbstractDAO<Producto> {
     }
 
 
-    /*
-     Con esta función se listan todos los productos activos (status = 1)
+    /**
+     * Metodo para listar todos los productos de la base de datos
+     * @Throws Si la base de datos rechaza la peticion
+     * @return Una lista de productos
      */
     public List<Producto> listarTodosLosProductos() {
         return execute(em -> {
@@ -187,9 +198,14 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         });
     }
 
+    /**
+     * Metodo para modificar los datos de un producto
+     * @Throws Si la base de datos rechaza la peticion o el producto es null
+     * @Params Un objeto de tipo Producto
+     * @return void
+     */
     public void actualizarProducto(Producto producto) {
         EntityTransaction tx = null;
-
         try {
             if (producto.getStatus().equals((byte) 0)) {
                 throw new RuntimeException("Este producto ya a sido eliminado.");
@@ -197,19 +213,19 @@ public class ProductoDAO extends AbstractDAO<Producto> {
 
             tx = em.getTransaction();
 
-            // Iniciar transaccion si no está activa
+            // Inicia la transaccion si no está activa
             if (!tx.isActive()) {
                 tx.begin();
             }
 
-            // Actualizar el producto existente
+            // Actualiza el producto existente
             em.merge(producto);
 
-            // Confirmar los cambios
+            // Confirma los cambios
             tx.commit();
 
         } catch (Exception e) {
-            // Revertir la transaccion si ocurre un error
+            // Revierte la transaccion si ocurre un error
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }

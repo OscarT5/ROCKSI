@@ -6,6 +6,7 @@ import java.util.List;
 import java.io.Serializable;
 
 public class ProductoHelper implements Serializable {
+
     public void altaProducto(Producto producto) throws Exception {
         try{
             ServiceFacadeLocator.getInstanceProductoFacade().altaProducto(producto);
@@ -28,6 +29,12 @@ public class ProductoHelper implements Serializable {
         ServiceFacadeLocator.getInstanceProductoFacade().reducirStock(idProducto);
     }
 
+    /**
+     * Metodo para modificar los datos de un producto que llamara a la instancia de ProductoFacade
+     * @Throws Si la base de datos rechaza la peticion
+     * @Params Un objeto de tipo Producto
+     * @return void
+     */
     public void modificarProducto(Producto producto) throws Exception {
         ServiceFacadeLocator.getInstanceProductoFacade().actualizarProducto(producto);
     }
