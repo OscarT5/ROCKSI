@@ -23,6 +23,7 @@ public class RetirarDineroPagaBeanUI implements Serializable {
     private Double montoRetirar;
     private String contrasenaUR;
     private Usuariorecepcionista usuarioValidado;
+    private String observaciones;
 
     private final PagaHelper pagaHelper = new PagaHelper();
     private final ClienteHelper clienteHelper = new ClienteHelper();
@@ -97,6 +98,12 @@ public class RetirarDineroPagaBeanUI implements Serializable {
             pagoRetiro.setMonto(montoRetirar * -1.0);
             pagoRetiro.setPorPagar((byte) 0);
 
+            if (observaciones != null && !observaciones.trim().isEmpty()) {
+                pagoRetiro.setObservaciones(observaciones.trim());
+            } else {
+                pagoRetiro.setObservaciones(observaciones);
+            }
+
             pagaHelper.RealizarPago(pagoRetiro, ID_ITEM_RETIRO);
 
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Retiro de $" + montoRetirar + " registrado."));
@@ -118,6 +125,7 @@ public class RetirarDineroPagaBeanUI implements Serializable {
         this.contrasenaUR = null;
         this.montoRetirar = null;
         this.usuarioValidado = null;
+        this.observaciones = null;
     }
 
     // getters y setters
@@ -129,4 +137,7 @@ public class RetirarDineroPagaBeanUI implements Serializable {
 
     public String getContrasenaUR() { return contrasenaUR; }
     public void setContrasenaUR(String contrasenaUR) { this.contrasenaUR = contrasenaUR; }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 }

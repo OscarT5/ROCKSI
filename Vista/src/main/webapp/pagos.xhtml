@@ -160,6 +160,11 @@
             background-color: #eef7ff !important;
         }
 
+        .texto-vacio {
+            font-style: italic !important;
+            color: #999 !important;
+        }
+
         /* --- DIALOG CAJA --- */
         .ui-dialog {
             border-radius: 15px !important;
@@ -330,9 +335,9 @@
                     </p:inputText>
 
                     <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
-                                     actionListener="#{RealizarPagoBeanUI.recargar()}"
-                                     action="#{pagoBeanUI.recargar}"
-                                     update="tablaPagos"/>
+                                     actionListener="#{pagoBeanUI.recargar}"
+                                     process="@this"
+                                     update=":formPagos:tablaPagos :formPagos:buscarPago"/>
 
                     <p:commandButton value="Realizar Pago clase"
                                      icon="pi pi-shopping-cart"
@@ -414,6 +419,11 @@
 
                     <p:column headerText="Producto" sortBy="#{pa.idItem.idItem}">
                         <h:outputText value="#{pa.idItem.idItem}" />
+                    </p:column>
+
+                    <p:column headerText="Observaciones" sortBy="#{pa.observaciones}">
+                        <h:outputText value="#{empty pa.observaciones ? 'Ninguna observación' : pa.observaciones}"
+                                      styleClass="#{empty pa.observaciones ? 'texto-vacio' : ''}"/>
                     </p:column>
 
                     <p:column headerText="Fecha de pago" sortBy="#{pa.fecha}">
@@ -1210,10 +1220,19 @@
                                required="true" requiredMessage="El monto es obligatorio."
                                style="width:100%;"/>
 
+                <h:outputLabel for="obsRetiro" value="Observaciones" style="margin-top:10px; display:block;"/>
+                <p:inputTextarea id="obsRetiro"
+                                 value="#{retirarDineroPagaBeanUI.observaciones}"
+                                 rows="3"
+                                 placeholder="Motivo del retiro..."
+                                 style="width:100%; resize:none;"
+                                 maxlength="250"/>
+
                 <p:commandButton value="Registrar Retiro"
                                  icon="pi pi-arrow-down"
                                  actionListener="#{retirarDineroPagaBeanUI.registrarRetiro}"
-                                 process="@this montoRetirado"  update="msgsMontoRetiro"
+                                 process="@this montoRetirado obsRetiro"
+                                 update="msgsMontoRetiro :formPagos"
                                  style="margin-top:10px; background:#dc3545; color:#fff;"/>
             </h:panelGrid>
             </h:form>

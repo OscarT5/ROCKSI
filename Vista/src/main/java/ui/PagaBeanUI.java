@@ -26,11 +26,15 @@ public class PagaBeanUI implements Serializable {
 
     @PostConstruct
     public void init() {
+        this.filtro = "";
         cargarPagos();
     }
 
     public void recargar() {
+        this.filtro = "";
         cargarPagos();
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualizado", "Tabla de pagos refrescada."));
     }
 
     public void filtrarPorId() {
