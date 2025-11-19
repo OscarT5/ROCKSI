@@ -24,10 +24,10 @@ public class Cliente {
     @Column(name = "fechaRegistro")
     private Date fechaRegistro;
 
-     /*
-     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Pago> historialPagos = new ArrayList<>();
-     */
+    @Column(name = "estatus", nullable = false)
+    private int estatus;
+    //1 = Activo 0 = Eliminado
+
 
     @ManyToMany
     @JoinTable( //Aqui se hace un join para realizar la tabla puente de estainscrito dentro de la BD
@@ -51,7 +51,7 @@ public class Cliente {
 
     //constructores
 
-    public Cliente() { }
+    public Cliente() { this.estatus = 1; }
 
 
     public Cliente(String nombreCompleto, String telefono, double credito, String sexo, String segundoTelefono) {
@@ -63,6 +63,7 @@ public class Cliente {
         this.sexo = sexo;
         this.segundoTelefono = segundoTelefono;
         this.cantidadDineroMensual = 0;
+        this.estatus = 1;
     }
 
     // metodo para creacion de ID
@@ -117,6 +118,10 @@ public class Cliente {
     public void setCredito(double credito) {
         this.credito = credito;
     }
+
+    public int getEstatus() { return estatus; }
+
+    public void setEstatus(int estatus) { this.estatus = estatus; }
 
     @Transient
     public String getApellido() {

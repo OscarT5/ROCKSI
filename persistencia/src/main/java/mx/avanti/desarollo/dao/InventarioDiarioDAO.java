@@ -22,20 +22,12 @@ public class InventarioDiarioDAO extends AbstractDAO<InventarioDiario> {
         return this.entityManager;
     }
 
-    /**
-     Verifica si ya existen snapshots guardados para una fecha en espeicfico.
-     Utiliza el metodo heredado 'findByOneParameter' de AbstractDAO.
-     retorna true si ya existen registros para ese día, false en caso de que no.
-     */
     public boolean existeSnapshotParaFecha(LocalDate fecha) {
         List<InventarioDiario> snapshotsEncontrados = super.findByOneParameter(fecha, "fecha");
 
         return snapshotsEncontrados != null && !snapshotsEncontrados.isEmpty();
     }
 
-    /**
-     * Busca todos los snapshots de inventario de una fecha especifica.
-     */
     public List<InventarioDiario> findByFecha(LocalDate fecha) {
         return super.findByOneParameter(fecha, "fecha");
     }

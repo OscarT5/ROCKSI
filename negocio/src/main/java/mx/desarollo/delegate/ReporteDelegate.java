@@ -17,7 +17,7 @@ public class ReporteDelegate {
 
     public ReporteDelegate() {}
 
-    private static final double DINERO_INICIAL_CAJA = 0;//Esto se va a cambiar cuando quede lo de abrir caja
+    private static final double DINERO_INICIAL_CAJA = 0.0;//Esto se va a cambiar cuando quede lo de abrir caja
     //Metodo principal que recolecta, procesa y empaqueta toda la informacion necesaria para el reporte diario.
     public ReporteDiarioDTO generarDatosReporteDiario(LocalDate fecha) {
 
@@ -74,39 +74,6 @@ public class ReporteDelegate {
         }
     }
 
-
-    //Convierte la lista de entidades de Paga a una lista de dtos para el reporte
-    private List<PagoReporteDTO> procesarPagos(List<Paga> pagos) {
-        List<PagoReporteDTO> dtos = new ArrayList<>();
-
-        for (Paga p : pagos) {
-            String idCliente = p.getIdCliente().getIdCliente();
-            String nombreCliente = p.getIdCliente().getNombreCompleto(); // Sigo asumiendo que Cliente.java tiene getNombreCompleto()
-            String idPago = p.getIdPaga();
-            double total = p.getMonto();
-
-            //Variable para guardar el nombre del artículo
-            String articulo = "";
-            Item item = p.getIdItem();
-
-            //Aqui se comprueba de que tipo es el item
-            if (item instanceof Producto) {
-                //Si es Producto lo convertimos a Producto y usamos getNombre()
-                articulo = ((Producto) item).getNombre();
-
-            } else if (item instanceof Clase) {
-                //Si es Clase lo convertimos a Clase y usamos getNombre()
-                articulo = ((Clase) item).getNombre();
-
-            } else if (item instanceof Membresia) {
-                // Membresia no tiene nombre asi que le asignamos uno
-                articulo = "Membresía";
-
-            }
-            dtos.add(new PagoReporteDTO(idCliente, nombreCliente, idPago, articulo, total));
-        }
-        return dtos;
-    }
 
     private List<ProductoReporteDTO> procesarProductos(List<Producto> productos, List<InventarioDiario> snapshots, List<Paga> pagos) {
 
