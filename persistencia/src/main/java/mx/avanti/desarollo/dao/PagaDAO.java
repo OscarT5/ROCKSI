@@ -14,6 +14,7 @@ public class PagaDAO extends AbstractDAO<Paga> {
     private final EntityManager em;
     private static boolean contadorInicializado = false;
 
+    // Constructor
     public PagaDAO(EntityManager em) {
         super(Paga.class);
         this.em = em;
@@ -23,6 +24,11 @@ public class PagaDAO extends AbstractDAO<Paga> {
         }
     }
 
+    /**
+     * Metodo para obtener todas las pagas registradas
+     * @Throws Si la base de datos rechaza la peticion de obtener todas las pagas
+     * @return Una lista de pagas
+     */
     public List<Paga> findAllWithPaga() {
         return execute(em -> {
             //Limpia contexto antes de ejecutar la query
@@ -39,7 +45,7 @@ public class PagaDAO extends AbstractDAO<Paga> {
             return result;
         });
     }
-
+    
     public Item findItemById(String idItem) {
         try {
             return em.find(Item.class, idItem);
@@ -55,13 +61,21 @@ public class PagaDAO extends AbstractDAO<Paga> {
         return em;
     }
 
+    /**
+     * Metodo para crear una paga
+     * @Throws Si la base de datos rechaza la peticion de crear el pago
+     * @Params Un objeto de tipo Paga
+     * @return void
+     */
     public void crear(Paga paga){
         save(paga);
         sincronizarContador();
     }
 
-    /*
-    En esta funcion se inicializa el contador para su respectivo ID que empieza con CLI
+    /**
+     * Metodo para sincrinizar el numero de pago con el utlimo pago realizado para crear el ID de la paga
+     * @Throws Si no hay ningun pago registrado en la base de datos
+     * @return void
      */
     private void sincronizarContador() {
         try {
@@ -84,11 +98,20 @@ public class PagaDAO extends AbstractDAO<Paga> {
         }
     }
 
-    //Aqui se genera el nuevo ID
+    /**
+     * Metodo para generar un nuevo ID de paga
+     * @return Un objeto de tipo String id de la paga (Ej.PA####)
+     */
     public String generarNuevoIdPaga() {
         return Paga.generarNuevoId();
     }
 
+    /**
+     * Metodo para eliminar una paga
+     * @Throws Si la base de datos rechaza la peticion de eliminar la paga por ID o no se encuentra la paga con el ID
+     * @Params Un objeto de tipo String id de la paga
+     * @return Una respuesta de tipo boolean
+     */
     public boolean eliminarPaga(String idPaga){
         EntityTransaction et = null;
         boolean eliminado = false;
@@ -116,14 +139,6 @@ public class PagaDAO extends AbstractDAO<Paga> {
         return eliminado;
     }
 
-    public Paga buscarPagaPorId(String id) {
-        try {
-            return em.find(Paga.class, id);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar el Pago por ID", e);
-        }
-    }
-
     public List<Paga> buscarPagosPorId(String idParcial) {
         return execute(em -> {
             em.clear();
@@ -142,25 +157,31 @@ public class PagaDAO extends AbstractDAO<Paga> {
     }
      */
 
+    /**
+     * Metodo para actualizar una paga
+     * @Throws Si la base de datos rechaza la peticion de actualizar la paga
+     * @Params Un objeto de tipo Paga
+     * @return void
+     */
     public void actualizarPaga(Paga paga) {
         EntityTransaction tx = null;
 
         try {
             tx = em.getTransaction();
 
-            // Iniciar transaccion si no está activa
+            // Inicia la transaccion si no está activa
             if (!tx.isActive()) {
                 tx.begin();
             }
 
-            // Actualizar el pago existente
+            // Actualiza el pago existente
             em.merge(paga);
 
-            // Confirmar los cambios
+            // Confirma los cambios
             tx.commit();
 
         } catch (Exception e) {
-            // Revertir la transaccion si ocurre un error
+            // Revierte la transaccion si ocurre un error
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
@@ -168,8 +189,7 @@ public class PagaDAO extends AbstractDAO<Paga> {
             throw new RuntimeException("Error al modificar el pago.", e);
         }
     }
-
-    //Esta funcion busca los pagos de una fecha especifica para el reporte diario, trae info del cliente y del item
+    
     public List<Paga> findByFecha(LocalDate fecha) {
         return execute(em -> {
             em.clear();
@@ -183,6 +203,7 @@ public class PagaDAO extends AbstractDAO<Paga> {
                     .getResultList();
         });
     }
+    
     public List<Paga> findByFechaBetween(LocalDate inicioMes, LocalDate finMes) {
         return execute(em -> {
             em.clear();

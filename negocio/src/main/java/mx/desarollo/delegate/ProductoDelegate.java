@@ -68,39 +68,48 @@ public class ProductoDelegate {
      * @return Una respuesta de tipo boolean
      */
     public boolean eliminarProducto(String idProducto) throws Exception {
+        // Si el String idProducto esta vacio entonces
         if(idProducto == null || idProducto.trim().isEmpty()) {
             throw new Exception("El id del producto esta vacio");
         }
+        // Si no entonces retorna la respuesta que entrega el metodo .eliminarProducto(idProducto)
         return productoDAO.eliminarProducto(idProducto);
     }
 
-    /*
-    este metodo sirve para actualizar clientes mediante su ID
-    que esta es proporcionada por el bean, falta implementar el bean
+    /**
+     * Metodo para modificar los datos de un producto que llamara a la instancia de ProductoDAO
+     * @Throws Si la base de datos rechaza la peticion o si el producto es null
+     * @params Un objeto de tipo Producto
+     * @return void
      */
     public void actualizarProducto(Producto producto) throws Exception {
         String idAActualizar = producto.getIdItem();
+        // Si el idActualizar esta vacio entonces
         if (idAActualizar == null || idAActualizar.trim().isEmpty()) {
             throw new Exception("No se proporcionó ID de producto para modificar.");
         }
 
+        // Creo una instancia de Producto llamada existente al que le asigno el prodcuto que me retorne el metodo .buscarProductoPorId()
         Producto existente = productoDAO.buscarProductoPorId(idAActualizar);
+
+        // Si existente (Producto) es null
         if (existente == null) {
             throw new Exception("No existe el producto con ID " + idAActualizar + " en la base de datos.");
         }
 
-        // Validaciones
+        // Validaciones: Nombre vacio
         if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
             throw new Exception("El nombre no puede estar vacío.");
         }
+        // Que el Stock no sea negativo
         if (producto.getStock() < 0) {
             throw new Exception("El Stock debe ser numeros positivos.");
         }
-
+        // Que el precio sea mayor que cero
         if (producto.getPrecio() <= 0) {
             throw new Exception("El precio debe ser mayor que cero.");
         }
-
+        // Que el provedor no este vacio
         if (producto.getProveedor() == null || producto.getProveedor().trim().isEmpty()) {
             throw new Exception("El proveedor no puede estar vacío.");
         }
@@ -111,6 +120,7 @@ public class ProductoDelegate {
         existente.setPrecio(producto.getPrecio());
         existente.setProveedor(producto.getProveedor());
 
+        // Modifico el producto con el metodo de la instancia productoDAO .actualizarProducto() y entre parametros el objeto de producto
         productoDAO.actualizarProducto(existente);
     }
 
@@ -122,12 +132,16 @@ public class ProductoDelegate {
      */
     public Producto obtenerProducto(String id) {
         try {
+            // Si el String id es null entonces
             if (id == null) return null;
             id = id.trim();
+            // Si el String id esta vacio
             if (id.isEmpty()) return null;
 
-            Producto producto = productoDAO.find(id).orElse(null);
+            // Si la String id si contiene algo entonces, busca con el metodo de la instancia del DAO .buscarProductoPorId() y lo que retorne se lo asigna a un objeto de tipo Producto
+            Producto producto = productoDAO.buscarProductoPorId(id);
 
+            // Retorno el producto encontrado
             return producto;
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo el producto con id=" + id, e);
@@ -140,6 +154,6 @@ public class ProductoDelegate {
      * @return Una lista de productos que contendra todos los productos de la base de datos
      */
     public List<Producto> listarProductos() {
-        return productoDAO.findAll();
+        return productoDAO.listarTodosLosProductos();
     }
 }

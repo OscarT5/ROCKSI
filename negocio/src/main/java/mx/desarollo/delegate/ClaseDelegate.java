@@ -40,12 +40,6 @@ public class ClaseDelegate {
         return claseDAO.eliminarClase(idClase);
     }
 
-    /**
-     * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteDAO
-     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
-     * @return Una lista de clientes que contendra todos los clientes de la base de datos
-     */
-
     /*
     este metodo sirve para actualizar clientes mediante su ID
     que esta es proporcionada por el bean, falta implementar el bean
@@ -90,15 +84,24 @@ public class ClaseDelegate {
         claseDAO.actualizarClase(existente);
     }
 
-
+    /**
+     * Metodo para obtener una clase por su ID que llamara a la instancia de ClaseDAO
+     * @Throws Si la base de datos rechaza la peticion o no se encuntra la clase con el ID
+     * @Params Un String id de la clase
+     * @return Un objeto de tipo Clase
+     */
     public Clase obtenerClase(String id) {
         try {
-            if (id == null) return null;
+            // Si el String id esta vacio entonces
+            if (id == null) return null; // retorna null
             id = id.trim();
-            if (id.isEmpty()) return null;
+            // Si el String id esta limpio
+            if (id.isEmpty()) return null; // retorna null
 
+            // Si id contiene algun dato busca la clase por el id con el metodo .find(id) y se la asigna a un objeto de tipo Clase
             Clase cla = claseDAO.find(id).orElse(null);
 
+            // Retorna la clase
             return cla;
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo la clase con id=" + id, e);
