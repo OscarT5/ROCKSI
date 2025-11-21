@@ -25,15 +25,21 @@ public class ClaseFacade {
     }
 
     /**
-     * Metodo para hacer busqueda por ID en los clientes, llamara a la instancia de ClienteDelegate
-     * @Throws Si la base de datos rechaza la peticion de busqueda por ID
-     * @Params Objeto de tipo String id
-     * @return Una lista con los clientes que cumplen con id del cliente especificado
+     * Metodo para actualizar los datos de una clase que llamara a la instancia de ClaseDelegate
+     * @Throws Si la base de datos rechaza la peticion, ya sea por valores invalidos
+     * @Params Un Objeto de tipo Clase
+     * @return void
      */
     public void actualizarClase(Clase cla) throws Exception {
         claseDelegate.actualizarClase(cla);
     }
 
+    /**
+     * Metodo para obtener una clase por su ID que llamara a la instancia de ClaseDelegate
+     * @Throws Si la base de datos rechaza la peticion o no se ecuntra la clase con el ID
+     * @Params Un String id de la clase
+     * @return Un objeto de tipo Clase
+     */
     public Clase obtenerClasePorId(String id) {
         return claseDelegate.obtenerClase(id);
     }

@@ -13,6 +13,17 @@ public class ServiceFacadeLocator {
     private static ReporteFacade reporteFacade;
     private static InventarioDiarioFacade inventarioDiarioFacade;
     private static ReporteMensualFacade reporteMensualFacade;
+    private static UsuarioAFacade UsuarioAFacade;
+
+    public static UsuarioAFacade getInstanceAAFacade() {
+        if(UsuarioAFacade == null){
+            UsuarioAFacade =  new UsuarioAFacade();
+            return UsuarioAFacade;
+        }
+        else{
+            return UsuarioAFacade;
+        }
+    }
 
     public static ClienteFacade getInstanceClienteFacade() {
         if (ClienteFacade == null) {

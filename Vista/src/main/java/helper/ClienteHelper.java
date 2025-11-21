@@ -15,9 +15,12 @@ import mx.desarollo.integration.ServiceFacadeLocator;
     public void AltaCliente(Cliente cli) throws Exception {
         ServiceFacadeLocator.getInstanceClienteFacade().registrarCliente(cli);
     }
-        public boolean eliminarCliente(String idCliente) throws Exception {
-            return ServiceFacadeLocator.getInstanceClienteFacade().eliminarCliente(idCliente);
-        }
+
+
+    public boolean eliminarCliente(String idCliente) throws Exception {
+        return ServiceFacadeLocator.getInstanceClienteFacade().eliminarCliente(idCliente);
+    }
+
     /**
      * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteFacade
      * @Throws Si la base de datos rechaza la peticion de selec * from tabla
@@ -27,6 +30,7 @@ import mx.desarollo.integration.ServiceFacadeLocator;
     public List<Cliente> ObtenerClientes() throws Exception {
         return ServiceFacadeLocator.getInstanceClienteFacade().listarClientes();
     }
+
         /**
          * Metodo para hacer busqueda por ID en los clientes, que llamara a la instancia de ClienteFacade
          * @Throws Si la base de datos rechaza la peticion de busqueda por ID

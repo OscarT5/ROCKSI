@@ -17,11 +17,7 @@ public class ClienteFacade {
 
     }
 
-
-
-    public Cliente obtenerClientePorId(String id) {
-        return clienteDelegate.obtenerCliente(id);
-    }
+    public Cliente obtenerClientePorId(String id) { return clienteDelegate.obtenerCliente(id); }
 
     /**
      * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteDelegate

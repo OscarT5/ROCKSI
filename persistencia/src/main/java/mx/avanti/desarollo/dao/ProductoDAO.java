@@ -40,6 +40,8 @@ public class ProductoDAO extends AbstractDAO<Producto> {
                 producto.setIdUsuarioAdmin("ADM1000");
             }
 
+            producto.setStatus((byte) 1);
+
             em.persist(producto);
             tx.commit();
 
@@ -82,42 +84,71 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         return Producto.generarNuevoId();
     }
 
-    /*
-   Con esta funcion se elimina un producto por su ID
-    */
+    /**
+     * Metodo para eliminar un producto por su ID
+     * @Throws Si la base de datos rechaza la peticion, o no se encuentra el producto con el ID
+     * @Params Un String id del producto
+     * @return Una respuesta de tipo boolean
+     */
     public boolean eliminarProducto(String idProducto) {
-        EntityTransaction et = null;
+        EntityTransaction tx = null;
         boolean eliminado = false;
 
-        try{
-            et = em.getTransaction();
-            et.begin();//Se inicializa la transaccion
+        try {
+            // Primero buscamos el producto
+            Producto producto = em.find(Producto.class, idProducto);
 
-            Producto producto = em.find(Producto.class, idProducto);//Encuentra el id del producto
-
-            if(producto != null){
-                if(!em.contains(producto)){
-                    producto = em.merge(producto);
-                }
-                em.remove(producto);
-                eliminado = true;//Se confirma la eliminacion
+            // Si el producto es nulo (no existe) retornamos false
+            if (producto == null) {
+                return false;
             }
-            et.commit();//Se manda lo realizado
-            return eliminado;
 
-        } catch (Exception e){
-            if(et != null && et.isActive()) et.rollback();
+            if (producto.getStatus() == (byte) 0) {
+                return false;
+            }
+
+            tx = em.getTransaction();
+
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            // Baja logica esto quiere decir cambiar el estatus a 0
+            producto.setStatus((byte) 0);
+
+            em.merge(producto);
+
+            tx.commit();
+
+            // Si todo salio bien entonces
+            eliminado = true;
+
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             e.printStackTrace();
+            throw new RuntimeException("Error al eliminar el producto (Baja Lógica).", e);
         }
         return eliminado;
     }
 
-    /*
-   Con esta funcion se obtiene un producto por su ID
-    */
+    /**
+     * Metodo para buscar un producto por su ID
+     * @Throws Si la base de datos rechaza la peticion, o no se encuentra el producto con el ID
+     * @Params Un String id del producto
+     * @return Un objeto de tipo Producto
+     */
     public Producto buscarProductoPorId(String id) {
         try {
-            return em.find(Producto.class, id);
+            // Busca el producto por el id y si lo encuentra lo guarda en un objeto de tipo Producto
+            Producto producto = em.find(Producto.class, id);
+            // Si el status del producto es 0 entonces
+            if (producto.getStatus() == (byte) 0) {
+                return null; // retorna null
+            }
+            // Si no entonces retorna el producto
+            return producto;
         } catch (Exception e) {
             throw new RuntimeException("Error al buscar el producto por ID...", e);
         }
@@ -150,32 +181,51 @@ public class ProductoDAO extends AbstractDAO<Producto> {
     }
 
 
-    /*
-   Con esta funcion se listan todos los productos registrados
-    */
+    /**
+     * Metodo para listar todos los productos de la base de datos
+     * @Throws Si la base de datos rechaza la peticion
+     * @return Una lista de productos
+     */
     public List<Producto> listarTodosLosProductos() {
-        return findAll();
+        return execute(em -> {
+            em.clear();
+
+            return em.createQuery(
+                            "SELECT p FROM Producto p WHERE p.status = :status", Producto.class)
+                    .setParameter("status", (byte) 1)
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
+                    .getResultList();
+        });
     }
 
+    /**
+     * Metodo para modificar los datos de un producto
+     * @Throws Si la base de datos rechaza la peticion o el producto es null
+     * @Params Un objeto de tipo Producto
+     * @return void
+     */
     public void actualizarProducto(Producto producto) {
         EntityTransaction tx = null;
-
         try {
+            if (producto.getStatus().equals((byte) 0)) {
+                throw new RuntimeException("Este producto ya a sido eliminado.");
+            }
+
             tx = em.getTransaction();
 
-            // Iniciar transaccion si no está activa
+            // Inicia la transaccion si no está activa
             if (!tx.isActive()) {
                 tx.begin();
             }
 
-            // Actualizar el producto existente
+            // Actualiza el producto existente
             em.merge(producto);
 
-            // Confirmar los cambios
+            // Confirma los cambios
             tx.commit();
 
         } catch (Exception e) {
-            // Revertir la transaccion si ocurre un error
+            // Revierte la transaccion si ocurre un error
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }

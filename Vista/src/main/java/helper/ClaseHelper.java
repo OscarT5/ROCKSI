@@ -22,16 +22,21 @@ public class ClaseHelper implements Serializable {
     }
 
     /**
-     * Metodo para hacer consulta de todos los clientes que llamara a la instancia de ClienteFacade
-     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
-     * @Param Objeto de tipo Cliente
-     * @return Una lista de clientes
+     * Metodo para modificar los datos de una clase que llamara a la instancia de ClaseFacade
+     * @Throws Si la base de datos rechaza la peticion de modificacion, ya sea por valor invalido
+     * @Param Un objeto del tipo Clase
+     * @return void
      */
-    public void ModificarClase(Clase cla) throws Exception {
+    public void modificarClase(Clase cla) throws Exception {
         ServiceFacadeLocator.getInstanceClaseFacade().actualizarClase(cla);
     }
 
-
+    /**
+     * Metodo para obtener una clase por su ID que llamara a la instancia de ClaseFacade
+     * @Throws Si la base de datos rechaza la peticion o no se encuentra la clase con el ID
+     * @Param String id del cliente
+     * @return Un objeto de tipo Clase
+     */
     public Clase obtenerClase(String id) {
         return ServiceFacadeLocator.getInstanceClaseFacade().obtenerClasePorId(id);
 

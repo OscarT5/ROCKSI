@@ -9,4 +9,8 @@
         <resource-handler>org.primefaces.application.resource.PrimeResourceHandler</resource-handler>
     </application>
 
+    <lifecycle>
+        <phase-listener>ui.AuthorizationListener</phase-listener>
+    </lifecycle>
+
 </faces-config>
