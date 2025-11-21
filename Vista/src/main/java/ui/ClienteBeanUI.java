@@ -11,10 +11,15 @@ import java.io.Serializable;
 @Named("clienteBeanUI")
 @SessionScoped
 public class ClienteBeanUI implements Serializable {
-    private List<Cliente> listaClientes;
-    private ClienteHelper clienteHelper = new ClienteHelper();
-    private String filtroId;
+    private List<Cliente> listaClientes; // Lista de clientes necesesaria para consulta de clientes
+    private ClienteHelper clienteHelper = new ClienteHelper(); // Instancia del helper de clientes
+    private String filtroId; // String para filtrar un cliente por su ID
 
+    /**
+     * Metodo para hacer consulta de todos los clientes que llamara a la instancia de clienteHelper
+     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
+     * @return Una lista de clientes a la List listaClientes
+     */
     @PostConstruct
     public void init() {
         try {
@@ -24,6 +29,11 @@ public class ClienteBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para probar la conexion a la base de datos que llamara a la instancia de clienteHelper
+     * @Throws Si la base de datos rechaza la peticion de selec * from tabla
+     * @return Una lista de clientes a la List listaClientes
+     */
     public void probarConexion() {
         try {
             System.out.println("Si se mando a llamar");
@@ -34,12 +44,17 @@ public class ClienteBeanUI implements Serializable {
         }
     }
 
-
+    /**
+     * Metodo para la busqueda de un cliente por su ID que llamara a la instancia de clienteHelper
+     * @Throws Si la base de datos rechaza la peticion del cliente o este no se encuentra
+     * @return Un cliente especifico por su ID
+     */
     public void filtrarPorId() {
         try {
+            // Si el String filtro esta vacio entonces muestra la consulta completa
             if (filtroId == null || filtroId.isEmpty()) {
                 listaClientes = clienteHelper.ObtenerClientes();
-            } else {
+            } else { // Si no, entonces obtiene el cliente por su ID con la funcion .ObtenerClientesPorID(String IdCliente)
                 listaClientes = clienteHelper.ObtenerClientesPorId(filtroId);
             }
         } catch (Exception e) {
@@ -47,6 +62,7 @@ public class ClienteBeanUI implements Serializable {
         }
     }
 
+    // Getters y Setters
     public List<Cliente> getListaClientes() {
         return listaClientes;
     }

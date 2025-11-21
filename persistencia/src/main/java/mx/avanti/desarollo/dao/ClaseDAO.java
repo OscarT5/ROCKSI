@@ -105,6 +105,13 @@ public class ClaseDAO extends AbstractDAO<Clase> {
         }
         return eliminado;
     }
+
+    /**
+     * Metodo para obtener una clase por su ID
+     * @Throws Si la base de datos rechaza la peticion o no se encuntra la clase con el ID
+     * @Params Un String id de la clase
+     * @return Un objeto de tipo Clase
+     */
     public Clase buscarClasePorId(String id) {
         try {
             return em.find(Clase.class, id);
@@ -118,25 +125,31 @@ public class ClaseDAO extends AbstractDAO<Clase> {
     }
      */
 
+    /**
+     * Metodo para modificar los datos de una clase
+     * @Throws Si la base de datos rechaza la peticion, ya sea por valores invalidos
+     * @Params Un objeto de tipo Clase
+     * @return void
+     */
     public void actualizarClase(Clase cla) {
         EntityTransaction tx = null;
 
         try {
             tx = em.getTransaction();
 
-            // Iniciar transaccion si no está activa
+            // Inicia la transaccion si no está activa
             if (!tx.isActive()) {
                 tx.begin();
             }
 
-            // Actualizar la clase existente
+            // Actualiza la clase existente
             em.merge(cla);
 
-            // Confirmar los cambios
+            // Confirma los cambios
             tx.commit();
 
         } catch (Exception e) {
-            // Revertir la transaccion si ocurre un error
+            // Revierte la transaccion si ocurre un error
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }

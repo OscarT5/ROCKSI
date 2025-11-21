@@ -143,6 +143,7 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
             throw new RuntimeException("Error al modificar el cliente.", e);
         }
     }
+
     public List<Cliente> findByFechaRegistroBetween(java.util.Date inicioMes, java.util.Date finMes) {
         return execute(em -> {
             em.clear();

@@ -199,7 +199,12 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
-    // Esta funcion verifica la contraseña del usuarioRecepcionista anteriormente encontrado (Para mas seguridad)
+    /**
+     * Metodo para verificar al usuario primeramente el ID del UR que llamara a la instancia de usuarioHelper
+     * @Throws Si el ID del UR no corresponde a ningun UR
+     * @Params ninguno
+     * @return void
+     */
     public void validarContrasena() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -225,7 +230,12 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
-    // Esta funcion realiza el pago en efectivo del carrito
+    /**
+     * Metodo para realizar un pago en efectivo de carrito
+     * @Throws Si algun dato es null o hay un error al realizar el pago
+     * @Params ninguno
+     * @return void
+     */
     public void realizarPagoInteractivoCarrito() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -321,7 +331,12 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
-    // Esta funcion realiza el pago con tarjeta del carrito
+    /**
+     * Metodo para realizar un pago del carrito con tarjeta
+     * @Throws Si algun dato es null o hay un error al realizar el pago
+     * @Params ninguno
+     * @return void
+     */
     public void realizarPagoTarjetaCarrito() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -398,7 +413,12 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
-    // Esta funcion realiza el pago por pagar
+    /**
+     * Metodo para realizar un pago por pagar del carrito
+     * @Throws Si algun dato es null o hay un error al realizar el pago
+     * @Params ninguno
+     * @return void
+     */
     public void realizarPagoPorPagar() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -475,6 +495,11 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para preparar el pago y sus variables
+     * @Throws Si algun dato es null o hay un error durante el proceso
+     * @return void
+     */
     public void prepararPago() {
 
         FacesContext fc = FacesContext.getCurrentInstance();
@@ -525,6 +550,11 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para aplicar credito si el cliente tiene y aplicarlo al total
+     * @Throws Si algun dato es null o hay un error durante el proceso
+     * @return void
+     */
     public void aplicarCredito() {
         FacesContext fc = FacesContext.getCurrentInstance();
         try {
@@ -560,6 +590,11 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para cancelar el pago
+     * @Throws Si hay un error durante el proceso
+     * @return void
+     */
     public void cancelarPago() {
         try {
             limpiarCampos();
@@ -571,6 +606,12 @@ public class TiendaBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para limpiar variables
+     * @Throws ninguno
+     * @Params ninguno
+     * @return void
+     */
     public void limpiarCampos() {
         cliente = null;
         monto = null;
@@ -589,6 +630,11 @@ public class TiendaBeanUI implements Serializable {
         creditoAplicado = 0.0;
     }
 
+    /**
+     * Metodo para obtener el total a pagar
+     * @Throws Si algun dato es null o hay un error durante el proceso
+     * @Return void
+     */
     private void obtenerTotal() {
 
         // Obtiene el subtotal del carrito
@@ -616,7 +662,11 @@ public class TiendaBeanUI implements Serializable {
         calcularFaltante();
     }
 
-    // Esta funcion calculta el faltante del dinero que ingreso el usuarioRecepcionista en el pago interactivo contra el monto total
+    /**
+     * Metodo para calcular el Faltante a la hora de hacer pago interactivo
+     * @Params ninguno
+     * @return void
+     */
     private void calcularFaltante() {
         if (montoIngresado == null) montoIngresado = 0.0;
         if (montoTotal == null) montoTotal = 0.0;
@@ -631,29 +681,14 @@ public class TiendaBeanUI implements Serializable {
     }
 
     // Getters y setters
+    public List<ItemCarrito> getCarrito() { return carrito; }
+    public void setCarrito(List<ItemCarrito> carrito) { this.carrito = carrito; }
 
-    public List<ItemCarrito> getCarrito() {
-        return carrito;
-    }
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
 
-    public void setCarrito(List<ItemCarrito> carrito) {
-        this.carrito = carrito;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
-    public ItemCarrito getItemSeleccionado() {
-        return itemSeleccionado;
-    }
-    public void setItemSeleccionado(ItemCarrito itemSeleccionado) {
-        this.itemSeleccionado = itemSeleccionado;
-    }
+    public ItemCarrito getItemSeleccionado() { return itemSeleccionado; }
+    public void setItemSeleccionado(ItemCarrito itemSeleccionado) { this.itemSeleccionado = itemSeleccionado;}
 
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }

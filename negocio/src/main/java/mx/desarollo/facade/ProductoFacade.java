@@ -35,6 +35,12 @@ public class ProductoFacade {
         productoDelegate.reducirStock(idProducto);
     }
 
+    /**
+     * Metodo para modificar los datos de un producto que llamara a la instancia de ProductoDelegate
+     * @Throws Si la base de datos rechaza la peticion o el producto es null
+     * @Params Un objeto de tipo Producto
+     * @return void
+     */
     public void actualizarProducto(Producto producto) throws Exception {
         productoDelegate.actualizarProducto(producto);
     }
