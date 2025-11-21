@@ -9,1301 +9,354 @@
     <meta charset="UTF-8"/>
 
     <style>
-        body {
-            margin: 0;
-            font-family: "Poppins", Arial, sans-serif;
-            background-color: #f8f9fb;
-        }
+        body { margin: 0; font-family: "Poppins", Arial, sans-serif; background-color: #f8f9fb; }
 
-        /* BARRA LATERAL */
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #007bcb;
-            color: white;
-            position: fixed;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
+        .sidebar { width: 220px; height: 100vh; background: #007bcb; color: white; position: fixed; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .sidebar .menu { width: 100%; padding-top: 30px; }
+        .sidebar a, .sidebar h\:commandLink { display: flex; align-items: center; gap: 10px; color: white !important; text-decoration: none !important; padding: 10px 20px; font-size: 15px; transition: background 0.3s, transform 0.2s; margin-bottom: 10px; }
+        .sidebar a:hover, .sidebar h\:commandLink:hover, .sidebar .active { background: #0061a6 !important; border-radius: 6px; }
+        .menu-icon { width: 22px; height: 22px; filter: brightness(0) invert(1); transition: transform 0.2s ease; }
+        .sidebar h\:commandLink:hover .menu-icon { transform: scale(1.15); }
+        .sidebar .logo-bottom { padding: 25px 0; }
+        .sidebar .logo-bottom img { width: 130px; border-radius: 50%; }
 
-        /* Menú principal dentro de la barra lateral */
-        .sidebar .menu {
-            width: 100%;
-            padding-top: 30px;
-        }
+        .main-content { margin-left: 220px; padding: 10px 20px; }
+        .header { display: flex; align-items: center; padding-bottom: 10px; border-bottom: 3px solid #007bcb; margin-bottom: 20px; background-color: #f8f9fb; }
+        .header img { height: 60px; }
 
-        /* Enlaces del menú  */
-        .sidebar a,
-        .sidebar h\:commandLink {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white !important;
-            text-decoration: none !important;
-            padding: 10px 20px;
-            font-size: 15px;
-            transition: background 0.3s, transform 0.2s;
-            margin-bottom: 10px;
-        }
+        /* CARDS */
+        .card { background: white; border-radius: 12px; padding: 20px 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card h2 { margin: 0; font-size: 20px; color: #111; font-weight: 700; }
 
-        /* Hover y estado activo */
-        .sidebar a:hover,
-        .sidebar h\:commandLink:hover,
-        .sidebar .active {
-            background: #0061a6 !important;
-            border-radius: 6px;
-        }
+        /* BOTONES */
+        .action-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .btn-custom { background: #007bcb !important; border: none !important; color: white !important; font-weight: normal !important; border-radius: 5px !important; padding: 6px 15px !important; font-size: 14px !important; box-shadow: none !important; text-shadow: none !important; }
+        .btn-custom:hover { background: #005fa3 !important; }
+        .btn-danger { background: #dc3545 !important; border: none !important; color: white !important; font-weight: normal !important; border-radius: 5px !important; padding: 6px 15px !important; font-size: 14px !important; box-shadow: none !important; text-shadow: none !important; }
+        .btn-danger:hover { background: #c82333 !important; }
+        .btn-warning { background: #cf962e !important; border: none !important; color: white !important; font-weight: normal !important; border-radius: 5px !important; padding: 6px 15px !important; }
 
-        /* Ícono dentro del menú */
-        .menu-icon {
-            width: 22px;
-            height: 22px;
-            filter: brightness(0) invert(1);
-            transition: transform 0.2s ease;
-        }
+        .clean-table.ui-datatable { border: none !important; background: #ffffff !important; }
+        .clean-table .ui-datatable-tablewrapper { overflow: visible !important; }
+        .clean-table thead th.ui-state-default { background: #ffffff !important; border: none !important; border-bottom: 1px solid #eaeaea !important; color: #000 !important; font-weight: 700 !important; text-transform: none !important; padding: 15px 10px !important; text-align: left !important; box-shadow: none !important; }
+        .clean-table thead th.ui-state-active, .clean-table thead th.ui-state-hover { background: #ffffff !important; box-shadow: none !important; }
+        .clean-table .ui-datatable-data tr.ui-widget-content, .clean-table .ui-datatable-data tr.ui-datatable-even, .clean-table .ui-datatable-data tr.ui-datatable-odd { background: #ffffff !important; border: none !important; }
+        .clean-table tbody td { border: none !important; border-bottom: 1px solid #f4f4f4 !important; padding: 18px 10px !important; color: #333 !important; font-size: 14px !important; }
+        .clean-table .ui-datatable-data tr:hover, .clean-table .ui-datatable-data tr.ui-state-hover { background-color: #fafafa !important; box-shadow: none !important; font-weight: normal !important; color: #333 !important; }
 
-        /* Animación de ícono al pasar el mouse */
-        .sidebar h\:commandLink:hover .menu-icon {
-            transform: scale(1.15);
-        }
+        .ui-inputfield:focus, .ui-inputtext:focus, .ui-inputnumber:focus input, .ui-dialog .ui-inputtext:focus { outline: 0 none !important; border-color: #007bcb !important; box-shadow: 0 0 0 0.15rem rgba(0, 123, 203, 0.25) !important; transition: none !important; }
+        .form-control, .ui-inputfield, .ui-inputmask { width: 100%; box-sizing: border-box; padding: 8px !important; border-radius: 5px !important; border: 1px solid #ccc !important; box-shadow: none !important; }
 
-        /* Logo inferior */
-        .sidebar .logo-bottom {
-            padding: 25px 0;
-        }
+        .ui-dialog .ui-dialog-titlebar { background: white !important; border: none !important; border-bottom: 1px solid #f0f0f0 !important; padding: 15px 20px !important; }
+        .ui-dialog .ui-dialog-title { font-size: 18px !important; color: #333 !important; font-weight: 700 !important; }
+        .ui-dialog .ui-dialog-content { padding: 20px !important; background: white !important; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; font-size: 14px; }
+        .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background-color: #dc3545 !important; background-image: none !important; border-color: #dc3545 !important; color: #ffffff !important; transform: scale(1.1); transition: all 0.2s ease; opacity: 1 !important; }
 
-        .sidebar .logo-bottom img {
-            width: 130px;
-            border-radius: 50%;
-        }
-
-        /* ESTILOS GENERALES */
-        body {
-            margin: 0;
-            font-family: "Poppins", Arial, sans-serif;
-            background-color: #f8f9fb;
-        }
-
-        /* CONTENEDOR PRINCIPAL */
-        .main-content {
-            margin-left: 220px;
-            padding: 30px 40px;
-        }
-
-        /* Encabezado de la página (título "Clases") */
-        .header-clientes {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #007bcb;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-
-        .header-clientes h1 {
-            font-size: 26px;
-            color: #000;
-            margin: 0;
-            font-weight: 700;
-        }
-
-        /* TARJETA CONTENEDORA */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px 30px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        /* BOTONES DE ACCIÓN */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-bottom: 15px;
-        }
-
-        .action-buttons .ui-button {
-            border: none !important;
-            border-radius: 20px !important;
-            font-weight: 600 !important;
-            padding: 6px 16px !important;
-            font-size: 14px !important;
-        }
-
-        .btn-registrar {
-            background: #007bcb !important;
-            color: #fff !important;
-        }
-
-        .btn-modificar {
-            background: #007bcb !important;
-            color: #fff !important;
-        }
-
-        .btn-baja {
-            background: #007bcb !important;
-            color: #fff !important;
-        }
-
-        /* TABLA DE PRODUCTOS */
-        .ui-datatable {
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            border: none !important;
-            margin-top: 5px;
-        }
-
-        .ui-datatable thead th {
-            background-color: #007bcb !important;
-            color: white !important;
-            text-align: left !important;
-            font-weight: 600 !important;
-            padding: 10px 12px !important;
-            border: none !important;
-            font-size: 14px !important;
-        }
-
-        .ui-datatable tbody td {
-            padding: 10px 12px !important;
-            font-size: 14px !important;
-            color: #222;
-            border: none !important;
-        }
-
-        .ui-datatable tr:nth-child(even) {
-            background-color: #f9f9f9 !important;
-        }
-
-        .ui-datatable tr:nth-child(odd) {
-            background-color: #fff !important;
-        }
-
-        .ui-datatable tr:hover {
-            background-color: #eef7ff !important;
-        }
-
-        .ui-datatable-tablewrapper {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        /* Boton cerrar */
-        .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close,
-        .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-hover,
-        .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-focus {
-            background: transparent !important;
-            border: none !important;
-            color: #555 !important;
-            position: absolute !important;
-            right: 10px !important;
-            top: 50% !important;
-            transform: translateY(-50%) !important;
-            transition: all 0.3s ease !important;
-            box-shadow: none !important;
-        }
-
-        /* Boton cerrar on hover*/
-        .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close:hover,
-        .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-hover:hover {
-            background-color: #dc3545 !important;
-            color: #fff !important;
-            border-radius: 50% !important;
-            width: 28px !important;
-            height: 28px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-
-        /* Titulo del modal */
-        .ui-dialog-title {
-            width: 100% !important;
-            text-align: center !important;
-            font-size: 24px !important;
-            font-weight: 700 !important;
-            color: #000 !important;
-        }
-
-        /* Contenido del modal */
-        .form-group {
-            background-color: #fff;
-            border-radius: 15px;
-            border: none;
-            color: #000;
-            padding: 20px;
-        }
-
-        /* Configracion del layout del modal */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-            width: 90%;
-        }
-
-        /* Configracion del layout del modal */
-        .form-group label {
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        /* Configuracion de estilo en el cuerpo del modal */
-        .ui-dialog {
-            background: white !important;
-            border-radius: 15px !important;
-            border: none !important;
-        }
-
-        /* Configuracion del titulo del modal */
-        .ui-dialog-titlebar {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            position: relative;
-            background: white !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        /* Configuracion de estilo en el cuerpo del modal */
-        .form-group {
-            background: white !important;
-            border: none !important;
-        }
-
-        /* Configuracion de estilo en el cuerpo del modal */
-        .form-group {
-            border: none;
-            border-bottom: 2px solid #ccc;
-            border-radius: 0;
-            background: transparent;
-            color: #000;
-            font-size: 15px;
-        }
-
-        /* Configuracion de estilo en los campos cuando se aplica un focus*/
-        .form-group:focus,
-        .form-group:focus {
-            border-color: #919191 !important;
-            outline: none !important;
-        }
-
-        /* Configuracion en del boton registrar cliente*/
-        .boton-registrar {
-            border: none !important;
-            border-radius: 8px !important;
-            padding: 10px 16px !important;
-            font-weight: 600 !important;
-            font-size: 15px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            margin: 15px auto 0 auto !important;
-            width: 80% !important;
-        }
-
-        /* Configuracion en del boton registrar cliente*/
-        .boton-registrar {
-            margin-right: 8px;
-            font-size: 16px;
-        }
-
-        .ui-confirmdialog {
-            z-index: 1100 !important;
-        }
-
-        .ui-widget-overlay {
-            z-index: 1000 !important;
-        }
-
-        /* === NUEVAS TABLAS (Productos / Carrito) === */
-        .tienda-container {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-
-        /* Contenedores de cada tabla */
-        .tienda-box {
-            flex: 1;
-            min-width: 400px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            padding: 20px 25px;
-        }
-
-        /* Encabezado de cada bloque */
-        .tienda-box h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #000;
-            margin: 0 0 10px 0;
-        }
-
-        /* Input de búsqueda */
-        .tienda-box input[type="text"],
-        .tienda-box .ui-inputfield {
-            width: 100% !important;
-            border: 1px solid #ccc !important;
-            border-radius: 6px !important;
-            padding: 8px 10px !important;
-            font-size: 14px !important;
-            box-shadow: none !important;
-            margin-bottom: 12px !important;
-            transition: border-color 0.2s;
-        }
-        .tienda-box input[type="text"]:focus,
-        .tienda-box .ui-inputfield.ui-state-focus {
-            border-color: #007bcb !important;
-        }
-
-        /* Tablas internas */
-        .tienda-box .ui-datatable {
-            width: 100% !important;
-            border-radius: 8px !important;
-            border: none !important;
-            overflow: hidden !important;
-        }
-
-        .tienda-box .ui-datatable thead th {
-            background-color: #f4f6f8 !important;
-            color: #000 !important;
-            text-align: left !important;
-            font-weight: 600 !important;
-            padding: 8px 12px !important;
-            border-bottom: 2px solid #e0e0e0 !important;
-            font-size: 14px !important;
-        }
-
-        .tienda-box .ui-datatable tbody td {
-            padding: 10px 12px !important;
-            font-size: 14px !important;
-            color: #333;
-            border-bottom: 1px solid #f0f0f0 !important;
-        }
-
-        /* Hover de fila */
-        .tienda-box .ui-datatable tbody tr:hover {
-            background-color: #eef7ff !important;
-        }
-
-        /* Bloque de total */
-        .total-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #007bcb;
-            color: white;
-            padding: 10px 16px;
-            margin-top: 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        /* Botón de Cobrar */
-        .btn-cobrar {
-            margin-top: 12px;
-            background: #007bcb !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            padding: 8px 18px !important;
-            float: right;
-            transition: all 0.2s ease-in-out;
-        }
-        .btn-cobrar:hover {
-            background: #005c96 !important;
-            transform: scale(1.05);
-        }
-
-        /* Encabezado de la sección "Productos" con buscador en la misma línea */
-        .header-tienda {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        /* Título */
-        .header-tienda h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #000;
-            margin: 0;
-        }
-
-        /* Campo de búsqueda */
-        .buscar-producto {
-            width: 220px !important;
-            border: 2px solid #d8d8d8 !important;
-            border-radius: 8px !important;
-            padding: 8px 10px !important;
-            font-size: 14px !important;
-            box-shadow: none !important;
-            transition: all 0.2s ease;
-        }
-        .buscar-producto:focus,
-        .buscar-producto.ui-state-focus {
-            border-color: #007bcb !important;
-        }
-
-        /* 1. Anula el padding y margen muy grande denrtro de cualquier dialogo */
-        .ui-dialog .form-group {
-            padding: 0 !important;
-            margin-bottom: 12px !important;
-            background: none !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-
-            /* Mantenemos la estructura flex, pero con ancho completo */
-            display: flex;
-            flex-direction: column;
-            width: 100% !important;
-        }
-
-        /* Espacio para todos los espacios entre label e input */
-        .ui-dialog .form-group label {
-            margin-bottom: 5px;
-        }
-
-        .ui-dialog .ui-panelgrid td {
-            padding: 6px 4px !important;
-            border: none !important;
-        }
-
-        /* Asegura que los panelgrids no tengan espaciado de borde */
-        .ui-dialog .ui-panelgrid {
-            border-collapse: collapse;
-        }
-
-        /* Añade un pequeño espacio entre botones si estan apilados */
-        .ui-dialog .ui-button {
-            margin-top: 5px;
-        }
+        .tienda-container { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+        .tienda-box { flex: 1; min-width: 400px; background: #fff; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 20px; border: 1px solid #f0f0f0; }
+        .tienda-box h2 { font-size: 18px; font-weight: 700; margin-top: 0; margin-bottom: 15px; color: #333; border-bottom: 2px solid #007bcb; padding-bottom: 8px; display: inline-block; }
+        .total-box { display: flex; justify-content: space-between; align-items: center; background: #f8f9fb; padding: 15px; margin-top: 15px; border-radius: 8px; border: 1px solid #e0e0e0; font-weight: 700; font-size: 18px; color: #333; }
+        .total-amount { color: #007bcb; font-size: 22px; }
+        .confirm-purchase-container { text-align: right; margin-top: 15px; }
+        .search-input { width: 200px !important; margin-right: 10px; }
 
     </style>
 </h:head>
 
 <h:body>
-    <!-- Barra lateral -->
     <div class="sidebar">
         <div class="menu">
             <h:form>
-                <!-- HOME -->
-                <h:commandLink action="home.xhtml?faces-redirect=true"
-                               actionListener="#{menuBeanUI.setActivePage('home')}"
-                               styleClass="#{menuBeanUI.activePage eq 'home' ? 'active' : ''}">
+                <h:commandLink action="home.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('home')}" styleClass="#{menuBeanUI.activePage eq 'home' ? 'active' : ''}">
                     <img src="resources-20250903T164359Z-1-001/resources/home.png" alt="Home Icon" class="menu-icon"/>
                     <span>Home</span>
                 </h:commandLink>
-
-                <!-- CLIENTES -->
-                <h:commandLink action="clientes.xhtml?faces-redirect=true"
-                               actionListener="#{menuBeanUI.setActivePage('clientes')}"
-                               styleClass="#{menuBeanUI.activePage eq 'clientes' ? 'active' : ''}">
+                <h:commandLink action="clientes.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('clientes')}" styleClass="#{menuBeanUI.activePage eq 'clientes' ? 'active' : ''}">
                     <img src="resources-20250903T164359Z-1-001/resources/clientes.png" alt="Clientes Icon" class="menu-icon"/>
                     <span>Clientes</span>
                 </h:commandLink>
-
-                <!-- TIENDA -->
-                <h:commandLink action="tienda.xhtml?faces-redirect=true"
-                               actionListener="#{menuBeanUI.setActivePage('tienda')}"
-                               styleClass="#{menuBeanUI.activePage eq 'tienda' ? 'active' : ''}">
+                <h:commandLink action="tienda.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('tienda')}" styleClass="#{menuBeanUI.activePage eq 'tienda' ? 'active' : ''}">
                     <img src="resources-20250903T164359Z-1-001/resources/tienda.png" alt="Tienda Icon" class="menu-icon"/>
                     <span>Tienda</span>
                 </h:commandLink>
-
-                <!-- CLASES -->
-                <h:commandLink action="clases.xhtml?faces-redirect=true"
-                               actionListener="#{menuBeanUI.setActivePage('clases')}"
-                               styleClass="#{menuBeanUI.activePage eq 'clases' ? 'active' : ''}">
+                <h:commandLink action="clases.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('clases')}" styleClass="#{menuBeanUI.activePage eq 'clases' ? 'active' : ''}">
                     <img src="resources-20250903T164359Z-1-001/resources/clases.png" alt="Clases Icon" class="menu-icon"/>
                     <span>Clases</span>
                 </h:commandLink>
-
-                <!-- PAGOS -->
-                <h:commandLink action="pagos.xhtml?faces-redirect=true"
-                               actionListener="#{menuBeanUI.setActivePage('pagos')}"
-                               styleClass="#{menuBeanUI.activePage eq 'pagos' ? 'active' : ''}">
+                <h:commandLink action="pagos.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('pagos')}" styleClass="#{menuBeanUI.activePage eq 'pagos' ? 'active' : ''}">
                     <img src="resources-20250903T164359Z-1-001/resources/pagos.png" alt="Pagos Icon" class="menu-icon"/>
                     <span>Pagos</span>
                 </h:commandLink>
             </h:form>
         </div>
-
-        <!-- Logo inferior -->
         <div class="logo-bottom">
             <img src="resources-20250903T164359Z-1-001/resources/rockon-icon.png" alt="Rock On Logo"/>
         </div>
     </div>
 
-    <!-- Contenido principal -->
     <div class="main-content">
+        <div class="header">
+            <img src="resources-20250903T164359Z-1-001/resources/Rock_on_text_logo.png" alt="Rock On Title"/>
+        </div>
+
         <div class="card">
             <h:form id="formProductos">
-                <h1>Productos</h1>
+                <p:growl id="msgs" showDetail="true" life="3000" />
 
-                <!-- Tienda -->
                 <div class="tienda-container">
-
-                    <!-- Bloque de productos -->
                     <div class="tienda-box">
-                        <div class="header-tienda">
-                            <h2>Productos</h2>
+                        <h2>Catálogo</h2>
+                        <p:inputText id="buscarProducto" value="#{productoBeanUI.filtro}" placeholder="Buscar producto..." style="width:100%; margin-bottom:15px;">
+                            <p:ajax event="input" listener="#{productoBeanUI.filtrarPorId}" update="tablaProductosMini" delay="300"/>
+                        </p:inputText>
 
-                            <!-- Campo de búsqueda -->
-                            <p:inputText id="buscarProducto"
-                                         value="#{productoBeanUI.filtro}"
-                                         placeholder="Buscar por ID Clase"
-                                         styleClass="form-control buscar-producto">
-                                <p:ajax event="input"
-                                        listener="#{productoBeanUI.filtrarPorId}"
-                                        update="tablaProductosMini"
-                                        delay="300"/>
-                            </p:inputText>
-                        </div>
-
-                        <!-- Mensajes -->
-                        <p:growl id="msgs" showDetail="true" life="3000" />
-
-                        <!-- Tabla de productos existentes -->
-                        <p:dataTable id="tablaProductosMini"
-                                     value="#{productoBeanUI.listaProductos}"
-                                     var="pro"
-                                     selectionMode="single"
-                                     selection="#{productoBeanUI.productoSeleccionado}"
-                                     rowKey="#{pro.idItem}"
-                                     paginator="false"
-                                     emptyMessage="No hay productos registrados">
-
-                            <p:ajax event="rowDblselect"
-                                    listener="#{tiendaBeanUI.agregarAlCarritoDesdeProductos}"
+                        <p:dataTable id="tablaProductosMini" value="#{productoBeanUI.listaProductos}" var="pro"
+                                     selectionMode="single" selection="#{productoBeanUI.productoSeleccionado}" rowKey="#{pro.idItem}"
+                                     paginator="true" rows="5" paginatorPosition="bottom"
+                                     emptyMessage="Sin productos" styleClass="clean-table">
+                            <p:ajax event="rowDblselect" listener="#{tiendaBeanUI.agregarAlCarritoDesdeProductos}"
                                     update=":formProductos:tablaCarrito :formProductos:totalBox :formProductos:msgs :formProductos:tablaProductosMini" />
-
-                            <p:column headerText="ID">
-                                <h:outputText value="#{pro.idItem}" />
-                            </p:column>
-                            <p:column headerText="Nombre">
-                                <h:outputText value="#{pro.nombre}" />
-                            </p:column>
-                            <p:column headerText="Precio">
-                                <h:outputText value="$#{pro.precio}" />
-                            </p:column>
-                            <p:column headerText="Stock">
-                                <h:outputText value="#{pro.stock}" />
-                            </p:column>
+                            <p:column headerText="Nombre"><h:outputText value="#{pro.nombre}" /></p:column>
+                            <p:column headerText="Precio" width="30%"><h:outputText value="$#{pro.precio}" /></p:column>
+                            <p:column headerText="Stock" width="20%"><h:outputText value="#{pro.stock}" /></p:column>
                         </p:dataTable>
                     </div>
 
-                    <!-- Bloque del carrito -->
-                    <div class="tienda-box">
-                        <h2>Carrito</h2>
-
-                        <p:dataTable id="tablaCarrito"
-                                     value="#{tiendaBeanUI.carrito}"
-                                     var="item"
-                                     paginator="false"
-                                     emptyMessage="No hay productos en el carrito"
-                                     selectionMode="single"
-                                     selection="#{tiendaBeanUI.itemSeleccionado}"
-                                     rowKey="#{item.id}">
-
-                            <p:ajax event="rowDblselect"
-                                    listener="#{tiendaBeanUI.devolverProductoAlInventario}"
+                    <div class="tienda-box" style="background: #fdfdfd;">
+                        <h2>Carrito de Compra</h2>
+                        <p:dataTable id="tablaCarrito" value="#{tiendaBeanUI.carrito}" var="item"
+                                     paginator="false" emptyMessage="Carrito vacío"
+                                     selectionMode="single" selection="#{tiendaBeanUI.itemSeleccionado}" rowKey="#{item.id}"
+                                     styleClass="clean-table">
+                            <p:ajax event="rowDblselect" listener="#{tiendaBeanUI.devolverProductoAlInventario}"
                                     update=":formProductos:tablaCarrito :formProductos:tablaProductosMini :formProductos:totalBox :formProductos:msgs" />
-
-                            <p:column headerText="ID">
-                                <h:outputText value="#{item.id}" />
-                            </p:column>
-                            <p:column headerText="Nombre">
-                                <h:outputText value="#{item.nombre}" />
-                            </p:column>
-                            <p:column headerText="Precio">
-                                <h:outputText value="$#{item.precio}" />
-                            </p:column>
-                            <p:column headerText="Cantidad">
-                                <h:outputText value="#{item.cantidad}" />
-                            </p:column>
+                            <p:column headerText="Producto"><h:outputText value="#{item.nombre}" /></p:column>
+                            <p:column headerText="Cant." width="20%"><h:outputText value="#{item.cantidad}" /></p:column>
+                            <p:column headerText="Subtotal" width="30%"><h:outputText value="$#{item.precio * item.cantidad}" /></p:column>
                         </p:dataTable>
 
-
                         <h:panelGroup id="totalBox" layout="block" styleClass="total-box">
-                            <span>Total:</span>
-                            <h:outputText value="#{tiendaBeanUI.total}">
+                            <span>Total a Pagar:</span>
+                            <h:outputText value="#{tiendaBeanUI.total}" styleClass="total-amount">
                                 <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
                             </h:outputText>
                         </h:panelGroup>
 
-                        <p:commandButton value="Cobrar"
-                                         icon="pi pi-check"
-                                         onclick="PF('dlgAskId1').show();"
-                                         update="tablaCarrito totalBox msgs"
-                                         styleClass="btn-cobrar" />
+                        <div class="confirm-purchase-container">
+                            <p:commandButton value="Cobrar"
+                                             icon="pi pi-money-bill"
+                                             onclick="PF('dlgAskId1').show();"
+                                             styleClass="btn-custom" />
+                        </div>
                     </div>
-
                 </div>
 
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;"/>
 
-                <div class="action-buttons" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                    <h:outputLabel for="txtFiltroProducto" value="ID Producto:"/>
-                    <p:inputText id="txtFiltroProducto"
-                                 value="#{productoBeanUI.filtro}"
-                                 placeholder="Buscar producto"
-                                 styleClass="form-control"
-                                 style="width:220px;">
-                        <p:ajax event="input"
-                                listener="#{productoBeanUI.filtrarPorId}"
-                                update="tablaProductos"
-                                delay="300"/>
-                    </p:inputText>
-
-                    <!-- SUBMIT real (sin type="button") -->
-                    <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
-                                     action="#{productoBeanUI.recargar}"
-                                     update="tablaProductos"
-                                     styleClass="btn-registrar"/>
-
-                    <!-- Abren diálogos -->
-                    <p:commandButton value="Alta de Producto" icon="pi pi-plus"
-                                     styleClass="btn-registrar"
-                                     onclick="PF('dlgAgregarProducto').show(); return false;"
-                                     type="button"/>
-
-                    <p:commandButton value="Modificar Producto" icon="pi pi-pencil" styleClass="btn-modificar"
-                                     onclick="PF('dlgBuscarProd').show(); return false;" type="button"/>
-
-                    <p:commandButton value="Baja de Producto" icon="pi pi-trash" styleClass="btn-baja"
-                                     onclick="PF('dlgEliminarProducto').show(); return false;" type="button"/>
-
+                <div class="card-header">
+                    <h2>Inventario General</h2>
+                    <div class="action-buttons">
+                        <p:inputText id="txtFiltroProducto" value="#{productoBeanUI.filtro}" placeholder="ID Producto" styleClass="search-input">
+                            <p:ajax event="input" listener="#{productoBeanUI.filtrarPorId}" update="tablaProductos" delay="300"/>
+                        </p:inputText>
+                        <p:commandButton value="Actualizar" icon="pi pi-refresh" action="#{productoBeanUI.recargar}" update="tablaProductos" styleClass="btn-custom"/>
+                        <p:commandButton value="Nuevo" icon="pi pi-plus" onclick="PF('dlgAgregarProducto').show(); return false;" type="button" styleClass="btn-custom"/>
+                        <p:commandButton value="Modificar" icon="pi pi-pencil" onclick="PF('dlgBuscarProd').show(); return false;" type="button" styleClass="btn-custom"/>
+                        <p:commandButton value="Baja" icon="pi pi-trash" onclick="PF('dlgEliminarProducto').show(); return false;" type="button" styleClass="btn-danger"/>
+                    </div>
                 </div>
 
-                <!--Tabla-->
                 <p:dataTable id="tablaProductos" value="#{productoBeanUI.listaProductos}" var="pro"
                              paginator="true" rows="8" emptyMessage="No hay productos registrados"
-                             paginatorPosition="bottom" style="margin-top:20px;">
-                    <p:column headerText="ID Producto" sortBy="#{pro.idItem}">
-                        <h:outputText value="#{pro.idItem}"/>
-                    </p:column>
-                    <p:column headerText="Nombre" sortBy="#{pro.nombre}">
-                        <h:outputText value="#{pro.nombre}"/>
-                    </p:column>
-                    <p:column headerText="Stock" sortBy="#{pro.stock}">
-                        <h:outputText value="#{pro.stock}"/>
-                    </p:column>
-                    <p:column headerText="Precio por unidad" sortBy="#{pro.precio}">
-                        <h:outputText value="#{pro.precio}"/>
-                    </p:column>
-                    <p:column headerText="Proveedor" sortBy="#{pro.proveedor}">
-                        <h:outputText value="#{pro.proveedor}"/>
-                    </p:column> <!--Proveedor agregado por sugerencia del cliente-->
+                             paginatorPosition="bottom" styleClass="clean-table">
+                    <p:column headerText="ID" width="15%"><h:outputText value="#{pro.idItem}" style="font-weight:600;"/></p:column>
+                    <p:column headerText="Nombre"><h:outputText value="#{pro.nombre}"/></p:column>
+                    <p:column headerText="Stock"><h:outputText value="#{pro.stock}"/></p:column>
+                    <p:column headerText="Precio"><h:outputText value="$#{pro.precio}"/></p:column>
+                    <p:column headerText="Proveedor"><h:outputText value="#{pro.proveedor}"/></p:column>
                 </p:dataTable>
             </h:form>
         </div>
     </div>
 
-    <!-- dialogs -->
-    <p:dialog header="Nuevo producto" widgetVar="dlgAgregarProducto" modal="true"
-              resizable="false" closable="true" draggable="false" width="360">
-
+    <p:dialog header="Nuevo Producto" widgetVar="dlgAgregarProducto" modal="true" resizable="false" width="400" appendTo="@(body)">
         <h:form id="formAltaProducto">
-
             <p:messages id="msgsAltaProducto" showDetail="true" closable="true"/>
-
-            <div class="form-group">
-                <h:outputLabel for="nombreProducto" value="Nombre"/>
-                <p:inputText id="nombreProducto"
-                             value="#{altaProdBeanUI.nombre}"
-                             placeholder="Nombre"
-                             required="true"
-                             requiredMessage="El campo Nombre es obligatorio"/>
-            </div>
-
-            <div class="form-group">
-                <h:outputLabel for="stockProducto" value="Stock"/>
-                <p:inputText id="stockProducto"
-                             value="#{altaProdBeanUI.stock}"
-                             placeholder="Existencia del producto"
-                             required="true"
-                             requiredMessage="El campo Stock es obligatorio">
-                    <f:validateLongRange minimum="1"/>
-                </p:inputText>
-            </div>
-
-            <div class="form-group">
-                <h:outputLabel for="precioProducto" value="Precio"/>
-                <p:inputText id="precioProducto"
-                             value="#{altaProdBeanUI.precio}"
-                             placeholder="Precio del producto"
-                             required="true"
-                             requiredMessage="El campo Precio es obligatorio">
-                    <f:validateDoubleRange minimum="0.01"/>
-                </p:inputText>
-            </div>
-
-            <div class="form-group">
-                <h:outputLabel for="proveedorProducto" value="Proveedor"/>
-                <p:inputText id="proveedorProducto"
-                             value="#{altaProdBeanUI.proveedor}"
-                             placeholder="Ej. cocacola, nestle"
-                             required="true"
-                             requiredMessage="El campo Proveedor es obligatorio"/>
-            </div> <!--Proveedor gagregado-->
-
-            <div class="boton-registrar">
-                <p:commandButton id="registrarProductoBtn"
-                                 value="Registrar el producto"
-                                 icon="pi pi-plus-circle"
-                                 action="#{altaProdBeanUI.altaProducto}"
-                                 process="@form"
-                                 update="msgsAltaProducto formProductos:tablaProductos"
-                                 style="background:#007bff; color:#fff; border:none;"/>
-            </div>
+            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{altaProdBeanUI.nombre}" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Stock"/><p:inputNumber value="#{altaProdBeanUI.stock}" decimalPlaces="0" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Precio"/><p:inputNumber value="#{altaProdBeanUI.precio}" symbol="$" symbolPosition="p" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Proveedor"/><p:inputText value="#{altaProdBeanUI.proveedor}" required="true"/></div>
+            <p:commandButton value="Registrar" action="#{altaProdBeanUI.altaProducto}" update="msgsAltaProducto :formProductos:tablaProductos" styleClass="btn-custom" style="width:100%"/>
         </h:form>
     </p:dialog>
 
-    <!-- dialogo para buscar el id del producto a modificar -->
-    <p:dialog header="Buscar producto" widgetVar="dlgBuscarProd"
-              modal="true" resizable="false" draggable="false" closable="true"
-              width="380">
-
+    <p:dialog header="Buscar Producto" widgetVar="dlgBuscarProd" modal="true" resizable="false" width="350" appendTo="@(body)">
         <h:form id="formBuscarProd">
             <p:messages id="msgsAsk" showDetail="true" closable="true" />
-
-            <div class="form-group" style="margin-top: 10px;">
-                <h:outputLabel for="busquedaId" value="ID del producto:"/>
-                <p:inputText id="busquedaId"
-                             value="#{modificarProdBeanUI.busquedaId}"
-                             placeholder="Ejemplo: PR1001"
-                             style="width:100%" required="true"
-                             requiredMessage="Debe ingresar un ID."/>
-            </div>
-
-            <div style="text-align:center; margin-top:1em;">
-                <p:commandButton value="Buscar"
-                                 icon="pi pi-search"
-                                 action="#{modificarProdBeanUI.cargarProductoPorId}"
-                                 update="formBuscarProd:msgsAsk, formModificarProd"
-                                 oncomplete="if (args &amp;&amp; args.found){PF('dlgBuscarProd').hide();PF('dlgModificarProd').show();}"/>
-            </div>
+            <div class="form-group"><h:outputLabel value="ID Producto"/><p:inputText value="#{modificarProdBeanUI.busquedaId}" placeholder="Ej. PR1001" required="true"/></div>
+            <p:commandButton value="Buscar" icon="pi pi-search" action="#{modificarProdBeanUI.cargarProductoPorId}"
+                             update="msgsAsk :formModificarProd"
+                             oncomplete="if (args &amp;&amp; args.found){PF('dlgBuscarProd').hide();PF('dlgModificarProd').show();}"
+                             styleClass="btn-custom" style="width:100%"/>
         </h:form>
     </p:dialog>
 
-    <!-- dialogo para modificar el producto -->
-    <p:dialog header="Modificar producto" widgetVar="dlgModificarProd"
-              modal="true" resizable="false" draggable="false" closable="true"
-              width="420">
-
+    <p:dialog header="Modificar Producto" widgetVar="dlgModificarProd" modal="true" resizable="false" width="400" appendTo="@(body)">
         <h:form id="formModificarProd">
             <p:messages id="msgsModificar" showDetail="true" closable="true" />
-
-            <h:panelGrid columns="1" cellpadding="5" style="width:100%;">
-
-                <!-- Campo Nombre -->
-                <h:outputLabel for="nombre" value="Nombre"/>
-                <p:inputText id="nombre" value="#{modificarProdBeanUI.nombre}"
-                             placeholder="Nombre del producto" style="width:100%" required="true"
-                             requiredMessage="El nombre es obligatorio."/>
-
-                <!-- Campo Stock -->
-                <h:outputLabel for="stock" value="Stock"/>
-                <p:inputNumber id="stock" value="#{modificarProdBeanUI.stock}"
-                               placeholder="Existencia del producto" style="width:100%"
-                               minValue="0" required="true"
-                               requiredMessage="El stock es obligatorio."/>
-
-                <!-- Campo Precio -->
-                <h:outputLabel for="precio" value="Precio"/>
-                <p:inputNumber id="precio" value="#{modificarProdBeanUI.precio}"
-                               placeholder="Precio del producto" style="width:100%"
-                               decimalPlaces="2" minValue="0"
-                               required="true" requiredMessage="El precio es obligatorio."/>
-
-                <h:outputLabel for="proveedor" value="Proveedor"/>
-                <p:inputText id="proveedor"
-                             value="#{modificarProdBeanUI.proveedor}"
-                             placeholder="Proveedor del producto"
-                             style="width:100%"
-                             required="true"
-                             requiredMessage="El proveedor es obligatorio."/>
-
-            </h:panelGrid>
-
-            <div style="text-align:center; margin-top:15px;">
-                <p:commandButton value="Guardar cambios"
-                                 icon="pi pi-check"
-                                 action="#{modificarProdBeanUI.modificarProducto}"
-                                 update="msgsModificar formBuscarProd:msgsAsk"
-                                 oncomplete="if (!args.validationFailed) { PF('dlgModificarProd').hide(); PF('dlgBuscarProd').show(); }"/>
-            </div>
-
-            <div style="text-align:center; margin-top:10px;">
-                <p:commandButton value="Cancelar"
-                                 icon="pi pi-times"
-                                 type="button"
-                                 onclick="PF('dlgModificarProd').hide(); PF('dlgBuscarProd').show();"/>
-            </div>
-
+            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{modificarProdBeanUI.nombre}" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Stock"/><p:inputNumber value="#{modificarProdBeanUI.stock}" decimalPlaces="0" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Precio"/><p:inputNumber value="#{modificarProdBeanUI.precio}" symbol="$" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Proveedor"/><p:inputText value="#{modificarProdBeanUI.proveedor}" required="true"/></div>
+            <p:commandButton value="Guardar Cambios" styleClass="btn-custom" style="width:100%"/>
         </h:form>
     </p:dialog>
 
-    <!-- Eliminar Producto -->
-    <p:dialog header="Eliminar Producto" widgetVar="dlgEliminarProducto"
-                  modal="true" resizable="false" closable="true"
-                  draggable="false" width="360">
-        <h:form id="formEliminarProducto">
-
-            <!-- Mensajes del backend -->
+    <p:dialog header="Eliminar Producto" widgetVar="dlgEliminarProducto" modal="true" resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formEliminarProd">
             <p:messages id="msgsEliminarProducto" showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="ID Producto"/><p:inputText value="#{bajaProductoBeanUI.idProducto}" required="true"/></div>
+            <p:commandButton value="Eliminar" icon="pi pi-trash" styleClass="btn-danger" style="width:100%" onclick="PF('dlgConfirmar').show(); return false;"/>
 
-            <div class="form-group">
-                <h:outputLabel for="idEliminarProducto" value="ID del Producto"/>
-                <p:inputText id="idEliminarProducto"
-                             value="#{bajaProductoBeanUI.idProducto}"
-                             placeholder="ID del producto a eliminar"
-                             required="true"
-                             requiredMessage="El campo ID es obligatorio"/>
-            </div>
-
-            <!-- Botón que abre el modal de confirmación -->
-            <p:commandButton id="abrirConfirmarProductoBtn" value="Eliminar Producto"
-                             icon="pi pi-times-circle"
-                             styleClass="btn-baja"
-                             onclick="PF('dlgConfirmar').show(); return false;"
-                             type="button"/>
-
-            <!-- Diálogo de confirmación -->
-            <p:confirmDialog id="confirmDialog"
-                             widgetVar="dlgConfirmar"
-                             header="Confirmar Eliminación"
-                             message="¿Seguro que deseas eliminar este producto?"
-                             icon="pi pi-exclamation-triangle"
-                             closable="false" modal="true">
-
-                <!-- Botón SÍ -->
-                <p:commandButton value="Sí, eliminar"
-                                 icon="pi pi-check"
-                                 action="#{bajaProductoBeanUI.eliminarProducto}"
-                                 process="@form"
-                                 update="msgsEliminarProducto :formProductos:tablaProductos"
-                                 oncomplete="PF('dlgConfirmar').hide();"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-
-                <!-- Botón CANCELAR -->
-                <p:commandButton value="Cancelar"
-                                 icon="pi pi-times"
-                                 onclick="PF('dlgConfirmar').hide(); return false;"
-                                 type="button"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+            <p:confirmDialog widgetVar="dlgConfirmar" header="Confirmación" message="¿Eliminar producto?" showEffect="fade" hideEffect="fade" appendTo="@(body)">
+                <p:commandButton value="Sí, eliminar" action="#{bajaProductoBeanUI.eliminarProducto}" update=":formEliminarProd:msgsEliminarProducto :formProductos:tablaProductos" oncomplete="PF('dlgConfirmar').hide();" styleClass="btn-danger"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgConfirmar').hide();" type="button" styleClass="btn-custom"/>
             </p:confirmDialog>
         </h:form>
     </p:dialog>
 
-    <h:form id="formPrincipal">
-        <p:dialog header="Identifícate" widgetVar="dlgAskId1" modal="true"
-                  resizable="false" closable="true" draggable="false" width="360">
-            <h:panelGrid columns="1" style="width:100%; text-align:center;">
-                <p:messages id="msgsId1" showDetail="true" closable="true"/>
-                <div class="form-group">
-                    <h:outputLabel for="searchId1" value="ID Usuario Recepcionista"/>
-                    <p:inputText id="searchId1"
-                                 value="#{tiendaBeanUI.idUR}"
-                                 placeholder="Ej. UR0001"
-                                 styleClass="form-control"
-                                 required="true"
-                                 requiredMessage="El ID es obligatorio"/>
-                </div>
+    <p:dialog header="Identifícate" widgetVar="dlgAskId1" modal="true" resizable="false" width="360" appendTo="@(body)">
+        <h:form id="formAskId1">
+            <p:messages id="msgsId1" showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="ID Recepcionista"/><p:inputText id="searchId1" value="#{tiendaBeanUI.idUR}" required="true"/></div>
+            <p:commandButton value="Siguiente" action="#{tiendaBeanUI.verificarUsuario}" update="msgsId1" process="@this searchId1"
+                             oncomplete="if (!args.validationFailed) { PF('dlgAskId1').hide(); PF('dlgAskPass1').show(); }" styleClass="btn-custom" style="width:100%"/>
+        </h:form>
+    </p:dialog>
 
-                <p:commandButton value="Siguiente"
-                                 icon="pi pi-search"
-                                 action="#{tiendaBeanUI.verificarUsuario}"
-                                 update="msgsId1"
-                                 process="@this searchId1"
-                                 oncomplete="if (!args.validationFailed) { PF('dlgAskId1').hide(); PF('dlgAskPass1').show(); }"
-                                 styleClass="ui-button"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+    <p:dialog header="Contraseña" widgetVar="dlgAskPass1" modal="true" resizable="false" width="360" appendTo="@(body)">
+        <h:form id="formAskPass1">
+            <p:messages id="msgsPass1" showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password id="pass1" value="#{tiendaBeanUI.contrasenaUR}" required="true"/></div>
+            <p:commandButton value="Validar" action="#{tiendaBeanUI.validarContrasena}" update="msgsPass1" process="@this pass1"
+                             oncomplete="if (!args.validationFailed) { PF('dlgAskPass1').hide(); PF('dlgMetodoPago1').show(); }" styleClass="btn-custom" style="width:100%"/>
+        </h:form>
+    </p:dialog>
 
-            </h:panelGrid>
-        </p:dialog>
-
-        <p:dialog header="Ingresa tu contraseña" widgetVar="dlgAskPass1" modal="true"
-                  resizable="false" closable="true" draggable="false" width="360">
-            <h:panelGrid columns="1" style="width:100%; text-align:center;">
-                <p:messages id="msgsPass1" showDetail="true" closable="true"/>
-                <div class="form-group">
-                    <h:outputLabel for="pass1" value="Contraseña del Recepcionista"/>
-                    <p:password id="pass1"
-                                value="#{tiendaBeanUI.contrasenaUR}"
-                                feedback="false"
-                                styleClass="form-control"
-                                required="true"
-                                requiredMessage="Debe ingresar la contraseña"/>
-                </div>
-
-                <p:commandButton value="Validar"
-                                 icon="pi pi-lock"
-                                 action="#{tiendaBeanUI.validarContrasena}"
-                                 update="msgsPass1"
-                                 process="@this pass1"
-                                 oncomplete="if (!args.validationFailed) { PF('dlgAskPass1').hide(); PF('dlgMetodoPago1').show(); }"
-                                 styleClass="ui-button"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-            </h:panelGrid>
-        </p:dialog>
-
-        <p:dialog header="Seleccionar Método de Pago" widgetVar="dlgMetodoPago1"
-                  modal="true" resizable="false" closable="true" draggable="false" width="360">
-            <h:panelGrid id="panelMetodoPago1" columns="1" style="width:100%; text-align:center;">
-
+    <p:dialog header="Método de Pago" widgetVar="dlgMetodoPago1" modal="true" resizable="false" width="360" appendTo="@(body)">
+        <h:form id="formMetodoPago1">
+            <h:panelGrid id="panelMetodoPago1" columns="1" style="width:100%; gap:10px;">
                 <p:messages id="msgsMetodoPago1" showDetail="true" closable="true"/>
+                <div class="form-group"><h:outputLabel value="Cliente"/><p:inputText id="cliente1" value="#{tiendaBeanUI.idCliente}" placeholder="CLI1000"/></div>
+                <div class="form-group"><h:outputLabel value="Descuento"/><p:inputText id="descuento1" value="#{tiendaBeanUI.descuento}" placeholder="$0"/></div>
 
-                <div class="form-group">
-                    <h:outputLabel for="cliente1" value="Cliente" style="font-weight:bold;"/>
-                    <p:inputText id="cliente1"
-                                 value="#{tiendaBeanUI.idCliente}"
-                                 maxlength="7"
-                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
-                                 placeholder="CLI1000"
-                                 styleClass="form-control">
-                    </p:inputText>
-                </div>
-
-                <div class="form-group">
-                    <h:outputLabel for="descuento1" value="Descuento (opcional)" style="font-weight:bold;"/>
-                    <p:inputText id="descuento1"
-                                 value="#{tiendaBeanUI.descuento}"
-                                 maxlength="5"
-                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
-                                 placeholder="$200"
-                                 styleClass="form-control">
-                    </p:inputText>
-                </div>
-
-                <p:commandButton value="Pago en Efectivo"
-                                 icon="pi pi-money-bill"
-                                 actionListener="#{tiendaBeanUI.prepararPago()}"
-                                 process="@this cliente1 descuento1"
-                                 update="panelMetodoPago1 :formPrincipal:panelPagoInteractivo1 :formPrincipal:panelAplicarCredito1"
-                                 oncomplete="if (!args.validationFailed) {
-                                PF('dlgMetodoPago1').hide();
-                                if (args.tieneCredito) {
-                                    PF('dlgAplicarCredito1').show();
-                                } else {
-                                    PF('dlgPagoInteractivo1').show();
-                                }
-                            }"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;">
+                <p:commandButton value="Efectivo" icon="pi pi-money-bill" actionListener="#{tiendaBeanUI.prepararPago()}"
+                                 process="@this cliente1 descuento1" update="panelMetodoPago1 :formPagoInteractivo1:panelPagoInteractivo1 :formAplicarCredito1:panelAplicarCredito1"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgMetodoPago1').hide(); if (args.tieneCredito) { PF('dlgAplicarCredito1').show(); } else { PF('dlgPagoInteractivo1').show(); } }"
+                                 styleClass="btn-custom" style="width:100%">
                     <f:param name="proximo" value="dlgPagoInteractivo1" />
                 </p:commandButton>
 
-                <p:commandButton value="Pago con Tarjeta"
-                                 icon="pi pi-credit-card"
-                                 actionListener="#{tiendaBeanUI.prepararPago()}"
-                                 process="@this cliente1 descuento1"
-                                 update="panelMetodoPago1 :formPrincipal:panelPagoTarjeta1 :formPrincipal:panelAplicarCredito1"
-                                 oncomplete="if (!args.validationFailed) {
-                                PF('dlgMetodoPago1').hide();
-                                if (args.tieneCredito) {
-                                    PF('dlgAplicarCredito1').show();
-                                } else {
-                                    PF('dlgPagoTarjeta1').show();
-                                }
-                            }"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;">
+                <p:commandButton value="Tarjeta" icon="pi pi-credit-card" actionListener="#{tiendaBeanUI.prepararPago()}"
+                                 process="@this cliente1 descuento1" update="panelMetodoPago1 :formPagoTarjeta1:panelPagoTarjeta1 :formAplicarCredito1:panelAplicarCredito1"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgMetodoPago1').hide(); if (args.tieneCredito) { PF('dlgAplicarCredito1').show(); } else { PF('dlgPagoTarjeta1').show(); } }"
+                                 styleClass="btn-custom" style="width:100%">
                     <f:param name="proximo" value="dlgPagoTarjeta1" />
                 </p:commandButton>
 
-                <p:commandButton value="Pago por Pagar"
-                                 icon="pi pi-book"
-                                 actionListener="#{tiendaBeanUI.prepararPago()}"
-                                 process="@this cliente1 descuento1"
-                                 update="panelMetodoPago1 :formPrincipal:panelPagoPorPagarM :formPrincipal:panelAplicarCredito1"
-                                 oncomplete="if (!args.validationFailed) {
-                                PF('dlgMetodoPago1').hide();
-                                if (args.tieneCredito) {
-                                    PF('dlgAplicarCredito1').show();
-                                } else {
-                                    PF('dlgPagoPorPagarM').show();
-                                }
-                            }"
-                                 style="background:#cf962e !important; color:#fff !important; border:none !important;">
+                <p:commandButton value="Por Pagar" icon="pi pi-book" actionListener="#{tiendaBeanUI.prepararPago()}"
+                                 process="@this cliente1 descuento1" update="panelMetodoPago1 :formPagoPorPagarM:panelPagoPorPagarM :formAplicarCredito1:panelAplicarCredito1"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgMetodoPago1').hide(); if (args.tieneCredito) { PF('dlgAplicarCredito1').show(); } else { PF('dlgPagoPorPagarM').show(); } }"
+                                 styleClass="btn-warning" style="width:100%">
                     <f:param name="proximo" value="dlgPagoTarjeta1" />
                 </p:commandButton>
-
             </h:panelGrid>
-        </p:dialog>
+        </h:form>
+    </p:dialog>
 
-        <p:dialog header="Confirmar Crédito" widgetVar="dlgAplicarCredito1"
-                  modal="true" resizable="false" closable="false" draggable="false" width="420">
-
+    <p:dialog header="Crédito Disponible" widgetVar="dlgAplicarCredito1" modal="true" resizable="false" width="400" appendTo="@(body)">
+        <h:form id="formAplicarCredito1">
             <h:panelGrid id="panelAplicarCredito1" columns="1" style="width:100%; text-align:center;">
                 <p:messages id="msgsCredito1" showDetail="true" closable="true"/>
-
-                <h:outputText value="El cliente tiene un crédito disponible de:"
-                              style="font-size:16px;"/>
-
-                <h:outputText value="#{tiendaBeanUI.cliente.credito}"
-                              style="font-size:22px; font-weight:bold; color:#28a745; margin:5px 0;">
-                    <f:convertNumber type="currency" currencySymbol="$"/>
-                </h:outputText>
-
-                <h:outputText value="Total actual de la compra:"
-                              style="font-size:16px; margin-top:10px;"/>
-                <h:outputText value="#{tiendaBeanUI.montoTotal}"
-                              style="font-size:18px; font-weight:bold;">
-                    <f:convertNumber type="currency" currencySymbol="$"/>
-                </h:outputText>
-
-                <h:outputText value="¿Desea aplicar el crédito a esta compra?"
-                              style="font-size:16px; margin-top:15px; font-weight:bold;"/>
-
-                <h:outputText value="Esta acción es irreversible y modificará el saldo del cliente."
-                              style="font-size:13px; font-style:italic; color:#777;"/>
-
-                <p:commandButton value="Sí, Aplicar Crédito"
-                                 icon="pi pi-check"
-                                 action="#{tiendaBeanUI.aplicarCredito}"
-                                 process="@this"
-                                 update="panelAplicarCredito1 msgsCredito1 :formPrincipal:panelPagoTarjeta1 :formPrincipal:panelPagoInteractivo1 :formPrincipal:panelPagoPorPagarM"
-                                 oncomplete="if (!args.validationFailed) { PF('dlgAplicarCredito1').hide(); PF('#{tiendaBeanUI.siguienteDialogo}').show(); }"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-
-                <p:commandButton value="No, Pagar Completo"
-                                 icon="pi pi-times"
-                                 type="button"
-                                 onclick="PF('dlgAplicarCredito1').hide(); PF('#{tiendaBeanUI.siguienteDialogo}').show();"
-                                 style="background:#dc3545; color:#fff;"/>
-
+                <h:outputText value="Crédito disponible:" style="color:#555;"/>
+                <h:outputText value="#{tiendaBeanUI.cliente.credito}" style="font-size:20px; font-weight:bold; color:#28a745;"><f:convertNumber type="currency" currencySymbol="$"/></h:outputText>
+                <div style="margin-top:15px;">
+                    <p:commandButton value="Usar Crédito" action="#{tiendaBeanUI.aplicarCredito}" process="@this"
+                                     update="panelAplicarCredito1 msgsCredito1 :formPagoTarjeta1:panelPagoTarjeta1 :formPagoInteractivo1:panelPagoInteractivo1 :formPagoPorPagarM:panelPagoPorPagarM"
+                                     oncomplete="if (!args.validationFailed) { PF('dlgAplicarCredito1').hide(); PF('#{tiendaBeanUI.siguienteDialogo}').show(); }" styleClass="btn-custom" style="margin-right:10px;"/>
+                    <p:commandButton value="No Usar" type="button" onclick="PF('dlgAplicarCredito1').hide(); PF('#{tiendaBeanUI.siguienteDialogo}').show();" styleClass="btn-danger"/>
+                </div>
             </h:panelGrid>
-        </p:dialog>
+        </h:form>
+    </p:dialog>
 
-        <p:dialog header="Pago con Tarjeta"
-                  widgetVar="dlgPagoTarjeta1"
-                  modal="true"
-                  resizable="false"
-                  closable="false"
-                  draggable="false"
-                  width="420">
-
+    <p:dialog header="Pago con Tarjeta" widgetVar="dlgPagoTarjeta1" modal="true" resizable="false" width="400" appendTo="@(body)">
+        <h:form id="formPagoTarjeta1">
             <h:panelGrid id="panelPagoTarjeta1" columns="1" style="width:100%;">
                 <p:messages id="msgsTarjeta1" showDetail="true" closable="true"/>
-
-                <h:outputText value="Información del Cliente:" style="font-weight:bold; margin-bottom:10px;"/>
-
-                <h:panelGrid columns="2" columnClasses="label,value" style="width:100%;">
-                    <h:outputText value="ID Cliente:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.cliente.idCliente}" style="color:#000000;"/>
-
-                    <h:outputText value="Nombre del cliente:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.cliente.nombreCompleto}" style="color:#000000;"/>
-
-                    <h:outputText value="Monto Total:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.montoTotal}" style="color:#000000;"/>
-
-                    <h:outputText value="Fecha:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.fecha}" style="color:#000000;">
-                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-                    </h:outputText>
-
-                    <h:outputText value="Método de pago:" style="color:#000000;"/>
-                    <h:outputText value="Tarjeta de crédito/débito" style="color:#17a2b8; font-weight:bold;"/>
-                </h:panelGrid>
-
-                <h:outputText value="Por favor, realice el cobro manual en la terminal bancaria."
-                              style="margin-top:10px; display:block; text-align:center; font-style:italic;"/>
-
-                <h:panelGroup layout="block" style="margin-top:15px; text-align:center;">
-                    <p:commandButton id="btnPagoTarjeta1"
-                                     value="Pagar"
-                                     process="@this"
-                                     update="msgsTarjeta1"
-                                     actionListener="#{tiendaBeanUI.realizarPagoTarjetaCarrito()}"
-                                     style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-
-                    <p:commandButton value="Cancelar"
-                                     icon="pi pi-times"
-                                     actionListener="#{tiendaBeanUI.limpiarCampos()}"
-                                     update="@form"
-                                     process="@this"
-                                     oncomplete="PF('dlgPagoTarjeta1').hide();"
-                                     style="background:#dc3545; color:#fff;"/>
-                </h:panelGroup>
+                <div class="form-group"><h:outputLabel value="Cliente"/><h:outputText value="#{tiendaBeanUI.cliente.nombreCompleto}" style="font-weight:bold"/></div>
+                <div class="form-group"><h:outputLabel value="Total"/><h:outputText value="#{tiendaBeanUI.montoTotal}" style="font-weight:bold; font-size:18px"/></div>
+                <p:commandButton value="Pagar" actionListener="#{tiendaBeanUI.realizarPagoTarjetaCarrito()}" update="msgsTarjeta1" styleClass="btn-custom" style="width:100%"/>
             </h:panelGrid>
-        </p:dialog>
+        </h:form>
+    </p:dialog>
 
-        <p:dialog id="dlgExitoTarjeta1"
-                  header="Pago Realizado"
-                  widgetVar="dlgExitoTarjeta1"
-                  modal="true"
-                  resizable="false"
-                  closable="false"
-                  draggable="false"
-                  width="300">
-
-            <h:panelGrid columns="1" style="width:100%; text-align:center;">
-                <h:outputText value="Pago realizado con éxito"
-                              style="font-weight:bold; font-size:18px; color:#28a745;"/>
-
-                <h:outputText value="El cobro con tarjeta se procesó correctamente."
-                              style="font-size:14px; color:#333; margin-top:10px;"/>
-
-                <p:commandButton value="Continuar"
-                                 icon="pi pi-check"
-                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
-                                 onclick="PF('dlgExitoTarjeta1').hide();"
-                                 update="@form"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-            </h:panelGrid>
-        </p:dialog>
-
-        <p:dialog header="Realizar Pago en Efectivo"
-                  widgetVar="dlgPagoInteractivo1"
-                  modal="true"
-                  resizable="false"
-                  closable="true"
-                  draggable="false"
-                  width="400">
-
+    <p:dialog header="Pago en Efectivo" widgetVar="dlgPagoInteractivo1" modal="true" resizable="false" width="400" appendTo="@(body)">
+        <h:form id="formPagoInteractivo1">
             <h:panelGrid id="panelPagoInteractivo1" columns="1" style="width:100%;">
                 <p:messages id="msgsPagoInteractivo1" showDetail="true" closable="true"/>
-
-                <div class="form-group">
-                    <h:outputLabel for="montoIngresado1" value="Monto ingresado"/>
-                    <p:inputText id="montoIngresado1"
-                                 value="#{tiendaBeanUI.montoIngresado}"
-                                 maxlength="5"
-                                 onkeydown="if(event.key === 'Enter'){event.preventDefault(); return false;}"
-                                 style="text-align:left;">
-                        <p:ajax event="keyup" update="faltante1" process="@this"/>
-                    </p:inputText>
-                </div>
-
-                <div class="form-group">
-                    <h:outputLabel value="Monto restante"/>
-                    <h:outputText id="faltante1" value="#{tiendaBeanUI.montoFaltante}"/>
-                </div>
-
-                <p:commandButton value="Pagar"
-                                 action="#{tiendaBeanUI.realizarPagoInteractivoCarrito()}"
-                                 update="msgsPagoInteractivo1 faltante1"
-                                 styleClass="ui-button"
-                                 process="@this montoIngresado1"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
+                <div class="form-group"><h:outputLabel value="Monto Recibido"/><p:inputText id="montoIngresado1" value="#{tiendaBeanUI.montoIngresado}"><p:ajax event="keyup" update="faltante1" process="@this"/></p:inputText></div>
+                <div class="form-group"><h:outputLabel value="Faltante"/><h:outputText id="faltante1" value="#{tiendaBeanUI.montoFaltante}" style="color:red; font-weight:bold"/></div>
+                <p:commandButton value="Pagar" action="#{tiendaBeanUI.realizarPagoInteractivoCarrito()}" update="msgsPagoInteractivo1 faltante1" process="@this montoIngresado1" styleClass="btn-custom" style="width:100%"/>
             </h:panelGrid>
-        </p:dialog>
+        </h:form>
+    </p:dialog>
 
-        <p:dialog id="dlgCambio1"
-                  header="Cambio Entregado"
-                  widgetVar="dlgCambio1"
-                  modal="true"
-                  resizable="false"
-                  closable="false"
-                  draggable="false"
-                  width="300">
+    <p:dialog header="Cambio" widgetVar="dlgCambio1" modal="true" resizable="false" width="300" appendTo="@(body)">
+        <h:form id="formCambio1">
+            <div style="text-align:center; padding:10px;">
+                <h:outputText value="Cambio a entregar:"/><br/>
+                <h:outputText value="$#{tiendaBeanUI.montoCambio}" style="font-size:24px; font-weight:bold; color:#28a745;"/><br/><br/>
+                <p:commandButton value="Finalizar" actionListener="#{tiendaBeanUI.limpiarCampos()}" onclick="PF('dlgCambio1').hide();" update=":formProductos" styleClass="btn-custom"/>
+            </div>
+        </h:form>
+    </p:dialog>
 
-            <h:panelGrid columns="1" style="width:100%; text-align:center;">
-                <h:outputText value="Cambio:" style="font-weight:bold; font-size:18px;"/>
-                <h:outputText value="$#{tiendaBeanUI.montoCambio}"
-                              style="font-size:22px; color:#28a745; margin:10px 0; display:block;">
-                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                </h:outputText>
-
-                <p:commandButton value="Continuar"
-                                 icon="pi pi-check"
-                                 actionListener="#{tiendaBeanUI.limpiarCampos()}"
-                                 onclick="PF('dlgCambio1').hide();"
-                                 update="@form"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-            </h:panelGrid>
-        </p:dialog>
-
-        <p:dialog header="Pago por Pagar"
-                  widgetVar="dlgPagoPorPagarM"
-                  modal="true"
-                  resizable="false"
-                  closable="false"
-                  draggable="false"
-                  width="420">
-
+    <p:dialog header="Confirmar Deuda" widgetVar="dlgPagoPorPagarM" modal="true" resizable="false" width="400" appendTo="@(body)">
+        <h:form id="formPagoPorPagarM">
             <h:panelGrid id="panelPagoPorPagarM" columns="1" style="width:100%;">
                 <p:messages id="msgsPorPagarM" showDetail="true" closable="true"/>
-
-                <h:outputText value="Información del Cliente:" style="font-weight:bold; margin-bottom:10px;"/>
-
-                <h:panelGrid columns="2" columnClasses="label,value" style="width:100%;">
-                    <h:outputText value="ID Cliente:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.cliente.idCliente}" style="color:#000000;"/>
-
-                    <h:outputText value="Nombre del cliente:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.cliente.nombreCompleto}" style="color:#000000;"/>
-
-                    <h:outputText value="Monto Total:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.montoTotal}" style="color:#000000;"/>
-
-                    <h:outputText value="Fecha:" style="color:#000000;"/>
-                    <h:outputText value="#{tiendaBeanUI.fecha}" style="color:#000000;">
-                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-                    </h:outputText>
-
-                    <h:outputText value="Método de pago:" style="color:#000000;"/>
-                    <h:outputText value="Por pagar" style="color:#17a2b8; font-weight:bold;"/>
-                </h:panelGrid>
-
-                <h:outputText value="Desea colocar este pago por Pagar ?"
-                              style="margin-top:10px; display:block; text-align:center; font-style:italic;"/>
-
-                <h:panelGroup layout="block" style="margin-top:15px; text-align:center;">
-                    <p:commandButton id="btnPagoPorPagarM"
-                                     value="Si, Colocar por Pagar"
-                                     process="@this"
-                                     update="msgsPorPagarM"
-                                     actionListener="#{tiendaBeanUI.realizarPagoPorPagar()}"
-                                     style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-
-                    <p:commandButton value="Cancelar"
-                                     icon="pi pi-times"
-                                     actionListener="#{tiendaBeanUI.limpiarCampos()}"
-                                     update="@form"
-                                     process="@this"
-                                     oncomplete="PF('dlgPagoPorPagarM').hide();"
-                                     style="background:#dc3545; color:#fff;"/>
-                </h:panelGroup>
+                <h:outputText value="¿Registrar como deuda pendiente?" style="display:block; text-align:center; margin-bottom:15px;"/>
+                <div style="display:flex; gap:10px;">
+                    <p:commandButton value="Sí, Registrar" actionListener="#{tiendaBeanUI.realizarPagoPorPagar()}" update="msgsPorPagarM" styleClass="btn-custom" style="flex:1"/>
+                    <p:commandButton value="Cancelar" actionListener="#{tiendaBeanUI.limpiarCampos()}" onclick="PF('dlgPagoPorPagarM').hide();" styleClass="btn-danger" style="flex:1"/>
+                </div>
             </h:panelGrid>
-        </p:dialog>
+        </h:form>
+    </p:dialog>
 
-        <p:dialog id="dlgExitoPorPagar"
-                  header="Pago por Pagar"
-                  widgetVar="dlgExitoPorPagar"
-                  modal="true"
-                  resizable="false"
-                  closable="false"
-                  draggable="false"
-                  width="300">
+    <p:dialog header="Éxito" widgetVar="dlgExitoTarjeta1" modal="true" resizable="false" width="300" appendTo="@(body)">
+        <h:form>
+            <div style="text-align:center;">
+                <i class="pi pi-check-circle" style="font-size:3rem; color:#28a745;"></i><br/>
+                <h:outputText value="Operación Exitosa" style="font-weight:bold; display:block; margin:10px 0;"/>
+                <p:commandButton value="Aceptar" actionListener="#{RealizarPagoBeanUI.limpiarCampos()}" onclick="PF('dlgExitoTarjeta1').hide();" update=":formProductos" styleClass="btn-custom"/>
+            </div>
+        </h:form>
+    </p:dialog>
 
-            <h:panelGrid columns="1" style="width:100%; text-align:center;">
-                <h:outputText value="Pago Pendiente"
-                              style="font-weight:bold; font-size:18px; color:#28a745;"/>
-
-                <h:outputText value="Recuerde cobrar al cliente..." style="color:#000000;"/>
-
-                <p:commandButton value="Continuar"
-                                 icon="pi pi-check"
-                                 actionListener="#{RealizarPagoBeanUI.limpiarCampos()}"
-                                 onclick="PF('dlgExitoPorPagar').hide();"
-                                 update="@form"
-                                 style="background:#007bff !important; color:#fff !important; border:none !important;"/>
-            </h:panelGrid>
-        </p:dialog>
-    </h:form>
+    <p:dialog header="Éxito" widgetVar="dlgExitoPorPagar" modal="true" resizable="false" width="300" appendTo="@(body)">
+        <h:form>
+            <div style="text-align:center;">
+                <i class="pi pi-check-circle" style="font-size:3rem; color:#28a745;"></i><br/>
+                <h:outputText value="Deuda Registrada" style="font-weight:bold; display:block; margin:10px 0;"/>
+                <p:commandButton value="Aceptar" actionListener="#{RealizarPagoBeanUI.limpiarCampos()}" onclick="PF('dlgExitoPorPagar').hide();" update=":formProductos" styleClass="btn-custom"/>
+            </div>
+        </h:form>
+    </p:dialog>
 
 </h:body>
 </html>
