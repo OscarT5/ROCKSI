@@ -30,7 +30,7 @@ public class RetirarDineroPagaBeanUI implements Serializable {
     private final UsuarioRHelper usuarioRHelper = new UsuarioRHelper();
 
     private static final String ID_ITEM_RETIRO = "RC1000";
-    private static final String ID_CLIENTE_TIENDA = "CLI1000";
+    private static final String ID_CLIENTE_TIENDA = "CLI69";
 
     // se verifica el id del recepcionista
     public void verificarUsuario() {
@@ -90,6 +90,10 @@ public class RetirarDineroPagaBeanUI implements Serializable {
             if (clienteTienda == null) {
                 throw new Exception("Error crítico: El cliente marcador '" + ID_CLIENTE_TIENDA + "' no existe.");
             }
+
+            clienteTienda.setFechaRegistro(new java.util.Date());
+
+            clienteHelper.ModificarCliente(clienteTienda);
 
             Paga pagoRetiro = new Paga();
             pagoRetiro.setIdCliente(clienteTienda);
