@@ -94,7 +94,7 @@ public class ClienteDelegate {
             throw new Exception("No existe el cliente con ID " + idAActualizar);
         }
 
-        if (existente.getEstatus() == 0) {
+        if (existente.getEstatus() == 0 && !existente.getIdCliente().equals("CLI69")) {
             throw new Exception("No se puede editar un cliente que ha sido dado de baja.");
         }
 

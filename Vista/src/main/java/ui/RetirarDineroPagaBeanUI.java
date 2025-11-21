@@ -23,13 +23,14 @@ public class RetirarDineroPagaBeanUI implements Serializable {
     private Double montoRetirar;
     private String contrasenaUR;
     private Usuariorecepcionista usuarioValidado;
+    private String observaciones;
 
     private final PagaHelper pagaHelper = new PagaHelper();
     private final ClienteHelper clienteHelper = new ClienteHelper();
     private final UsuarioRHelper usuarioRHelper = new UsuarioRHelper();
 
     private static final String ID_ITEM_RETIRO = "RC1000";
-    private static final String ID_CLIENTE_TIENDA = "CLI1000";
+    private static final String ID_CLIENTE_TIENDA = "CLI69";
 
     // se verifica el id del recepcionista
     public void verificarUsuario() {
@@ -90,12 +91,22 @@ public class RetirarDineroPagaBeanUI implements Serializable {
                 throw new Exception("Error crítico: El cliente marcador '" + ID_CLIENTE_TIENDA + "' no existe.");
             }
 
+            clienteTienda.setFechaRegistro(new java.util.Date());
+
+            clienteHelper.ModificarCliente(clienteTienda);
+
             Paga pagoRetiro = new Paga();
             pagoRetiro.setIdCliente(clienteTienda);
             pagoRetiro.setIdUsuariorecep(usuarioValidado.getIdUsuariorecep());
             pagoRetiro.setFecha(LocalDate.now());
             pagoRetiro.setMonto(montoRetirar * -1.0);
             pagoRetiro.setPorPagar((byte) 0);
+
+            if (observaciones != null && !observaciones.trim().isEmpty()) {
+                pagoRetiro.setObservaciones(observaciones.trim());
+            } else {
+                pagoRetiro.setObservaciones(observaciones);
+            }
 
             pagaHelper.RealizarPago(pagoRetiro, ID_ITEM_RETIRO);
 
@@ -118,6 +129,7 @@ public class RetirarDineroPagaBeanUI implements Serializable {
         this.contrasenaUR = null;
         this.montoRetirar = null;
         this.usuarioValidado = null;
+        this.observaciones = null;
     }
 
     // getters y setters
@@ -129,4 +141,7 @@ public class RetirarDineroPagaBeanUI implements Serializable {
 
     public String getContrasenaUR() { return contrasenaUR; }
     public void setContrasenaUR(String contrasenaUR) { this.contrasenaUR = contrasenaUR; }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 }

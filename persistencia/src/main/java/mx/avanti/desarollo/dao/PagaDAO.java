@@ -35,7 +35,7 @@ public class PagaDAO extends AbstractDAO<Paga> {
             em.clear();
 
             List<Paga> result = em.createQuery(
-                            "SELECT DISTINCT p FROM Paga p LEFT JOIN FETCH p.idCliente",
+                            "SELECT DISTINCT p FROM Paga p LEFT JOIN FETCH p.idCliente ORDER BY p.idPaga ASC",
                             Paga.class
                     )
                     .setHint("jakarta.persistence.cache.storeMode", "REFRESH") //forzar lectura desde la BD

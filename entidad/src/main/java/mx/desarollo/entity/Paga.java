@@ -55,6 +55,10 @@ public class Paga {
     @Column(name = "porPagar", nullable = false)
     private Byte porPagar;
 
+    @Size(max = 255)
+    @Column(name = "observaciones", length = 255)
+    private String observaciones;
+
     public Paga() {
     }
 
@@ -113,5 +117,8 @@ public class Paga {
     public void setPorPagar(Byte porPagar) {
         this.porPagar = porPagar;
     }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
 }
