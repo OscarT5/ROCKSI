@@ -21,4 +21,8 @@ public class UsuarioRFacade {
     public List<Usuariorecepcionista> listarUsuarioR() {
         return usuarioRDelegate.listarUR();
     }
+
+    public void modificarUsuarioR(Usuariorecepcionista id) throws Exception {
+        usuarioRDelegate.modificarUsuarioR(id);
+    }
 }

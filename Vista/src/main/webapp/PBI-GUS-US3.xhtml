@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Modificar Usuario</title>
+    <style>
+        .ui-dialog .ui-dialog-titlebar {
+            background: transparent;
+            border: none;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .ui-dialog-content {
+            padding: 20px !important;
+        }
+        .field-label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        .custom-input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            padding: 5px;
+            background: transparent;
+        }
+        .custom-input:focus {
+            border-bottom-color: #007bff;
+        }
+        .btn-action {
+            width: 100%;
+            margin-top: 25px;
+            border: none !important;
+            font-weight: bold;
+        }
+    </style>
+</h:head>
+<h:body>
+
+    <h:form id="formGlobal">
+        <p:growl id="growlMsg" showDetail="true" life="3000"/>
+    </h:form>
+
+    <h:form>
+        <p:commandButton value="Modificar Usuario"
+                         actionListener="#{modificarUsuariosBeanUI.prepararBusqueda}"
+                         oncomplete="PF('dlgBuscar').show();"
+                         update=":formBuscar"
+                         icon="pi pi-search"/>
+    </h:form>
+
+    <p:dialog header="Buscar Usuario" widgetVar="dlgBuscar" modal="true"
+              resizable="false" draggable="false" width="350" closeOnEscape="true">
+        <h:form id="formBuscar">
+            <h:outputLabel for="idBusq" value="Ingrese ID Usuario" styleClass="field-label"/>
+            <p:inputText id="idBusq" value="#{modificarUsuariosBeanUI.idUsuario}"
+                         placeholder="Ej. UR1000" styleClass="custom-input" required="true"/>
+
+            <p:commandButton value="Buscar" icon="pi pi-search"
+                             actionListener="#{modificarUsuariosBeanUI.buscarUsuario}"
+                             update=":formGlobal:growlMsg :formModificar"
+                             styleClass="btn-action"
+                             style="background-color: #6c757d !important;"/>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Modificar usuario" widgetVar="dlgModificar" modal="true"
+              resizable="false" draggable="false" width="400" closeOnEscape="true">
+
+        <h:form id="formModificar">
+            <h:panelGroup rendered="#{modificarUsuariosBeanUI.usuarioSeleccionado != null}">
+
+                <h:outputLabel value="ID Usuario: #{modificarUsuariosBeanUI.usuarioSeleccionado.idUsuariorecep}"
+                               style="color: #888; font-size: 0.9em; display:block; text-align:center; margin-bottom:10px;"/>
+
+                <h:outputLabel for="nom" value="Nombre Completo" styleClass="field-label"/>
+                <p:inputText id="nom" value="#{modificarUsuariosBeanUI.usuarioSeleccionado.nombreCompleto}"
+                             styleClass="custom-input" required="true"/>
+
+                <h:outputLabel for="correo" value="Correo" styleClass="field-label"/>
+                <p:inputText id="correo" value="#{modificarUsuariosBeanUI.usuarioSeleccionado.correo}"
+                             styleClass="custom-input" required="true"/>
+
+                <h:outputLabel for="pass" value="Contraseña" styleClass="field-label"/>
+                <p:password id="pass" value="#{modificarUsuariosBeanUI.usuarioSeleccionado.contrasena}"
+                            styleClass="custom-input" required="true" redisplay="true"/>
+
+                <p:commandButton value="Guardar Cambios" icon="pi pi-save"
+                                 actionListener="#{modificarUsuariosBeanUI.modificarUsuarioR}"
+                                 update=":formGlobal:growlMsg"
+                                 styleClass="btn-action"
+                                 style="background-color: #007add !important;"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+
+</h:body>
+</html>

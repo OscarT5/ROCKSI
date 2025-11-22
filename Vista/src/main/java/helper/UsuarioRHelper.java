@@ -23,4 +23,8 @@ public class UsuarioRHelper implements Serializable {
         return ServiceFacadeLocator.getInstanceURFacade().listarUsuarioR();
     }
 
+    public void modificarUsuarioR(Usuariorecepcionista id) throws Exception {
+        ServiceFacadeLocator.getInstanceURFacade().modificarUsuarioR(id);
+    }
+
 }

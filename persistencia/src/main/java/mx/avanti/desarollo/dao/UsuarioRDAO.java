@@ -33,6 +33,22 @@ public class UsuarioRDAO extends AbstractDAO<Usuariorecepcionista> {
         });
     }
 
+    public void actualizar(Usuariorecepcionista usuario) {
+        EntityTransaction tx = null;
+        try {
+            tx = em.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            em.merge(usuario);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new RuntimeException("Error al actualizar el usuario recepcionista en la BD", e);
+        }
+    }
 
     @Override
     public EntityManager getEntityManager() {
