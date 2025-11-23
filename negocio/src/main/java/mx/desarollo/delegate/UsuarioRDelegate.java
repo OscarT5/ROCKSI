@@ -56,7 +56,7 @@ public class UsuarioRDelegate {
             throw new Exception("El usuario con ID " + id + " no existe.");
         }
 
-        if (ur.getStatus() == 0) {
+        if (ur.getEstatus() == 0) {
             throw new Exception("El usuario ya se encuentra dado de baja.");
         }
 

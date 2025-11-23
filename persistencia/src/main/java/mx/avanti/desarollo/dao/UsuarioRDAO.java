@@ -63,7 +63,7 @@ public class UsuarioRDAO extends AbstractDAO<Usuariorecepcionista> {
                 return false;
             }
 
-            usuario.setStatus(0);
+            usuario.setEstatus(0);
             em.merge(usuario);
 
             tx.commit();
