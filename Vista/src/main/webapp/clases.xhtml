@@ -367,6 +367,14 @@
                     <img src="resources-20250903T164359Z-1-001/resources/pagos.png" alt="Pagos Icon" class="menu-icon"/>
                     <span>Pagos</span>
                 </h:commandLink>
+                <!--USUARUIS -->
+                <h:commandLink action="usuarios.xhtml?faces-redirect=true"
+                               actionListener="#{menuBeanUI.setActivePage('usuarios')}"
+                               styleClass="#{menuBeanUI.activePage eq 'usuarios' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/clientes.png" alt="Usuarios Icon" class="menu-icon"/>
+                    <span>Usuarios</span>
+                </h:commandLink>
+
             </h:form>
         </div>
 

@@ -3,26 +3,22 @@ package mx.desarollo.facade;
 import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.UsuarioADao;
 import mx.avanti.desarollo.persistence.HibernateUtil;
+import mx.desarollo.delegate.UsuarioADelegate;
 import mx.desarollo.entity.Usuarioadministrador;
 
+import java.util.List;
+
 public class UsuarioAFacade {
+    private final UsuarioADelegate delegate = new UsuarioADelegate();
 
     private EntityManager getEntityManager() {
         return HibernateUtil.getEntityManager();
     }
 
-    public Usuarioadministrador obtenerUsuarioAPorId(String id) {
-        EntityManager em = getEntityManager();
-        try {
-            UsuarioADao dao = new UsuarioADao(em);
-            return dao.buscarADMPorId(id);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
+    public List<Usuarioadministrador> listarUA() {
+        return delegate.listarUA();
     }
+    public Usuarioadministrador obtenerUsuarioAPorId(String id) { return delegate.obtenerUsuarioAPorId(id); }
+    public Usuarioadministrador obtenerUA(String id) { return delegate.obtenerUA(id); }
+
 }

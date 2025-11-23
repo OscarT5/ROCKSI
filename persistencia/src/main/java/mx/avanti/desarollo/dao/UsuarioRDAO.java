@@ -18,14 +18,13 @@ public class UsuarioRDAO extends AbstractDAO<Usuariorecepcionista> {
 
     public List<Usuariorecepcionista> findAllWithUsuarioR() {
         return execute(em -> {
-            //Limpia contexto antes de ejecutar la query
             em.clear();
 
             List<Usuariorecepcionista> result = em.createQuery(
-                            "SELECT DISTINCT Ur FROM Usuariorecepcionista Ur LEFT JOIN FETCH Ur.idUsuariorecep",
+                            "SELECT Ur FROM Usuariorecepcionista Ur WHERE Ur.estatus = 1",
                             Usuariorecepcionista.class
                     )
-                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH") //forzar lectura desde la BD
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
                     .setHint("org.hibernate.cacheable", false)
                     .getResultList();
 

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Usuarios - Rock On</title>
+    <meta charset="UTF-8"/>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", Arial, sans-serif;
+            background-color: #f8f9fb;
+        }
+
+        /* BARRA LATERAL */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #007bcb;
+            color: white;
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar .menu { width: 100%; padding-top: 30px; }
+
+        .sidebar a, .sidebar h\:commandLink {
+            display: flex; align-items: center; gap: 10px;
+            color: white !important; text-decoration: none !important;
+            padding: 10px 20px; font-size: 15px;
+            transition: background 0.3s, transform 0.2s; margin-bottom: 10px;
+        }
+
+        .sidebar a:hover, .sidebar h\:commandLink:hover, .sidebar .active {
+            background: #0061a6 !important; border-radius: 6px;
+        }
+
+        .menu-icon {
+            width: 22px; height: 22px; filter: brightness(0) invert(1);
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar h\:commandLink:hover .menu-icon { transform: scale(1.15); }
+
+        .sidebar .logo-bottom { padding: 25px 0; }
+        .sidebar .logo-bottom img { width: 130px; border-radius: 50%; }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-content { margin-left: 220px; padding: 30px 40px; }
+
+        .header-clientes {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid #007bcb; padding-bottom: 8px; margin-bottom: 15px;
+        }
+
+        .header-clientes h1 { font-size: 26px; color: #000; margin: 0; font-weight: 700; }
+
+        .card {
+            background: white; border-radius: 12px; padding: 25px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* BOTONES */
+        .action-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 15px; }
+        .action-buttons .ui-button {
+            border: none !important; border-radius: 20px !important;
+            font-weight: 600 !important; padding: 6px 16px !important; font-size: 14px !important;
+        }
+        .btn-registrar { background: #007bcb !important; color: #fff !important; }
+        .btn-modificar { background: #007bcb !important; color: #fff !important; }
+        .btn-baja { background: #007bcb !important; color: #fff !important; }
+
+        /* TABLA */
+        .ui-datatable { width: 100%; border-radius: 8px; overflow: hidden; border: none !important; margin-top: 5px; }
+        .ui-datatable thead th {
+            background-color: #007bcb !important; color: white !important; text-align: left !important;
+            font-weight: 600 !important; padding: 10px 12px !important; border: none !important; font-size: 14px !important;
+        }
+        .ui-datatable tbody td { padding: 10px 12px !important; font-size: 14px !important; color: #222; border: none !important; }
+        .ui-datatable tr:nth-child(even) { background-color: #f9f9f9 !important; }
+        .ui-datatable tr:nth-child(odd) { background-color: #fff !important; }
+        .ui-datatable tr:hover { background-color: #eef7ff !important; }
+        .ui-datatable-tablewrapper { border-radius: 10px; overflow: hidden; }
+
+        /* DIALOGOS */
+        .ui-dialog .ui-dialog-titlebar {
+            background: white !important; border: none !important; display: flex !important;
+            justify-content: center !important;
+        }
+        .ui-dialog-title { font-size: 24px !important; font-weight: 700 !important; color: #000 !important; }
+
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; width: 90%; }
+        .form-group label { margin-bottom: 5px; font-size: 14px; color: #555; }
+
+        .form-control, .ui-inputfield {
+            border: 1px solid #ccc !important; width: 100%; padding: 8px; border-radius: 5px; transition: none !important;
+        }
+        .form-control:focus, .ui-inputfield:focus { outline: none !important; border-color: #919191 !important; }
+
+        .boton-registrar {
+            border: none !important; border-radius: 8px !important; padding: 10px 16px !important;
+            font-weight: 600 !important; font-size: 15px !important; display: flex !important;
+            align-items: center !important; justify-content: center !important; margin: 15px auto 0 auto !important; width: 80% !important;
+        }
+
+        /* ESTILO EXTRA PARA TABS */
+        .ui-tabs .ui-tabs-nav li { background: #f8f9fb !important; border-color: #ddd !important; }
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected { background: #007bcb !important; border-color: #007bcb !important; }
+        .ui-tabs .ui-tabs-nav li a { color: #333 !important; font-weight: 600; }
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected a { color: white !important; }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="sidebar">
+        <div class="menu">
+            <h:form>
+                <h:commandLink action="home.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('home')}" styleClass="#{menuBeanUI.activePage eq 'home' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/home.png" class="menu-icon"/><span>Home</span>
+                </h:commandLink>
+                <h:commandLink action="clientes.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('clientes')}" styleClass="#{menuBeanUI.activePage eq 'clientes' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/clientes.png" class="menu-icon"/><span>Clientes</span>
+                </h:commandLink>
+                <h:commandLink action="tienda.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('tienda')}" styleClass="#{menuBeanUI.activePage eq 'tienda' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/tienda.png" class="menu-icon"/><span>Tienda</span>
+                </h:commandLink>
+                <h:commandLink action="clases.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('clases')}" styleClass="#{menuBeanUI.activePage eq 'clases' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/clases.png" class="menu-icon"/><span>Clases</span>
+                </h:commandLink>
+                <h:commandLink action="pagos.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('pagos')}" styleClass="#{menuBeanUI.activePage eq 'pagos' ? 'active' : ''}">
+                    <img src="resources-20250903T164359Z-1-001/resources/pagos.png" class="menu-icon"/><span>Pagos</span>
+                </h:commandLink>
+
+                <h:commandLink action="usuarios.xhtml?faces-redirect=true" actionListener="#{menuBeanUI.setActivePage('usuarios')}" styleClass="active">
+                    <img src="resources-20250903T164359Z-1-001/resources/clientes.png" class="menu-icon"/><span>Usuarios</span>
+                </h:commandLink>
+            </h:form>
+        </div>
+        <div class="logo-bottom">
+            <img src="resources-20250903T164359Z-1-001/resources/rockon-icon.png" alt="Logo"/>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <div class="header-clientes">
+                <h1>Gestión de Usuarios</h1>
+            </div>
+
+            <p:growl id="globalMsgs" showDetail="true"/>
+
+            <p:tabView>
+
+                <p:tab title="Recepcionistas">
+                    <h:form id="formRecep">
+                        <div class="action-buttons">
+                            <h:outputLabel for="txtFiltroR" value="ID Usuario: " style="align-self: center; margin-right: 5px; font-weight: bold;"/>
+                            <p:inputText id="txtFiltroR" value="#{usuarioRBeanUI.filtroId}" placeholder="Buscar por ID">
+                                <p:ajax event="input" listener="#{usuarioRBeanUI.cargarUsuarios}" update="tablaRecep" process="@this" delay="300"/>
+                            </p:inputText>
+
+                            <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
+                                             actionListener="#{usuarioRBeanUI.cargarUsuarios}"
+                                             process="@this" update="tablaRecep" styleClass="btn-registrar"/>
+
+                            <p:commandButton value="Registrar Usuario" icon="pi pi-user-plus"
+                                             onclick="PF('dlgAgregarRecep').show();" styleClass="btn-registrar"/>
+
+                            <p:commandButton value="Modificar Usuario" icon="pi pi-user-edit"
+                                             onclick="PF('dlgAskIdRecep').show();" styleClass="btn-modificar"/>
+
+                            <p:commandButton value="Baja de Usuario" icon="pi pi-user-minus"
+                                             styleClass="btn-baja" type="button" onclick="PF('dlgEliminarRecep').show();"/>
+                        </div>
+
+                        <p:dataTable id="tablaRecep" value="#{usuarioRBeanUI.listaUsuarios}" var="usu" lazy="false"
+                                     rowKey="#{usu.idUsuariorecep}" paginator="true" rows="5"
+                                     emptyMessage="No hay recepcionistas registrados"
+                                     styleClass="clientes-tabla" paginatorPosition="bottom">
+
+                            <p:column headerText="ID Usuario" sortBy="#{usu.idUsuariorecep}">
+                                <h:outputText value="#{usu.idUsuariorecep}"/>
+                            </p:column>
+
+                            <p:column headerText="Nombre" sortBy="#{usu.nombreCompleto}">
+                                <h:outputText value="#{usu.nombreCompleto}"/>
+                            </p:column>
+
+                            <p:column headerText="Correo Electrónico" sortBy="#{usu.correo}">
+                                <h:outputText value="#{usu.correo}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="Administradores">
+                    <h:form id="formAdmin">
+                        <div class="action-buttons">
+                            <h:outputLabel for="txtFiltroA" value="ID Admin: " style="align-self: center; margin-right: 5px; font-weight: bold;"/>
+                            <p:inputText id="txtFiltroA" value="#{usuarioABeanUI.filtroId}" placeholder="Buscar por ID">
+                                <p:ajax event="input" listener="#{usuarioABeanUI.cargarUsuarios}" update="tablaAdmin" process="@this" delay="300"/>
+                            </p:inputText>
+
+                            <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
+                                             actionListener="#{usuarioABeanUI.cargarUsuarios}"
+                                             process="@this" update="tablaAdmin" styleClass="btn-registrar"/>
+
+                            <p:commandButton value="Registrar Admin" icon="pi pi-user-plus"
+                                             onclick="PF('dlgAgregarAdmin').show();" styleClass="btn-registrar"/>
+
+                            <p:commandButton value="Modificar Admin" icon="pi pi-user-edit"
+                                             onclick="PF('dlgAskIdAdmin').show();" styleClass="btn-modificar"/>
+
+                            <p:commandButton value="Baja de Admin" icon="pi pi-user-minus"
+                                             styleClass="btn-baja" type="button" onclick="PF('dlgEliminarAdmin').show();"/>
+                        </div>
+
+                        <p:dataTable id="tablaAdmin" value="#{usuarioABeanUI.listaUsuarios}" var="adm" lazy="false"
+                                     rowKey="#{adm.idUsuarioadmin}" paginator="true" rows="5"
+                                     emptyMessage="No hay administradores registrados"
+                                     styleClass="clientes-tabla" paginatorPosition="bottom">
+
+                            <p:column headerText="ID Admin" sortBy="#{adm.idUsuarioadmin}">
+                                <h:outputText value="#{adm.idUsuarioadmin}"/>
+                            </p:column>
+
+                            <p:column headerText="Nombre" sortBy="#{adm.nombreCompleto}">
+                                <h:outputText value="#{adm.nombreCompleto}"/>
+                            </p:column>
+
+                            <p:column headerText="Correo Electrónico" sortBy="#{adm.correo}">
+                                <h:outputText value="#{adm.correo}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+            </p:tabView>
+        </div>
+    </div>
+
+    <p:dialog header="Nuevo Recepcionista" widgetVar="dlgAgregarRecep" modal="true" resizable="false" closable="true" width="360">
+        <h:form>
+            <p:messages showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioRBeanUI.nuevoUsuario.nombreCompleto}" class="form-control" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioRBeanUI.nuevoUsuario.correo}" class="form-control" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioRBeanUI.nuevoUsuario.contrasena}" class="form-control" required="true"/></div>
+            <div class="boton-registrar"><p:commandButton value="Registrar" actionListener="#{usuarioRBeanUI.registrarUsuario}" update=":globalMsgs :formRecep:tablaRecep" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Buscar Recepcionista" widgetVar="dlgAskIdRecep" modal="true" resizable="false" closable="true" width="360">
+        <h:form>
+            <p:messages showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="ID Usuario"/><p:inputText value="#{usuarioRBeanUI.busquedaIdMod}" placeholder="Ej. REC1001" class="form-control" required="true"/></div>
+            <p:commandButton value="Buscar" actionListener="#{usuarioRBeanUI.buscarParaModificar}" update=":globalMsgs :formModRecep" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%; margin-top:10px;"/>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Modificar Recepcionista" widgetVar="dlgModificarUsuario" id="formModRecep" modal="true" resizable="false" width="360">
+        <h:form>
+            <p:messages showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioRBeanUI.usuarioSeleccionado.nombreCompleto}" class="form-control"/></div>
+            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioRBeanUI.usuarioSeleccionado.correo}" class="form-control"/></div>
+            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioRBeanUI.usuarioSeleccionado.contrasena}" class="form-control" redisplay="true"/></div>
+            <div class="boton-registrar"><p:commandButton value="Actualizar" actionListener="#{usuarioRBeanUI.modificarUsuario}" update=":globalMsgs :formRecep:tablaRecep" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Eliminar Recepcionista" widgetVar="dlgEliminarRecep" modal="true" resizable="false" width="360">
+        <h:form>
+            <div class="form-group"><h:outputLabel value="ID a Eliminar"/><p:inputText value="#{usuarioRBeanUI.idEliminar}" class="form-control"/></div>
+            <p:commandButton value="Eliminar" icon="pi pi-times-circle" styleClass="btn-baja" onclick="PF('dlgConfRecep').show(); return false;" style="width: 100%; margin-top: 10px;"/>
+            <p:confirmDialog widgetVar="dlgConfRecep" header="Confirmar" message="¿Eliminar este usuario?" icon="pi pi-exclamation-triangle">
+                <p:commandButton value="Sí" actionListener="#{usuarioRBeanUI.eliminarUsuario}" update=":globalMsgs :formRecep:tablaRecep" oncomplete="PF('dlgConfRecep').hide(); PF('dlgEliminarRecep').hide();" styleClass="btn-confirmar" style="background:#007bff !important; color:#fff !important; border:none;"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgConfRecep').hide(); return false;" type="button" style="background: #007bff !important; color: #fff !important; border: none; margin-left: 10px;"/>
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Nuevo Admin" widgetVar="dlgAgregarAdmin" modal="true" resizable="false" closable="true" width="360">
+        <h:form>
+            <p:messages showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioABeanUI.nuevoUsuario.nombreCompleto}" class="form-control" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioABeanUI.nuevoUsuario.correo}" class="form-control" required="true"/></div>
+            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioABeanUI.nuevoUsuario.contrasena}" class="form-control" required="true"/></div>
+            <div class="boton-registrar"><p:commandButton value="Registrar" actionListener="#{usuarioABeanUI.registrarUsuario}" update=":globalMsgs :formAdmin:tablaAdmin" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Buscar Admin" widgetVar="dlgAskIdAdmin" modal="true" resizable="false" closable="true" width="360">
+        <h:form>
+            <p:messages showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="ID Admin"/><p:inputText value="#{usuarioABeanUI.busquedaIdMod}" placeholder="Ej. ADM1001" class="form-control" required="true"/></div>
+            <p:commandButton value="Buscar" actionListener="#{usuarioABeanUI.buscarParaModificar}" update=":globalMsgs :formModAdmin" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%; margin-top:10px;"/>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Modificar Admin" widgetVar="dlgModificarAdmin" id="formModAdmin" modal="true" resizable="false" width="360">
+        <h:form>
+            <p:messages showDetail="true" closable="true"/>
+            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioABeanUI.usuarioSeleccionado.nombreCompleto}" class="form-control"/></div>
+            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioABeanUI.usuarioSeleccionado.correo}" class="form-control"/></div>
+            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioABeanUI.usuarioSeleccionado.contrasena}" class="form-control" redisplay="true"/></div>
+            <div class="boton-registrar"><p:commandButton value="Actualizar" actionListener="#{usuarioABeanUI.modificarUsuario}" update=":globalMsgs :formAdmin:tablaAdmin" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Baja Admin" widgetVar="dlgEliminarAdmin" modal="true" resizable="false" width="360">
+        <h:form>
+            <div class="form-group"><h:outputLabel value="ID a Eliminar"/><p:inputText value="#{usuarioABeanUI.idEliminar}" class="form-control"/></div>
+            <p:commandButton value="Eliminar" icon="pi pi-times-circle" styleClass="btn-baja" onclick="PF('dlgConfAdmin').show(); return false;" style="width: 100%; margin-top: 10px;"/>
+            <p:confirmDialog widgetVar="dlgConfAdmin" header="Confirmar" message="¿Eliminar este admin?" icon="pi pi-exclamation-triangle">
+                <p:commandButton value="Sí" actionListener="#{usuarioABeanUI.eliminarUsuario}" update=":globalMsgs :formAdmin:tablaAdmin" oncomplete="PF('dlgConfAdmin').hide(); PF('dlgEliminarAdmin').hide();" styleClass="btn-confirmar" style="background:#007bff !important; color:#fff !important; border:none;"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgConfAdmin').hide(); return false;" type="button" style="background: #007bff !important; color: #fff !important; border: none; margin-left: 10px;"/>
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog>
+
+</h:body>
+</html>
