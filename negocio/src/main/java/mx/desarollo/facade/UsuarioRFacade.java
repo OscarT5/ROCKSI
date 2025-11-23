@@ -25,4 +25,9 @@ public class UsuarioRFacade {
     public void modificarUsuarioR(Usuariorecepcionista id) throws Exception {
         usuarioRDelegate.modificarUsuarioR(id);
     }
+
+    public boolean bajaUsuarioR(String id) throws Exception {
+        return usuarioRDelegate.bajaUsuarioR(id);
+    }
+
 }
