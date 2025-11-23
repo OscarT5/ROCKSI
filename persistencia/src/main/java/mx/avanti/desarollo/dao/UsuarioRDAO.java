@@ -2,7 +2,6 @@ package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Usuariorecepcionista;
 
@@ -47,6 +46,35 @@ public class UsuarioRDAO extends AbstractDAO<Usuariorecepcionista> {
                 tx.rollback();
             }
             throw new RuntimeException("Error al actualizar el usuario recepcionista en la BD", e);
+        }
+    }
+
+    public boolean baja(String id) {
+        EntityTransaction tx = null;
+        try {
+            tx = em.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            Usuariorecepcionista usuario = buscarURPorId(id);
+
+            if (usuario == null) {
+                if (tx.isActive()) tx.rollback();
+                return false;
+            }
+
+            usuario.setStatus(0);
+            em.merge(usuario);
+
+            tx.commit();
+            return true;
+
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new RuntimeException("Error al dar de baja al usuario recepcionista", e);
         }
     }
 

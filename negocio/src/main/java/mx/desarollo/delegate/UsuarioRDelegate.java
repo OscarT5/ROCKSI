@@ -45,6 +45,24 @@ public class UsuarioRDelegate {
         UsuarioRDAO.actualizar(id);
     }
 
+    public boolean bajaUsuarioR(String id) throws Exception {
+        if (id == null || id.trim().isEmpty()) {
+            throw new Exception("El ID del usuario es necesario para dar la baja.");
+        }
+
+        // se valida si existe el usuario
+        Usuariorecepcionista ur = UsuarioRDAO.buscarURPorId(id);
+        if (ur == null) {
+            throw new Exception("El usuario con ID " + id + " no existe.");
+        }
+
+        if (ur.getStatus() == 0) {
+            throw new Exception("El usuario ya se encuentra dado de baja.");
+        }
+
+        return UsuarioRDAO.baja(id);
+    }
+
     public List<Usuariorecepcionista> listarUR() {
         return UsuarioRDAO.findAllWithUsuarioR();
     }

@@ -27,4 +27,8 @@ public class UsuarioRHelper implements Serializable {
         ServiceFacadeLocator.getInstanceURFacade().modificarUsuarioR(id);
     }
 
+    public boolean bajaUsuarioR(String id) throws Exception {
+        return ServiceFacadeLocator.getInstanceURFacade().bajaUsuarioR(id);
+    }
+
 }

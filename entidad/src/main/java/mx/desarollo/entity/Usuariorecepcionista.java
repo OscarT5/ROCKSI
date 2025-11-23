@@ -30,6 +30,9 @@ public class Usuariorecepcionista {
     @Column(name = "contrasena", nullable = false, length = 300)
     private String contrasena;
 
+    @Column(name = "status", nullable = false)
+    private Integer status = 1;
+
     public String getIdUsuariorecep() {
         return idUsuariorecep;
     }
@@ -61,5 +64,8 @@ public class Usuariorecepcionista {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
+
+    public Integer getStatus() { return status; }
+    public void setStatus(Integer status) { this.status = status; }
 
 }
