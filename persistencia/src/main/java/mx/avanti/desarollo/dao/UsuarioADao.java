@@ -23,14 +23,20 @@ public class UsuarioADao extends AbstractDAO<Usuarioadministrador> {
             em.clear();
 
             List<Usuarioadministrador> result = em.createQuery(
-                            "SELECT DISTINCT Ua FROM Usuarioadministrador Ua LEFT JOIN FETCH Ua.idUsuarioadmin",
+                            "SELECT Ua FROM Usuarioadministrador Ua WHERE Ua.estatus = 1",
                             Usuarioadministrador.class
                     )
-                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH") // forzar lectura desde la BD
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
                     .setHint("org.hibernate.cacheable", false)
                     .getResultList();
 
             return result;
+        });
+    }
+    public List<Usuarioadministrador> listarActivos() {
+        return execute(em -> {
+            em.clear();
+            return em.createQuery("SELECT u FROM Usuarioadministrador u WHERE u.estatus = 1", Usuarioadministrador.class).getResultList();
         });
     }
 

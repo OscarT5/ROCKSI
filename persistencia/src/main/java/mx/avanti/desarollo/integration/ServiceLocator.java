@@ -30,6 +30,10 @@ public class ServiceLocator {
         return new ClienteDAO(getEntityManager());
     }
 
+    public static UsuarioADao getInstanceUADAO() {
+        return new UsuarioADao(getEntityManager());
+    }
+
     public static ClaseDAO getInstanceClaseDAO() {
         return new ClaseDAO(getEntityManager());
     }

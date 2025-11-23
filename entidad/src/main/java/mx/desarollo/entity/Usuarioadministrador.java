@@ -30,6 +30,9 @@ public class Usuarioadministrador {
     @Column(name = "contrasena", nullable = false, length = 300)
     private String contrasena;
 
+    @Column(name = "estatus", nullable = false)
+    private int estatus;
+
     public String getIdUsuarioadmin() {
         return idUsuarioadmin;
     }
@@ -61,5 +64,9 @@ public class Usuarioadministrador {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
+
+    public int getEstatus() { return estatus; }
+
+    public void setEstatus(int estatus) { this.estatus = estatus; }
 
 }
