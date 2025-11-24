@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "usuarioadministrador")
 public class Usuarioadministrador {
+
+    private static int contador = 1000;
+
     @Id
     @Size(max = 45)
     @Column(name = "ID_UsuarioAdmin", nullable = false, length = 45)
@@ -32,6 +35,18 @@ public class Usuarioadministrador {
 
     @Column(name = "estatus", nullable = false)
     private int estatus;
+
+    // metodo para creacion de ID
+    public static synchronized String generarNuevoId() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UA").append(contador++);
+        return sb.toString();
+    }
+
+    // permite al DAO actualizar el contador
+    public static void setContador(int nuevoValor) {
+        contador = nuevoValor;
+    }
 
     public String getIdUsuarioadmin() {
         return idUsuarioadmin;

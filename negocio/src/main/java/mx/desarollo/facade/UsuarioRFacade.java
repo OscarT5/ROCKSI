@@ -8,6 +8,16 @@ import java.util.List;
 public class UsuarioRFacade {
     private final UsuarioRDelegate usuarioRDelegate = new UsuarioRDelegate();
 
+    /**
+     * Metodo para registrar un usuario recepcionista que llamara a la instancia de UsuarioRDelegate
+     * @Throws Si la base de datos rechaza el registro
+     * @Params Objeto de tipo Usuariorecepcionista
+     * @return void
+     */
+    public void registrarUsuarioRecepcionista(Usuariorecepcionista ur) throws Exception {
+        usuarioRDelegate.registrarUsuarioRecepcionista(ur);
+    }
+
     public Usuariorecepcionista obtenerUsuarioRPorId(String id) {
         return usuarioRDelegate.obtenerUR(id);
     }

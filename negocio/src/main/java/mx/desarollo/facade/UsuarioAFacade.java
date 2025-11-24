@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import mx.avanti.desarollo.dao.UsuarioADao;
 import mx.avanti.desarollo.persistence.HibernateUtil;
 import mx.desarollo.delegate.UsuarioADelegate;
+import mx.desarollo.entity.Cliente;
 import mx.desarollo.entity.Usuarioadministrador;
 
 import java.util.List;
@@ -13,6 +14,16 @@ public class UsuarioAFacade {
 
     private EntityManager getEntityManager() {
         return HibernateUtil.getEntityManager();
+    }
+
+    /**
+     * Metodo para registrar un usuario administrador que llamara a la instancia de UsuarioADelegate
+     * @Throws Si la base de datos rechaza el registro
+     * @Params Objeto de tipo Usuarioadministrador
+     * @return void
+     */
+    public void registrarUsuarioAdministrador(Usuarioadministrador ua) throws Exception {
+        delegate.registrarUsuarioAdministrador(ua);
     }
 
     public List<Usuarioadministrador> listarUA() {

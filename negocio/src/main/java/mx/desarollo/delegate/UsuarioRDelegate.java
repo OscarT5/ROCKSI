@@ -13,6 +13,33 @@ public class UsuarioRDelegate {
         this.UsuarioRDAO = ServiceLocator.getInstanceURDAO();
     }
 
+    /**
+     * Metodo para registrar un usuario recepcionista que llamara a la instancia de UsuarioRDAO
+     * @Throws Si la base de datos rechaza el registro o alguna variable es null o esta vacia
+     * @params Un objeto de tipo Usuariorecepcionista
+     * @return void
+     */
+    public void registrarUsuarioRecepcionista(Usuariorecepcionista ur) throws Exception {
+        //validaciones
+        if (ur.getNombreCompleto() == null || ur.getNombreCompleto().trim().isEmpty()) {
+            throw new Exception("El nombre no puede estar vacio.");
+        }
+        if (ur.getCorreo() == null || ur.getCorreo().trim().isEmpty()) {
+            throw new Exception("El correo no puede estar vacio.");
+        }
+
+        if (ur.getContrasena() == null || ur.getContrasena().trim().isEmpty()) {
+            throw new Exception("Se debe asignar una contraseña.");
+        }
+
+        if (!ur.getNombreCompleto().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+            throw new Exception("El nombre solo puede contener letras y espacios.");
+        }
+
+        ur.setEstatus(1);
+        UsuarioRDAO.crearUsuarioR(ur);
+    }
+
     public Usuariorecepcionista obtenerUR(String id) {
         try {
             if (id == null) return null;
