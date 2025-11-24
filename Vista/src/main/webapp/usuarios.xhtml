@@ -245,15 +245,66 @@
         </div>
     </div>
 
-    <p:dialog header="Nuevo Recepcionista" widgetVar="dlgAgregarRecep" modal="true" resizable="false" closable="true" width="360">
-        <h:form>
-            <p:messages showDetail="true" closable="true"/>
-            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioRBeanUI.nuevoUsuario.nombreCompleto}" class="form-control" required="true"/></div>
-            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioRBeanUI.nuevoUsuario.correo}" class="form-control" required="true"/></div>
-            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioRBeanUI.nuevoUsuario.contrasena}" class="form-control" required="true"/></div>
-            <div class="boton-registrar"><p:commandButton value="Registrar" actionListener="#{usuarioRBeanUI.registrarUsuario}" update=":globalMsgs :formRecep:tablaRecep" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+    <p:dialog header="Nuevo Recepcionista"
+              widgetVar="dlgAgregarRecep"
+              modal="true"
+              resizable="false"
+              closable="true"
+              width="360">
+
+        <h:form id="formNuevoRecep">
+
+            <!-- Mensajes dentro del diálogo -->
+            <p:messages id="msgsNuevoRecep" showDetail="true" closable="true"/>
+
+            <!-- Nombre del usuario recepcionista -->
+            <div class="form-group">
+                <h:outputLabel value="Nombre completo"/>
+                <p:inputText value="#{altaUsuarioRBeanUI.nombreCompleto}"
+                             class="form-control"
+                             required="true"
+                             placeholder="Nombre"
+                             requiredMessage="Ingrese el nombre"/>
+            </div>
+
+            <!-- Correo del usuario recepcionista -->
+            <div class="form-group">
+                <h:outputLabel value="Correo electrónico"/>
+
+                <p:inputText id="correoRecep"
+                             value="#{altaUsuarioRBeanUI.correo}"
+                             class="form-control"
+                             required="true"
+                             placeholder="ejemplo@dominio.com"
+                             requiredMessage="Ingrese un correo">
+                </p:inputText>
+
+                <p:message for="correoRecep"/>
+            </div>
+
+            <!-- Contraseña del usuario recepcionista -->
+            <div class="form-group">
+                <h:outputLabel value="Contraseña"/>
+                <p:password value="#{altaUsuarioRBeanUI.contraseña}"
+                            class="form-control"
+                            required="true"
+                            feedback="true"
+                            toggleMask="true"
+                            placeholder="Ingresa tu contraseña"
+                            requiredMessage="Ingrese una contraseña"/>
+            </div>
+
+            <!-- Boton registrar usuario recepcionista -->
+            <div class="boton-registrar">
+                <p:commandButton value="Registrar"
+                                 actionListener="#{altaUsuarioRBeanUI.altaUsuarioRecepcionista()}"
+                                 update=":globalMsgs :formRecep:tablaRecep :formNuevoRecep:msgsNuevoRecep"
+                                 styleClass="btn"
+                                 style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
+            </div>
         </h:form>
     </p:dialog>
+
 
     <p:dialog header="Buscar Recepcionista" widgetVar="dlgAskIdRecep" modal="true" resizable="false" closable="true" width="360">
         <h:form>
@@ -284,15 +335,59 @@
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Nuevo Admin" widgetVar="dlgAgregarAdmin" modal="true" resizable="false" closable="true" width="360">
-        <h:form>
-            <p:messages showDetail="true" closable="true"/>
-            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioABeanUI.nuevoUsuario.nombreCompleto}" class="form-control" required="true"/></div>
-            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioABeanUI.nuevoUsuario.correo}" class="form-control" required="true"/></div>
-            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioABeanUI.nuevoUsuario.contrasena}" class="form-control" required="true"/></div>
-            <div class="boton-registrar"><p:commandButton value="Registrar" actionListener="#{usuarioABeanUI.registrarUsuario}" update=":globalMsgs :formAdmin:tablaAdmin" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+    <p:dialog header="Nuevo Admin" widgetVar="dlgAgregarAdmin"
+              modal="true" resizable="false" closable="true" width="360">
+
+        <h:form id="formNuevoAdmin">
+            <p:messages id="msgsNuevo" showDetail="true" closable="true"/>
+
+            <!-- Nombre del usuario admin -->
+            <div class="form-group">
+                <h:outputLabel value="Nombre completo"/>
+                <p:inputText value="#{altaUsuarioABeanUI.nombreCompleto}"
+                             class="form-control"
+                             required="true"
+                             placeholder="Nombre"
+                             requiredMessage="Ingrese el nombre"/>
+            </div>
+
+            <!-- Correo del usuario admin -->
+            <div class="form-group">
+                <h:outputLabel value="Correo electrónico"/>
+                <p:inputText id="correo"
+                             value="#{altaUsuarioABeanUI.correo}"
+                             class="form-control"
+                             required="true"
+                             placeholder="ejemplo@dominio.com"
+                             requiredMessage="Ingrese un correo">
+                </p:inputText>
+
+                <p:message for="correo"/>
+            </div>
+
+            <!-- Contraseña del usuario admin -->
+            <div class="form-group">
+                <h:outputLabel value="Contraseña"/>
+                <p:password value="#{altaUsuarioABeanUI.contraseña}"
+                            class="form-control"
+                            required="true"
+                            feedback="true"
+                            toggleMask="true"
+                            placeholder="Ingresa tu contraseña"
+                            requiredMessage="Ingrese una contraseña"/>
+            </div>
+
+            <!-- Boton registrar usuario admin -->
+            <div class="boton-registrar">
+                <p:commandButton value="Registrar"
+                                 actionListener="#{altaUsuarioABeanUI.altaUsuarioAdministrador()}"
+                                 update=":globalMsgs :formAdmin:tablaAdmin :formNuevoAdmin:msgsNuevo"
+                                 styleClass="btn"
+                                 style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
+            </div>
         </h:form>
     </p:dialog>
+
 
     <p:dialog header="Buscar Admin" widgetVar="dlgAskIdAdmin" modal="true" resizable="false" closable="true" width="360">
         <h:form>
