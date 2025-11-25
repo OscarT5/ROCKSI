@@ -109,11 +109,49 @@
             align-items: center !important; justify-content: center !important; margin: 15px auto 0 auto !important; width: 80% !important;
         }
 
-        /* ESTILO EXTRA PARA TABS */
         .ui-tabs .ui-tabs-nav li { background: #f8f9fb !important; border-color: #ddd !important; }
         .ui-tabs .ui-tabs-nav li.ui-tabs-selected { background: #007bcb !important; border-color: #007bcb !important; }
         .ui-tabs .ui-tabs-nav li a { color: #333 !important; font-weight: 600; }
         .ui-tabs .ui-tabs-nav li.ui-tabs-selected a { color: white !important; }
+
+        .sidebar-footer {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-footer form {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .logout-link {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            color: white !important;
+            text-decoration: none !important;
+            padding: 10px 20px !important;
+            font-size: 15px !important;
+            transition: background 0.3s, transform 0.2s !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            cursor: pointer;
+            border-radius: 0 !important;
+        }
+
+        .logout-link:hover {
+            background: #0061a6 !important;
+        }
+
+        .logout-icon {
+            width: 22px;
+            height: 22px;
+            font-size: 1.2rem;
+        }
     </style>
 </h:head>
 
@@ -142,8 +180,18 @@
                 </h:commandLink>
             </h:form>
         </div>
-        <div class="logo-bottom">
-            <img src="resources-20250903T164359Z-1-001/resources/rockon-icon.png" alt="Logo"/>
+        <div class="sidebar-footer">
+
+            <h:form>
+                <h:commandLink action="#{loginBeanUI.cerrarSesion}" styleClass="logout-link">
+                    <i class="pi pi-power-off logout-icon"></i>
+                    <span>Cerrar Sesión</span>
+                </h:commandLink>
+            </h:form>
+
+            <div class="logo-bottom">
+                <img src="resources-20250903T164359Z-1-001/resources/rockon-icon.png" alt="Rock On Logo"/>
+            </div>
         </div>
     </div>
 
