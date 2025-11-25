@@ -10,9 +10,9 @@ import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 
-@Named("modificarUsuariosBeanUI")
+@Named("modificarUsuarioRBeanUI")
 @ViewScoped
-public class ModificarUsuariosBeanUI implements Serializable {
+public class ModificarUsuarioRBeanUI implements Serializable {
 
     private String idUsuario;
     private Usuariorecepcionista usuarioSeleccionado;

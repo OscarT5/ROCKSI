@@ -8,9 +8,9 @@ import jakarta.inject.Named;
 import org.primefaces.PrimeFaces;
 import java.io.Serializable;
 
-@Named("bajaUsuariosBeanUI")
+@Named("bajaUsuarioRBeanUI")
 @ViewScoped
-public class BajaUsuariosBeanUI implements Serializable {
+public class BajaUsuarioRBeanUI implements Serializable {
 
     private String idUsuario;
 
