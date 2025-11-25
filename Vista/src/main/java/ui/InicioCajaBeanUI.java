@@ -29,7 +29,7 @@ public class InicioCajaBeanUI implements Serializable {
     private final UsuarioRHelper usuarioRHelper = new UsuarioRHelper();
 
     private static final String ID_ITEM_APERTURA = "AC1000";
-    private static final String ID_CLIENTE_TIENDA = "CLI1000";
+    private static final String ID_CLIENTE_TIENDA = "CLI68";
 
     // Verifica el ID del recepcionista
     public void verificarUsuario() {
