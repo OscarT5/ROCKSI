@@ -5,6 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Usuarioadministrador;
+import mx.desarollo.entity.Usuarioadministrador;
 
 import java.util.List;
 
@@ -100,6 +101,52 @@ public class UsuarioADao extends AbstractDAO<Usuarioadministrador> {
             em.clear();
             return em.createQuery("SELECT u FROM Usuarioadministrador u WHERE u.estatus = 1", Usuarioadministrador.class).getResultList();
         });
+    }
+
+    public void actualizar(Usuarioadministrador usuario) {
+        EntityTransaction tx = null;
+        try {
+            tx = em.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+            em.merge(usuario);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new RuntimeException("Error al actualizar el usuario recepcionista en la BD", e);
+        }
+    }
+
+    public boolean baja(String id) {
+        EntityTransaction tx = null;
+        try {
+            tx = em.getTransaction();
+            if (!tx.isActive()) {
+                tx.begin();
+            }
+
+            Usuarioadministrador usuario = buscarADMPorId(id);
+
+            if (usuario == null) {
+                if (tx.isActive()) tx.rollback();
+                return false;
+            }
+
+            usuario.setEstatus(0);
+            em.merge(usuario);
+
+            tx.commit();
+            return true;
+
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new RuntimeException("Error al dar de baja al usuario recepcionista", e);
+        }
     }
 
     public Usuarioadministrador buscarADMPorId(String id) {

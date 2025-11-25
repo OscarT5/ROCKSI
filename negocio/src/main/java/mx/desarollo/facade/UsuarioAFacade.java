@@ -26,6 +26,14 @@ public class UsuarioAFacade {
         delegate.registrarUsuarioAdministrador(ua);
     }
 
+    public void modificarUsuarioA(Usuarioadministrador ua) throws Exception {
+        delegate.modificarUsuarioA(ua);
+    }
+
+    public boolean bajaUsuarioA(String id) throws Exception {
+        return delegate.bajaUsuarioA(id);
+    }
+
     public List<Usuarioadministrador> listarUA() {
         return delegate.listarUA();
     }

@@ -40,10 +40,18 @@ public class RetirarDineroPagaBeanUI implements Serializable {
                 throw new Exception("Debe ingresar el ID del usuario recepcionista.");
             }
 
+            // se busca el usuario en la bd
             usuarioValidado = usuarioRHelper.obtenerUsuarioR(idUsuarioRecep.trim());
 
+            // se valida si existe
             if (usuarioValidado == null) {
                 throw new Exception("No se encontró un usuario con ese ID.");
+            }
+
+            // nueva validacion del estatus
+            if (usuarioValidado.getEstatus() == 0) {
+                usuarioValidado = null;
+                throw new Exception("El usuario está dado de BAJA y no tiene permisos para realizar retiros.");
             }
 
         } catch (Exception e) {

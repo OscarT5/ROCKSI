@@ -20,6 +20,14 @@ public class UsuarioAHelper implements Serializable {
         return ServiceFacadeLocator.getInstanceAAFacade().obtenerUA(id);
     }
 
+    public void modificarUsuarioA(Usuarioadministrador ua) throws Exception {
+        ServiceFacadeLocator.getInstanceAAFacade().modificarUsuarioA(ua);
+    }
+
+    public boolean bajaUsuarioA(String id) throws Exception {
+        return ServiceFacadeLocator.getInstanceAAFacade().bajaUsuarioA(id);
+    }
+
     public List<Usuarioadministrador> listarUA() {
         return ServiceFacadeLocator.getInstanceAAFacade().listarUA();
     }

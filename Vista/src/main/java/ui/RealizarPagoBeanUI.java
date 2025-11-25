@@ -242,11 +242,14 @@ public class RealizarPagoBeanUI implements Serializable {
             montoFaltante = 0.0;
             fc.getExternalContext().getSessionMap().remove("clienteSeleccionado");
             limpiarCampos();
+            limpiarSesionVariables();
 
         } catch (Exception e) {
             // Si hay una excepcion, entonces muesro el siguiente mensaje
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error al realizar el pago", e.getMessage()));
+            limpiarCampos();
+            limpiarSesionVariables();
         }
     }
 
@@ -349,6 +352,7 @@ public class RealizarPagoBeanUI implements Serializable {
                 fc.getExternalContext().getSessionMap().remove("clienteSeleccionado");
                 // Limpio las variables con el metodo limpiarCampos()
                 limpiarCampos();
+                limpiarSesionVariables();
 
             } else {
                 return;
@@ -360,10 +364,13 @@ public class RealizarPagoBeanUI implements Serializable {
             fc.getExternalContext().getSessionMap().remove("clienteSeleccionado");
             // Limpio las variables con el metodo limpiarCampos()
             limpiarCampos();
+            limpiarSesionVariables();
 
         } catch (Exception e) {
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error al realizar el pago con tarjeta", e.getMessage()));
+            limpiarCampos();
+            limpiarSesionVariables();
         }
     }
 
@@ -489,9 +496,12 @@ public class RealizarPagoBeanUI implements Serializable {
             fc.getExternalContext().getSessionMap().remove("idCliente");
 
             limpiarCampos();
+            limpiarSesionVariables();
 
         } catch (Exception e) {
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al pagar clase", e.getMessage()));
+            limpiarCampos();
+            limpiarSesionVariables();
         }
     }
 
@@ -589,6 +599,7 @@ public class RealizarPagoBeanUI implements Serializable {
             // Si la membresia no esta activa limpio mis variables con el metodo limpiarCampos()
             if (!paseActivo) {
                 limpiarCampos();
+                limpiarSesionVariables();
             }
 
             // Limpio mis variabels de los campos tomados en la sesion anterior
@@ -597,6 +608,8 @@ public class RealizarPagoBeanUI implements Serializable {
 
         } catch (Exception e) {
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al pagar clase", e.getMessage()));
+            limpiarCampos();
+            limpiarSesionVariables();
         }
     }
 
@@ -742,6 +755,19 @@ public class RealizarPagoBeanUI implements Serializable {
     }
 
     /**
+     * Metodo para limpiar las variables de otra sesion
+     * @Throws ninguno
+     * @Params ninguno
+     * @return void
+     */
+    private void limpiarSesionVariables() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        fc.getExternalContext().getSessionMap().remove("idClase");
+        fc.getExternalContext().getSessionMap().remove("idCliente");
+        fc.getExternalContext().getSessionMap().remove("clienteSeleccionado");
+    }
+
+    /**
      * Metodo para limpiar variables
      * @Throws ninguno
      * @Params ninguno
@@ -749,6 +775,7 @@ public class RealizarPagoBeanUI implements Serializable {
      */
     public void limpiarCampos() {
         cliente = null;
+        idCliente = null;
         monto = null;
         fecha = null;
         porPagar = 0;
@@ -763,6 +790,7 @@ public class RealizarPagoBeanUI implements Serializable {
         siguienteDialogo = null;
         clienteTieneCredito = false;
         creditoAplicado = 0.0;
+        this.idCliente = null;
     }
 
     /**

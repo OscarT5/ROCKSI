@@ -220,11 +220,16 @@
                             <p:commandButton value="Registrar Usuario" icon="pi pi-user-plus"
                                              onclick="PF('dlgAgregarRecep').show();" styleClass="btn-registrar"/>
 
-                            <p:commandButton value="Modificar Usuario" icon="pi pi-user-edit"
-                                             onclick="PF('dlgAskIdRecep').show();" styleClass="btn-modificar"/>
+                            <p:commandButton value="Modificar Usuario"
+                                             actionListener="#{modificarUsuarioRBeanUI.prepararBusqueda}"
+                                             oncomplete="PF('dlgBuscar').show();"
+                                             update=":formBuscar"
+                                             icon="pi pi-search" styleClass="btn-registrar"/>
 
-                            <p:commandButton value="Baja de Usuario" icon="pi pi-user-minus"
-                                             styleClass="btn-baja" type="button" onclick="PF('dlgEliminarRecep').show();"/>
+                            <p:commandButton value="Baja Usuario"
+                                             oncomplete="PF('dlgCapturaID').show();"
+                                             icon="pi pi-user-minus"
+                                             styleClass="btn-registrar"/>
                         </div>
 
                         <p:dataTable id="tablaRecep" value="#{usuarioRBeanUI.listaUsuarios}" var="usu" lazy="false"
@@ -263,10 +268,16 @@
                                              onclick="PF('dlgAgregarAdmin').show();" styleClass="btn-registrar"/>
 
                             <p:commandButton value="Modificar Admin" icon="pi pi-user-edit"
-                                             onclick="PF('dlgAskIdAdmin').show();" styleClass="btn-modificar"/>
+                                             actionListener="#{modificarUsuarioABeanUI.prepararBusqueda}"
+                                             update=":formBuscarAdmin"
+                                             oncomplete="PF('dlgBuscarAdmin').show();"
+                                             styleClass="btn-modificar"/>
 
                             <p:commandButton value="Baja de Admin" icon="pi pi-user-minus"
-                                             styleClass="btn-baja" type="button" onclick="PF('dlgEliminarAdmin').show();"/>
+                                             actionListener="#{bajaUsuarioABeanUI.limpiar}"
+                                             update=":formCapturaAdmin"
+                                             oncomplete="PF('dlgCapturaIDAdmin').show();"
+                                             styleClass="btn-baja"/>
                         </div>
 
                         <p:dataTable id="tablaAdmin" value="#{usuarioABeanUI.listaUsuarios}" var="adm" lazy="false"
@@ -354,32 +365,95 @@
     </p:dialog>
 
 
-    <p:dialog header="Buscar Recepcionista" widgetVar="dlgAskIdRecep" modal="true" resizable="false" closable="true" width="360">
-        <h:form>
-            <p:messages showDetail="true" closable="true"/>
-            <div class="form-group"><h:outputLabel value="ID Usuario"/><p:inputText value="#{usuarioRBeanUI.busquedaIdMod}" placeholder="Ej. REC1001" class="form-control" required="true"/></div>
-            <p:commandButton value="Buscar" actionListener="#{usuarioRBeanUI.buscarParaModificar}" update=":globalMsgs :formModRecep" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%; margin-top:10px;"/>
+    <p:dialog header="Buscar Recepcionista" widgetVar="dlgBuscar" modal="true"
+              resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formBuscar">
+            <p:messages id="msgsAsk" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel value="ID Usuario"/>
+                <p:inputText value="#{modificarUsuarioRBeanUI.idUsuario}"
+                             placeholder="Ej. UR1001" required="true"
+                             requiredMessage="Ingrese un ID"/>
+            </div>
+
+            <p:commandButton value="Buscar" icon="pi pi-search"
+                             actionListener="#{modificarUsuarioRBeanUI.buscarUsuario}"
+                             update="msgsAsk :formModificar"
+                             styleClass="btn-custom" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Modificar Recepcionista" widgetVar="dlgModificarUsuario" id="formModRecep" modal="true" resizable="false" width="360">
-        <h:form>
-            <p:messages showDetail="true" closable="true"/>
-            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioRBeanUI.usuarioSeleccionado.nombreCompleto}" class="form-control"/></div>
-            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioRBeanUI.usuarioSeleccionado.correo}" class="form-control"/></div>
-            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioRBeanUI.usuarioSeleccionado.contrasena}" class="form-control" redisplay="true"/></div>
-            <div class="boton-registrar"><p:commandButton value="Actualizar" actionListener="#{usuarioRBeanUI.modificarUsuario}" update=":globalMsgs :formRecep:tablaRecep" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+    <p:dialog header="Modificar Recepcionista" widgetVar="dlgModificar" modal="true"
+              resizable="false" width="400" appendTo="@(body)">
+        <h:form id="formModificar">
+            <p:messages id="msgsModificar" showDetail="true" closable="true"/>
+
+            <h:panelGroup rendered="#{modificarUsuarioRBeanUI.usuarioSeleccionado != null}">
+                <div class="form-group">
+                    <h:outputLabel value="Nombre Completo"/>
+                    <p:inputText value="#{modificarUsuarioRBeanUI.usuarioSeleccionado.nombreCompleto}" required="true"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Correo Electrónico"/>
+                    <p:inputText value="#{modificarUsuarioRBeanUI.usuarioSeleccionado.correo}" required="true"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Contraseña"/>
+                    <p:password value="#{modificarUsuarioRBeanUI.usuarioSeleccionado.contrasena}"
+                                redisplay="true" required="true" toggleMask="true"/>
+                </div>
+
+                <p:commandButton value="Guardar Cambios" icon="pi pi-save"
+                                 actionListener="#{modificarUsuarioRBeanUI.modificarUsuarioR}"
+                                 update="msgsModificar :globalMsgs"
+                                 styleClass="btn-custom" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Eliminar Recepcionista" widgetVar="dlgEliminarRecep" modal="true" resizable="false" width="360">
-        <h:form>
-            <div class="form-group"><h:outputLabel value="ID a Eliminar"/><p:inputText value="#{usuarioRBeanUI.idEliminar}" class="form-control"/></div>
-            <p:commandButton value="Eliminar" icon="pi pi-times-circle" styleClass="btn-baja" onclick="PF('dlgConfRecep').show(); return false;" style="width: 100%; margin-top: 10px;"/>
-            <p:confirmDialog widgetVar="dlgConfRecep" header="Confirmar" message="¿Eliminar este usuario?" icon="pi pi-exclamation-triangle">
-                <p:commandButton value="Sí" actionListener="#{usuarioRBeanUI.eliminarUsuario}" update=":globalMsgs :formRecep:tablaRecep" oncomplete="PF('dlgConfRecep').hide(); PF('dlgEliminarRecep').hide();" styleClass="btn-confirmar" style="background:#007bff !important; color:#fff !important; border:none;"/>
-                <p:commandButton value="Cancelar" onclick="PF('dlgConfRecep').hide(); return false;" type="button" style="background: #007bff !important; color: #fff !important; border: none; margin-left: 10px;"/>
-            </p:confirmDialog>
+    <p:dialog header="Eliminar Recepcionista" widgetVar="dlgCapturaID" modal="true"
+              resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formCaptura">
+            <p:messages id="msgsEliminar" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel value="ID Usuario"/>
+                <p:inputText value="#{bajaUsuarioRBeanUI.idUsuario}"
+                             placeholder="Ej. UR1001" required="true"/>
+            </div>
+
+            <p:commandButton value="Eliminar" icon="pi pi-trash"
+                             process="@form" update="msgsEliminar"
+                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgCapturaID').hide(); PF('dlgConfirmEliminar').show(); }"
+                             styleClass="btn-danger" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Confirmación" widgetVar="dlgConfirmEliminar" modal="true"
+              resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formConfirm">
+            <div style="text-align:center; padding:10px;">
+                <i class="pi pi-exclamation-triangle" style="font-size:3rem; color:#dc3545; margin-bottom:10px;"></i>
+
+                <h:outputText value="¿Seguro que deseas eliminar este usuario?"
+                              style="font-weight:bold; display:block; margin-bottom:15px;"/>
+
+                <div style="display:flex; gap:10px;">
+                    <p:commandButton value="Sí, Eliminar"
+                                     actionListener="#{bajaUsuarioRBeanUI.bajaUsuario}"
+                                     update=":globalMsgs :formRecep:tablaRecep"
+                                     oncomplete="PF('dlgConfirmEliminar').hide();"
+                                     styleClass="btn-danger" style="background: #007bff !important; color: #fff !important; border: none; width:100%; flex:1"/>
+
+                    <p:commandButton value="Cancelar"
+                                     onclick="PF('dlgConfirmEliminar').hide(); PF('dlgCapturaID').show();"
+                                     type="button"
+                                     styleClass="btn-custom" style="background: #007bff !important; color: #fff !important; border: none; width:100%; flex:1"/>
+                </div>
+            </div>
         </h:form>
     </p:dialog>
 
@@ -437,32 +511,96 @@
     </p:dialog>
 
 
-    <p:dialog header="Buscar Admin" widgetVar="dlgAskIdAdmin" modal="true" resizable="false" closable="true" width="360">
-        <h:form>
-            <p:messages showDetail="true" closable="true"/>
-            <div class="form-group"><h:outputLabel value="ID Admin"/><p:inputText value="#{usuarioABeanUI.busquedaIdMod}" placeholder="Ej. ADM1001" class="form-control" required="true"/></div>
-            <p:commandButton value="Buscar" actionListener="#{usuarioABeanUI.buscarParaModificar}" update=":globalMsgs :formModAdmin" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%; margin-top:10px;"/>
+    <p:dialog header="Buscar Administrador" widgetVar="dlgBuscarAdmin" modal="true"
+              resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formBuscarAdmin">
+            <p:messages id="msgsAskAdmin" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel value="ID Administrador"/>
+                <p:inputText value="#{modificarUsuarioABeanUI.idUsuario}"
+                             placeholder="Ej. UA1000" required="true"
+                             requiredMessage="Ingrese un ID"/>
+            </div>
+
+            <p:commandButton value="Buscar" icon="pi pi-search"
+                             actionListener="#{modificarUsuarioABeanUI.buscarUsuario}"
+                             update="msgsAskAdmin :formModificarAdmin"
+                             styleClass="btn-custom" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Modificar Admin" widgetVar="dlgModificarAdmin" id="formModAdmin" modal="true" resizable="false" width="360">
-        <h:form>
-            <p:messages showDetail="true" closable="true"/>
-            <div class="form-group"><h:outputLabel value="Nombre"/><p:inputText value="#{usuarioABeanUI.usuarioSeleccionado.nombreCompleto}" class="form-control"/></div>
-            <div class="form-group"><h:outputLabel value="Correo"/><p:inputText value="#{usuarioABeanUI.usuarioSeleccionado.correo}" class="form-control"/></div>
-            <div class="form-group"><h:outputLabel value="Contraseña"/><p:password value="#{usuarioABeanUI.usuarioSeleccionado.contrasena}" class="form-control" redisplay="true"/></div>
-            <div class="boton-registrar"><p:commandButton value="Actualizar" actionListener="#{usuarioABeanUI.modificarUsuario}" update=":globalMsgs :formAdmin:tablaAdmin" styleClass="btn" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/></div>
+    <p:dialog header="Modificar Administrador" widgetVar="dlgModificarAdmin" modal="true"
+              resizable="false" width="400" appendTo="@(body)">
+        <h:form id="formModificarAdmin">
+            <p:messages id="msgsModificarAdmin" showDetail="true" closable="true"/>
+
+            <h:panelGroup rendered="#{modificarUsuarioABeanUI.usuarioSeleccionado != null}">
+                <div class="form-group">
+                    <h:outputLabel value="Nombre Completo"/>
+                    <p:inputText value="#{modificarUsuarioABeanUI.usuarioSeleccionado.nombreCompleto}" required="true"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Correo Electrónico"/>
+                    <p:inputText value="#{modificarUsuarioABeanUI.usuarioSeleccionado.correo}" required="true"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel value="Contraseña"/>
+                    <p:password value="#{modificarUsuarioABeanUI.usuarioSeleccionado.contrasena}"
+                                redisplay="true" required="true" toggleMask="true"/>
+                </div>
+
+                <p:commandButton value="Guardar Cambios" icon="pi pi-save"
+                                 actionListener="#{modificarUsuarioABeanUI.modificarUsuarioA}"
+                                 update="msgsModificarAdmin :globalMsgs :formAdmin:tablaAdmin"
+                                 oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificarAdmin').hide(); }"
+                                 styleClass="btn-custom" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
+            </h:panelGroup>
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Baja Admin" widgetVar="dlgEliminarAdmin" modal="true" resizable="false" width="360">
-        <h:form>
-            <div class="form-group"><h:outputLabel value="ID a Eliminar"/><p:inputText value="#{usuarioABeanUI.idEliminar}" class="form-control"/></div>
-            <p:commandButton value="Eliminar" icon="pi pi-times-circle" styleClass="btn-baja" onclick="PF('dlgConfAdmin').show(); return false;" style="width: 100%; margin-top: 10px;"/>
-            <p:confirmDialog widgetVar="dlgConfAdmin" header="Confirmar" message="¿Eliminar este admin?" icon="pi pi-exclamation-triangle">
-                <p:commandButton value="Sí" actionListener="#{usuarioABeanUI.eliminarUsuario}" update=":globalMsgs :formAdmin:tablaAdmin" oncomplete="PF('dlgConfAdmin').hide(); PF('dlgEliminarAdmin').hide();" styleClass="btn-confirmar" style="background:#007bff !important; color:#fff !important; border:none;"/>
-                <p:commandButton value="Cancelar" onclick="PF('dlgConfAdmin').hide(); return false;" type="button" style="background: #007bff !important; color: #fff !important; border: none; margin-left: 10px;"/>
-            </p:confirmDialog>
+    <p:dialog header="Eliminar Administrador" widgetVar="dlgCapturaIDAdmin" modal="true"
+              resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formCapturaAdmin">
+            <p:messages id="msgsEliminarAdmin" showDetail="true" closable="true"/>
+
+            <div class="form-group">
+                <h:outputLabel value="ID Administrador"/>
+                <p:inputText value="#{bajaUsuarioABeanUI.idUsuario}"
+                             placeholder="Ej. UA1000" required="true"/>
+            </div>
+
+            <p:commandButton value="Eliminar" icon="pi pi-trash"
+                             process="@form" update="msgsEliminarAdmin"
+                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgCapturaIDAdmin').hide(); PF('dlgConfirmEliminarAdmin').show(); }"
+                             styleClass="btn-danger" style="background: #007bff !important; color: #fff !important; border: none; width:100%;"/>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Confirmación" widgetVar="dlgConfirmEliminarAdmin" modal="true"
+              resizable="false" width="350" appendTo="@(body)">
+        <h:form id="formConfirmAdmin">
+            <div style="text-align:center; padding:10px;">
+                <i class="pi pi-exclamation-triangle" style="font-size:3rem; color:#dc3545; margin-bottom:10px;"></i>
+
+                <h:outputText value="¿Seguro que deseas eliminar este administrador?"
+                              style="font-weight:bold; display:block; margin-bottom:15px;"/>
+
+                <div style="display:flex; gap:10px;">
+                    <p:commandButton value="Sí, Eliminar"
+                                     actionListener="#{bajaUsuarioABeanUI.bajaUsuario}"
+                                     update=":globalMsgs :formAdmin:tablaAdmin"
+                                     oncomplete="PF('dlgConfirmEliminarAdmin').hide(); PF('dlgCapturaIDAdmin').hide();"
+                                     styleClass="btn-danger" style="background: #007bff !important; color: #fff !important; border: none; width:100%; flex:1"/>
+
+                    <p:commandButton value="Cancelar"
+                                     onclick="PF('dlgConfirmEliminarAdmin').hide(); PF('dlgCapturaIDAdmin').show();"
+                                     type="button"
+                                     styleClass="btn-custom" style="background: #007bff !important; color: #fff !important; border: none; width:100%; flex:1"/>
+                </div>
+            </div>
         </h:form>
     </p:dialog>
 

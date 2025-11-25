@@ -43,6 +43,41 @@ public class UsuarioADelegate {
         usuarioADao.crearUsuarioA(ua);
     }
 
+    public void modificarUsuarioA(Usuarioadministrador ua) throws Exception {
+        // validaciones basicas
+        if (ua == null || ua.getIdUsuarioadmin() == null || ua.getIdUsuarioadmin().trim().isEmpty()) {
+            throw new Exception("No se puede modificar sin un ID válido.");
+        }
+        if (ua.getNombreCompleto() == null || ua.getNombreCompleto().trim().isEmpty()) {
+            throw new Exception("El nombre completo es obligatorio.");
+        }
+        if (ua.getCorreo() == null || !ua.getCorreo().contains("@")) {
+            throw new Exception("Ingrese un correo válido.");
+        }
+        if (ua.getContrasena() == null || ua.getContrasena().trim().isEmpty()) {
+            throw new Exception("La contraseña no puede estar vacía.");
+        }
+
+        usuarioADao.actualizar(ua);
+    }
+
+    public boolean bajaUsuarioA(String id) throws Exception {
+        if (id == null || id.trim().isEmpty()) {
+            throw new Exception("El ID es necesario para dar la baja.");
+        }
+
+        Usuarioadministrador ua = usuarioADao.buscarADMPorId(id);
+        if (ua == null) {
+            throw new Exception("El usuario con ID " + id + " no existe.");
+        }
+
+        if (ua.getEstatus() == 0) {
+            throw new Exception("El usuario ya se encuentra dado de baja.");
+        }
+
+        return usuarioADao.baja(id);
+    }
+
     public Usuarioadministrador obtenerUA(String id) {
         return usuarioADao.buscarADMPorId(id);
     }

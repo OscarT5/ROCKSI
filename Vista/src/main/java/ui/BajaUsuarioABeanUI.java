@@ -1,0 +1,51 @@
+package ui;
+
+import helper.UsuarioAHelper;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import org.primefaces.PrimeFaces;
+import java.io.Serializable;
+
+@Named("bajaUsuarioABeanUI")
+@ViewScoped
+public class BajaUsuarioABeanUI implements Serializable {
+
+    private String idUsuario;
+    private final UsuarioAHelper usuarioAHelper = new UsuarioAHelper();
+
+    public void bajaUsuario() {
+        try {
+            if (idUsuario == null || idUsuario.trim().isEmpty()) {
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "El ID no puede estar vacío.");
+                return;
+            }
+
+            boolean exito = usuarioAHelper.bajaUsuarioA(this.idUsuario);
+
+            if (exito) {
+                addMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Administrador dado de baja correctamente.");
+
+                PrimeFaces.current().executeScript("PF('dlgConfAdmin').hide(); PF('dlgEliminarAdmin').hide();");
+                limpiar();
+            } else {
+                addMessage(FacesMessage.SEVERITY_WARN, "Aviso", "No se pudo dar de baja (revise si existe o ya está inactivo).");
+            }
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage());
+        }
+    }
+
+    public void limpiar() {
+        this.idUsuario = "";
+    }
+
+    private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
+    }
+
+    // getters y setters
+    public String getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(String idUsuario) { this.idUsuario = idUsuario; }
+}
