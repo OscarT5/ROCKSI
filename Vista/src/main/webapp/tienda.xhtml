@@ -579,7 +579,7 @@
                 </h:commandLink>
                 <h:commandLink action="usuarios.xhtml?faces-redirect=true"
                                actionListener="#{menuBeanUI.setActivePage('usuarios')}"
-                               styleClass="#{menuBeanUI.activePage eq 'usuarios' ? 'active' : ''}">
+                               styleClass="#{menuBeanUI.activePage eq 'usuarios' ? 'active' : ''}" rendered="#{loginBeanUI.isAdmin()}"> <!-- Muestra si es admin -->
                     <img src="resources-20250903T164359Z-1-001/resources/clientes.png" alt="Usuarios Icon" class="menu-icon"/>
                     <span>Usuarios</span>
                 </h:commandLink>
@@ -708,13 +708,15 @@
                 </div>
 
 
+                <!-- INICIO - Muestra si es admin -->
                 <div class="action-buttons" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                    <h:outputLabel for="txtFiltroProducto" value="ID Producto:"/>
+                    <h:outputLabel for="txtFiltroProducto" value="ID Producto:" rendered="#{loginBeanUI.isAdmin()}"/>
                     <p:inputText id="txtFiltroProducto"
                                  value="#{productoBeanUI.filtro}"
                                  placeholder="Buscar producto"
                                  styleClass="form-control"
-                                 style="width:220px;">
+                                 style="width:220px;"
+                                 rendered="#{loginBeanUI.isAdmin()}">
                         <p:ajax event="input"
                                 listener="#{productoBeanUI.filtrarPorId}"
                                 update="tablaProductos"
@@ -725,26 +727,30 @@
                     <p:commandButton value="Actualizar Tabla" icon="pi pi-refresh"
                                      action="#{productoBeanUI.recargar}"
                                      update="tablaProductos"
-                                     styleClass="btn-registrar"/>
+                                     styleClass="btn-registrar"
+                                     rendered="#{loginBeanUI.isAdmin()}"/>
 
                     <!-- Abren diálogos -->
                     <p:commandButton value="Alta de Producto" icon="pi pi-plus"
                                      styleClass="btn-registrar"
                                      onclick="PF('dlgAgregarProducto').show(); return false;"
-                                     type="button"/>
+                                     type="button"
+                                     rendered="#{loginBeanUI.isAdmin()}"/>
 
                     <p:commandButton value="Modificar Producto" icon="pi pi-pencil" styleClass="btn-modificar"
-                                     onclick="PF('dlgBuscarProd').show(); return false;" type="button"/>
+                                     onclick="PF('dlgBuscarProd').show(); return false;" type="button"
+                                     rendered="#{loginBeanUI.isAdmin()}"/>
 
                     <p:commandButton value="Baja de Producto" icon="pi pi-trash" styleClass="btn-baja"
-                                     onclick="PF('dlgEliminarProducto').show(); return false;" type="button"/>
+                                     onclick="PF('dlgEliminarProducto').show(); return false;" type="button"
+                                     rendered="#{loginBeanUI.isAdmin()}"/>
 
                 </div>
 
                 <!--Tabla-->
                 <p:dataTable id="tablaProductos" value="#{productoBeanUI.listaProductos}" var="pro"
                              paginator="true" rows="8" emptyMessage="No hay productos registrados"
-                             paginatorPosition="bottom" style="margin-top:20px;">
+                             paginatorPosition="bottom" style="margin-top:20px;" rendered="#{loginBeanUI.isAdmin()}">
                     <p:column headerText="ID Producto" sortBy="#{pro.idItem}">
                         <h:outputText value="#{pro.idItem}"/>
                     </p:column>
@@ -764,10 +770,11 @@
             </h:form>
         </div>
     </div>
+    <!-- FIN - Muestra si es admin -->
 
     <!-- dialogs -->
     <p:dialog header="Nuevo producto" widgetVar="dlgAgregarProducto" modal="true"
-              resizable="false" closable="true" draggable="false" width="360">
+              resizable="false" closable="true" draggable="false" width="360" rendered="#{loginBeanUI.isAdmin()}"> <!-- Muestra si es admin -->
 
         <h:form id="formAltaProducto">
 
@@ -828,7 +835,7 @@
     <!-- dialogo para buscar el id del producto a modificar -->
     <p:dialog header="Buscar producto" widgetVar="dlgBuscarProd"
               modal="true" resizable="false" draggable="false" closable="true"
-              width="380">
+              width="380" rendered="#{loginBeanUI.isAdmin()}"> <!-- Muestra si es admin -->
 
         <h:form id="formBuscarProd">
             <p:messages id="msgsAsk" showDetail="true" closable="true" />
@@ -855,7 +862,7 @@
     <!-- dialogo para modificar el producto -->
     <p:dialog header="Modificar producto" widgetVar="dlgModificarProd"
               modal="true" resizable="false" draggable="false" closable="true"
-              width="420">
+              width="420" rendered="#{loginBeanUI.isAdmin()}"> <!-- Muestra si es admin -->
 
         <h:form id="formModificarProd">
             <p:messages id="msgsModificar" showDetail="true" closable="true" />
@@ -913,8 +920,8 @@
     <!-- Eliminar Producto -->
     <p:dialog header="Eliminar Producto" widgetVar="dlgEliminarProducto"
               modal="true" resizable="false" closable="true"
-              draggable="false" width="360">
-        <h:form id="formEliminarProducto">
+              draggable="false" width="360" rendered="#{loginBeanUI.isAdmin()}">
+        <h:form id="formEliminarProducto"> <!-- Muestra si es admin -->
 
             <!-- Mensajes del backend -->
             <p:messages id="msgsEliminarProducto" showDetail="true" closable="true"/>

@@ -409,7 +409,7 @@
                 <!--USUARUIS -->
                 <h:commandLink action="usuarios.xhtml?faces-redirect=true"
                                actionListener="#{menuBeanUI.setActivePage('usuarios')}"
-                               styleClass="#{menuBeanUI.activePage eq 'usuarios' ? 'active' : ''}">
+                               styleClass="#{menuBeanUI.activePage eq 'usuarios' ? 'active' : ''}" rendered="#{loginBeanUI.isAdmin()}"> <!-- Muestra si es admin -->
                     <img src="resources-20250903T164359Z-1-001/resources/clientes.png" alt="Usuarios Icon" class="menu-icon"/>
                     <span>Usuarios</span>
                 </h:commandLink>

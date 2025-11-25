@@ -54,6 +54,11 @@ public class LoginBeanUI implements Serializable {
         return "/login.xhtml?faces-redirect=true";
     }
 
+    // Metodo para verificar el rol y ocultar un componente si este no es un admin
+    public boolean isAdmin() {
+        return usuarioLogueado != null && "ADMIN".equals(tipoUsuario);
+    }
+
     public String getIdUsuario() { return idUsuario; }
     public void setIdUsuario(String idUsuario) { this.idUsuario = idUsuario; }
     public String getContrasena() { return contrasena; }
