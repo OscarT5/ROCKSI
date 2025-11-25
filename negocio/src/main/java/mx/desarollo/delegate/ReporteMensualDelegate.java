@@ -44,7 +44,7 @@ public class ReporteMensualDelegate {
 
             List<Paga> pagosDelMes = pagaDAO.findByFechaBetween(inicioMes, finMes);
             List<Cliente> clientesNuevos = clienteDAO.findByFechaRegistroBetween(inicioMesDate, finMesDate);
-            List<Producto> todosLosProductos = productoDAO.findAll();
+            List<Producto> todosLosProductos = productoDAO.listarActivos();
 
             List<PagoReporteDTO> pagosDTO = new ArrayList<>();
             for (Paga p : pagosDelMes) {

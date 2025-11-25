@@ -31,7 +31,7 @@ public class InventarioDiarioDelegate {
             }
 
             //Obtiene productos existentes
-            List<Producto> todosLosProductos = productoDAO.findAll();
+            List<Producto> todosLosProductos = productoDAO.listarActivos();
 
             if (todosLosProductos == null || todosLosProductos.isEmpty()) {
                 throw new SnapshotException("No se encontraron productos para generar el snapshot.");

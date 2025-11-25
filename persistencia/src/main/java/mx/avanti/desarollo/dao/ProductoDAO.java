@@ -180,6 +180,14 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         }
     }
 
+    public List<Producto> listarActivos() {
+        return execute(em -> {
+            em.clear();
+            return em.createQuery("SELECT p FROM Producto p WHERE p.status = 1", Producto.class)
+                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH")
+                    .getResultList();
+        });
+    }
 
     /**
      * Metodo para listar todos los productos de la base de datos

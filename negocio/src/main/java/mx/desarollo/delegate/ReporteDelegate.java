@@ -35,7 +35,7 @@ public class ReporteDelegate {
             List<RetiroReporteDTO> retirosDTO = new ArrayList<>();
 
             //Procesar los productos
-            List<Producto> todosLosProductos = productoDAO.findAll();
+            List<Producto> todosLosProductos = productoDAO.listarActivos();
             List<InventarioDiario> snapshots = inventarioDAO.findByFecha(fecha);
             List<ProductoReporteDTO> productosDTO = procesarProductos(todosLosProductos, snapshots, pagosDelDia);
             double totalMontoCaja = 0.0;

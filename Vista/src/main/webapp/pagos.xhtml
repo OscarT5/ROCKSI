@@ -444,17 +444,6 @@
                                      onclick="PF('dlgCaja').show(); return false;"
                                      type="button"/>
 
-                    <p:commandButton value="Generar Reporte Diario"
-                                     icon="pi pi-file-pdf"
-                                     action="#{reporteBeanUI.descargarReporteDiario}"
-                                     ajax="false"
-                                     styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-                                     style="background:#007bff; color:#fff; border:none;"/>
-                    <p:commandButton value="Generar Reporte Mensual"
-                                     action="#{reporteMensualBeanUI.descargarReporteMensual}"
-                                     styleClass="register-btn"
-                                     ajax="false"/>
-
                 </div>
 
                 <!-- TABLA DE PAGOS -->
@@ -494,6 +483,22 @@
                     </p:column>
                 </p:dataTable>
 
+            </h:form>
+            <h:form id="formReportes" style="display:flex; justify-content:flex-end; gap:10px; margin: 15px 0;">
+
+                <p:commandButton value="Generar Reporte Diario"
+                                 icon="pi pi-file-pdf"
+                                 action="#{reporteBeanUI.descargarReporteDiario}"
+                                 ajax="false"
+                                 styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                                 style="background:#007bff; color:#fff; border:none;"/>
+
+                <p:commandButton value="Generar Reporte Mensual"
+                                 icon="pi pi-file-pdf"
+                                 action="#{reporteMensualBeanUI.descargarReporteMensual}"
+                                 ajax="false"
+                                 styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                                 style="background:#007bff; color:#fff; border:none;"/>
             </h:form>
         </div>
     </div>
