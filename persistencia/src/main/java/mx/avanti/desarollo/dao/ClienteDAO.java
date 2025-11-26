@@ -59,21 +59,28 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
     private void sincronizarContador() {
         try {
             String ultimoId = entityManager
-                    .createQuery("SELECT c.idCliente FROM Cliente c WHERE c.idCliente LIKE 'CLI%' ORDER BY c.idCliente DESC", String.class)
+                    .createQuery("SELECT c.idCliente FROM Cliente c WHERE c.idCliente LIKE 'CLI%' ORDER BY LENGTH(c.idCliente) DESC, c.idCliente DESC", String.class)
                     .setMaxResults(1)
                     .getSingleResult();
-
             if (ultimoId != null && ultimoId.startsWith("CLI")) {
                 int numero = Integer.parseInt(ultimoId.substring(3));
-                Cliente.setContador(numero + 1);
-                System.out.println("Contador sincronizado con base de datos: siguiente CLI" + (numero + 1));
+                // si encontramos numeros menor a 1000 ignoramos la secuencia normal y se forza el inicio en 1000
+                if (numero < 1000) {
+                    Cliente.setContador(1000);
+                    System.out.println("ID antiguo detectado (" + ultimoId + "). Iniciando nuevos registros en CLI1000.");
+                } else {
+                    // si ya se tiene 1000 o mas, se agrega 1
+                    Cliente.setContador(numero + 1);
+                    System.out.println("Sincronizado: siguiente ID será CLI" + (numero + 1));
+                }
             }
         } catch (NoResultException e) {
+            // si la bd esta vacia
             Cliente.setContador(1000);
-            System.out.println("No hay clientes registrados. Contador iniciado en CLI1000");
+            System.out.println("Sin registros previos. Contador iniciado en CLI1000");
         } catch (Exception e) {
             Cliente.setContador(1000);
-            System.err.println("Error sincronizando contador, se mantiene en CLI1000: " + e.getMessage());
+            System.err.println("Error sincronizando contador: " + e.getMessage());
         }
     }
 
