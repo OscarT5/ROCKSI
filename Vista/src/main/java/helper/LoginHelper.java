@@ -2,7 +2,7 @@ package helper;
 
 import mx.desarollo.entity.Usuarioadministrador;
 import mx.desarollo.entity.Usuariorecepcionista;
-import mx.desarollo.integration.ServiceFacadeLocator; // Usamos tu locator
+import mx.desarollo.integration.ServiceFacadeLocator;
 
 import java.io.Serializable;
 
@@ -17,11 +17,14 @@ public class LoginHelper implements Serializable {
 
         String idUpper = id.trim().toUpperCase();
 
-
         if (idUpper.startsWith("ADM")) {
             Usuarioadministrador admin = ServiceFacadeLocator.getInstanceAAFacade().obtenerUsuarioAPorId(idUpper);
 
             if (admin != null) {
+                if (admin.getEstatus() != 1) {
+                    throw new Exception("El usuario administrador ha sido dado de baja del sistema.");
+                }
+
                 if (admin.getContrasena().equals(contrasena)) {
                     return admin;
                 } else {
@@ -34,6 +37,10 @@ public class LoginHelper implements Serializable {
             Usuariorecepcionista recepcionista = ServiceFacadeLocator.getInstanceURFacade().obtenerUsuarioRPorId(idUpper);
 
             if (recepcionista != null) {
+                if (recepcionista.getEstatus() != 1) {
+                    throw new Exception("El usuario recepcionista ha sido dado de baja del sistema.");
+                }
+
                 if (recepcionista.getContrasena().equals(contrasena)) {
                     return recepcionista;
                 } else {
