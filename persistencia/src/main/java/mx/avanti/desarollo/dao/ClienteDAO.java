@@ -30,7 +30,6 @@ public class ClienteDAO extends AbstractDAO<Cliente> {
     public void crear(Cliente cliente) {
         EntityTransaction tx = null;
         try {
-            sincronizarContador();
             cliente.setEstatus(1);
 
             if (cliente.getIdCliente() == null || cliente.getIdCliente().isEmpty()) {

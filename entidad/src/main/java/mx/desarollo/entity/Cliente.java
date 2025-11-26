@@ -68,9 +68,7 @@ public class Cliente {
 
     // metodo para creacion de ID
     public static synchronized String generarNuevoId() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("CLI").append(contador++);
-        return sb.toString();
+        return "CLI" + (contador++);
     }
 
     // permite al DAO actualizar el contador

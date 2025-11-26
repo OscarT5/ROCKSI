@@ -15,7 +15,7 @@ import java.io.Serializable;
 @SessionScoped
 //Clase principal
 public class AltaClienteBeanUI implements Serializable {
-    private Cliente cliente = new Cliente(); //Crea un objeto de tipo cliente
+    private Cliente cliente; //Crea un objeto de tipo cliente
     private ClienteHelper guardarCliente = new ClienteHelper(); //Crea un objeto de tipo ClienteHelper
     private String nombre; //String que se llenara de acuerdo a lo que la vista obtenga
     private String apellido; //String que se llenara de acuerdo a lo que la vista obtenga
@@ -27,6 +27,7 @@ public class AltaClienteBeanUI implements Serializable {
     //Se llama a este metodo para crear el objeto de cliente y mandarselo a las otras capas
     public void altaCliente() {
         try {
+            cliente = new Cliente();
             this.cliente.setIdCliente(Cliente.generarNuevoId());
             this.cliente.setNombreCompleto(this.nombre + " " + this.apellido);
             this.cliente.setTelefono(this.telefono);
