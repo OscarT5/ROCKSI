@@ -463,6 +463,9 @@ public class RealizarPagoBeanUI implements Serializable {
                     nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
                     nueva.setTipo("clase");
                     nueva.setIdCliente(cliente);
+                    double gastoActual = cliente.getCantidadDineroMensual();
+                    cliente.setCantidadDineroMensual(gastoActual + montoTotal);
+                    clienteHelper.ModificarCliente(cliente);
                     membresiaHelper.registrarMembresia(nueva, cliente);
                     pagaHelper.RealizarPago(paga, nueva.getIdItem());
                     fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia creada", "Se ha creado la membresia de clase."));
@@ -575,6 +578,9 @@ public class RealizarPagoBeanUI implements Serializable {
                     nueva.setFechaVencimiento(LocalDate.now().plusDays(30));
                     nueva.setTipo("clase");
                     nueva.setIdCliente(cliente);
+                    double gastoActual = cliente.getCantidadDineroMensual();
+                    cliente.setCantidadDineroMensual(gastoActual + montoTotal);
+                    clienteHelper.ModificarCliente(cliente);
                     membresiaHelper.registrarMembresia(nueva, cliente);
                     pagaHelper.RealizarPago(paga, nueva.getIdItem());
                     fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Membresia creada", "Se ha creado la membresia de clase."));
@@ -791,6 +797,7 @@ public class RealizarPagoBeanUI implements Serializable {
         clienteTieneCredito = false;
         creditoAplicado = 0.0;
         this.idCliente = null;
+        limpiarSesionVariables();
     }
 
     /**
