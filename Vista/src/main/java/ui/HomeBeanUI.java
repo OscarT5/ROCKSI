@@ -48,6 +48,13 @@ public class HomeBeanUI implements Serializable {
 
             if (clienteEncontrado != null) {
 
+
+                if (clienteEncontrado.getEstatus() != 1) {
+                    fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Acceso Denegado",
+                            "El cliente " + clienteEncontrado.getNombreCompleto() + " se encuentra dado de baja."));
+                    this.idBusqueda = "";
+                    return;
+                }
                 boolean yaRegistrado = listaIngresos.stream()
                         .anyMatch(c -> c.getIdCliente().equals(clienteEncontrado.getIdCliente()));
 

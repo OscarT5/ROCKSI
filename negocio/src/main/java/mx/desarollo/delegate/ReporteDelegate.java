@@ -17,8 +17,7 @@ public class ReporteDelegate {
 
     public ReporteDelegate() {}
 
-    private static final double DINERO_INICIAL_CAJA = 0.0;//Esto se va a cambiar cuando quede lo de abrir caja
-    //Metodo principal que recolecta, procesa y empaqueta toda la informacion necesaria para el reporte diario.
+
     public ReporteDiarioDTO generarDatosReporteDiario(LocalDate fecha) {
 
         EntityManager em = HibernateUtil.getEntityManager();
@@ -39,25 +38,29 @@ public class ReporteDelegate {
             List<InventarioDiario> snapshots = inventarioDAO.findByFecha(fecha);
             List<ProductoReporteDTO> productosDTO = procesarProductos(todosLosProductos, snapshots, pagosDelDia);
             double totalMontoCaja = 0.0;
+            double dineroInicialCaja = 0.0;
 
             for (Paga p : pagosDelDia) {
-                //Se suma todo el monto de pagos, los retiros son negativos asi que se calcula eso tmbn solo
-                totalMontoCaja += p.getMonto();
-
                 String idItem = p.getIdItem().getIdItem();
 
                 //Si el id de item es retiro de caja, se agrega en su dicha seccion
-                if ("RC1000".equals(idItem)) {
+                if ("AC1000".equals(idItem)) {
+                    dineroInicialCaja += p.getMonto();
+
+                }
+                else if ("RC1000".equals(idItem)) {
                     retirosDTO.add(new RetiroReporteDTO(p.getMonto(), "Retiro de Caja"));
-                } else {
+                    totalMontoCaja += p.getMonto();
+                }
+                else {
                     pagosDTO.add(crearPagoDTO(p));
+                    totalMontoCaja += p.getMonto();
                 }
             }
-
-            double dineroDeberiaTerminar = DINERO_INICIAL_CAJA + totalMontoCaja;
+            double dineroDeberiaTerminar = dineroInicialCaja + totalMontoCaja;
 
             CajaReporteDTO cajaDTO = new CajaReporteDTO(
-                    DINERO_INICIAL_CAJA,
+                    dineroInicialCaja,
                     dineroDeberiaTerminar,
                     dineroDeberiaTerminar//Aqui faltaria que el usuario ingrese el dinero con el que se termino
             );
@@ -88,12 +91,12 @@ public class ReporteDelegate {
             if (pago.getIdItem() instanceof Producto) {
                 Producto p = (Producto) pago.getIdItem();
                 String idProducto = p.getIdItem();
-                //Aqui se calculan los articulos vendidos dividiendo el precio final por el precio del articulo
+                // Aqui se calculan los articulos vendidos dividiendo el precio final por el precio del articulo
                 int cantidadVendida = 0;
                 if (p.getPrecio() != null && p.getPrecio() > 0) {
                     cantidadVendida = (int) (pago.getMonto() / p.getPrecio());
                 }
-                //Acumulamos por si se vendio el mismo producto en pagos diferentes
+                // Acumulamos por si se vendio el mismo producto en pagos diferentes
                 mapaVentas.put(idProducto, mapaVentas.getOrDefault(idProducto, 0) + cantidadVendida);
             }
         }
@@ -103,13 +106,13 @@ public class ReporteDelegate {
             String id = p.getIdItem();
             int inicial = mapaStockInicial.getOrDefault(id, 0);
             int vendida = mapaVentas.getOrDefault(id, 0);
-            int fin = p.getStock(); //Stock final
+            int fin = p.getStock(); // Stock final
             dtos.add(new ProductoReporteDTO(p.getNombre(), inicial, vendida, fin));
         }
         return dtos;
     }
 
-    //Este metodo se encarga de generar un PagoReporteDTO y asignarle el tipo
+    // Este metodo se encarga de generar un PagoReporteDTO y asignarle el tipo
     private PagoReporteDTO crearPagoDTO(Paga p) {
         String idCliente = p.getIdCliente().getIdCliente();
         String nombreCliente = p.getIdCliente().getNombreCompleto();
