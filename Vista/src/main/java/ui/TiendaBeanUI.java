@@ -524,8 +524,13 @@ public class TiendaBeanUI implements Serializable {
                 this.cliente = clienteHelper.obtenerCliente(idClienteParaBuscar);
 
                 if (this.cliente == null) {
-                    // El UR escribió un ID que no existe
+                    // El UR escribió un ID de un cliente que no existe
                     throw new Exception("No se encontró el cliente con ID: " + idClienteParaBuscar);
+                }
+
+                if (this.cliente.getEstatus()==0) {
+                    // El UR escribió un ID de un cliente que esta eliminado logicamente
+                    throw new Exception("No se puede realizar una venta a un cliente eliminado...");
                 }
 
             }else{
