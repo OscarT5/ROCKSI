@@ -1,4 +1,4 @@
-name: Prueba básica ROCKSI
+name: Prueba ROCKSI REAL
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositorio
+      - name: Clonar repo
         uses: actions/checkout@v4
 
       - name: Configurar Java
@@ -18,31 +18,43 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Compilar proyecto
-        run: mvn clean install -DskipTests
+      # Construir proyecto (WAR)
+      - name: Construir WAR
+        run: mvn clean package -DskipTests
 
-      - name: Ejecutar pruebas unitarias
-        run: mvn test
-
-      # Levanta APP
-      - name: Levantar aplicación
+      # Descargar Tomcat 9
+      - name: Descargar Tomcat 9
         run: |
-          mvn spring-boot:run &
-          sleep 25
+          wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz
+          tar -xzf apache-tomcat-9.0.89.tar.gz
 
-      # Instalar Node
+      # Copiar WAR como ROOT
+      - name: Copiar WAR
+        run: cp Vista/target/*.war apache-tomcat-9.0.89/webapps/ROOT.war
+
+      # Iniciar servidor
+      - name: Iniciar Tomcat
+        run: |
+          cd apache-tomcat-9.0.89/bin
+          chmod +x startup.sh
+          ./startup.sh
+
+      # Esperar que levante
+      - name: Esperar servidor
+        run: sleep 40
+
+      # Node para Playwright
       - name: Instalar Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # Intalar Playwhrite
       - name: Instalar dependencias
         run: npm install
 
       - name: Instalar navegadores
         run: npx playwright install
 
-      # Ejecutar pruebas de UI
+      # Ejecutar pruebas reales
       - name: Ejecutar pruebas UI
-        run: npx playwright test || true
+        run: npx playwright test
