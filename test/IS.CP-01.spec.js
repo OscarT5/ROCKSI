@@ -13,7 +13,7 @@ test('login ROCKSI', async ({ page }) => {
         return;
     }
 
-    // SOLO LOCAL (donde sí funciona tu BD)
+    // Local e BD
     await page.waitForSelector('[id$="usuario"]', { timeout: 20000 });
 
     await page.fill('[id$="usuario"]', 'ADM1000');
