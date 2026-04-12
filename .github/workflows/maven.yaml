@@ -78,16 +78,6 @@ jobs:
           chmod +x startup.sh
           ./startup.sh
 
-      # Diagnóstico inicial de endpoints
-      - name: Diagnosticar servidor
-        run: |
-          echo "===== GET / ====="
-          curl -i http://localhost:8080/ || true
-          echo "===== GET /api/app/user ====="
-          curl -i http://localhost:8080/api/app/user || true
-          echo "===== GET /api/api/app/user ====="
-          curl -i http://localhost:8080/api/api/app/user || true
-
       # Esperar a que la app responda
       - name: Esperar servidor
         run: |
@@ -107,6 +97,16 @@ jobs:
           ls -lah apache-tomcat-11.0.8/logs || true
           tail -n 200 apache-tomcat-11.0.8/logs/localhost*.log || true
           exit 1
+
+      # Diagnóstico inicial de endpoints
+      - name: Diagnosticar servidor
+        run: |
+          echo "===== GET / ====="
+          curl -i http://localhost:8080/ || true
+          echo "===== GET /api/app/user ====="
+          curl -i http://localhost:8080/api/app/user || true
+          echo "===== GET /api/api/app/user ====="
+          curl -i http://localhost:8080/api/api/app/user || true
 
       # Node para Playwright
       - name: Instalar Node
