@@ -1,0 +1,373 @@
+{
+  "info": {
+    "_postman_id": "cc6264d9-4b63-41b9-9319-fa66c491333b",
+    "name": "REST API basics: CRUD, test & variable",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52884977",
+    "_collection_link": "https://go.postman.co/collection/52884977-cc6264d9-4b63-41b9-9319-fa66c491333b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"ID is UR1000\", function() {",
+              "    pm.expect(pm.response.json().idUsuariorecep).to.eql(\"UR1000\");",
+              "});",
+              "",
+              "pm.test(\"Name is Farita\", function() {",
+              "    pm.expect(pm.response.json().nombreCompleto).to.eql(\"Farita\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/user/UR1000",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "user",
+            "UR1000"
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+    {
+      "name": "Get ID Copy",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/user/UR1003",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "user",
+            "UR1003"
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+    {
+      "name": "Get Product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is an array\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(Array.isArray(jsonData)).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"Array size is more than 1\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.length).to.be.greaterThan(1);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/product",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "product"
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+    {
+      "name": "Get User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code to be 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_administrador exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_administrador).to.not.be.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_recepcionista exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_recepcionista).to.not.be.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/user",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "user"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Filter UR",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code to be 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_administrador don't exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_administrador).to.be.undefined;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_recepcionista exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_recepcionista).to.not.be.empty;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/user?filter=ur",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "user"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "ur"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Filter UA",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code to be 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_administrador don't exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_administrador).to.not.be.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_recepcionista exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_recepcionista).to.be.undefined;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/user?filter=ua",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "user"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "ua"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Filter Nothing",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code to be 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_administrador don't exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_administrador).to.be.undefined;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Check if usuario_recepcionista exist\", function () {\r",
+              "    pm.expect(pm.response.json().usuario_recepcionista).to.be.undefined;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/vista/api/app/user?filter=abc",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "vista",
+            "api",
+            "app",
+            "user"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "abc"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "base_url",
+      "value": "https://template.postman-echo.com"
+    }
+  ]
+}
