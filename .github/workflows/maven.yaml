@@ -57,7 +57,7 @@ jobs:
 
         # Pruebas unitarias
       - name: Ejecutar pruebas unitarias
-        run: mvn test -pl persistencia
+        run: mvn install -DskipTests && mvn test -pl persistencia
 
       # Ejecutar pruebas reales
       - name: Ejecutar pruebas UI
