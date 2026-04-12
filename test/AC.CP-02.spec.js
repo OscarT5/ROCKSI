@@ -1,27 +1,29 @@
 const { test, expect } = require('@playwright/test');
 
-test('Alta cliente sin sexo (fallido)', async ({ page }) => {
+const BASE_URL = 'http://localhost:8080';
 
-    if (process.env.CI) {
-        console.log("Modo CI: validando carga básica");
+async function login(page) {
+    await page.goto(BASE_URL);
 
-        // Solo validar que cargó algo
-        await expect(page).toHaveTitle(/./);
-
-        return;
-    }
-
-    await page.goto('http://localhost:8080/vista/');
+    await page.waitForSelector('[id$="usuario"]', { timeout: 30000 });
 
     await page.fill('[id$="usuario"]', 'ADM1000');
     await page.fill('[id$="contrasena"]', '123');
+
     await page.click('input[value="Iniciar sesión"]');
 
-    await page.waitForURL('**/home.xhtml');
+    await page.waitForURL('**/home.xhtml', { timeout: 20000 });
+}
 
-    await page.goto('http://localhost:8080/vista/clientes.xhtml');
+test('Alta cliente sin sexo (fallido)', async ({ page }) => {
+
+    await login(page);
+
+    await page.goto(`${BASE_URL}/vista/clientes.xhtml`);
 
     await page.click('button:has-text("Registrar Cliente")');
+
+    await page.waitForSelector('[id$="nombreAlta"]');
 
     await page.fill('[id$="nombreAlta"]', 'Test');
     await page.fill('[id$="apellidoAlta"]', 'Usuario');
@@ -29,9 +31,8 @@ test('Alta cliente sin sexo (fallido)', async ({ page }) => {
 
     await page.click('[id$="registrarBtn"]');
 
-    // Validar mensaje de error
     const error = page.locator('.ui-messages-error');
-    await error.waitFor();
 
-    await expect(error).toContainText('sexo');
+    await expect(error).toBeVisible({ timeout: 10000 });
+    await expect(error).toContainText(/sexo/i);
 });
