@@ -2,7 +2,7 @@ name: Prueba ROCKSI REAL
 
 on:
   push:
-    branches: [ "Desarrollo" ]
+    branches: [ "Main" ]
 
 jobs:
   build:
