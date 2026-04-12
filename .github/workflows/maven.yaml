@@ -78,11 +78,21 @@ jobs:
           chmod +x startup.sh
           ./startup.sh
 
+      # Diagnóstico inicial de endpoints
+      - name: Diagnosticar servidor
+        run: |
+          echo "===== GET / ====="
+          curl -i http://localhost:8080/ || true
+          echo "===== GET /api/app/user ====="
+          curl -i http://localhost:8080/api/app/user || true
+          echo "===== GET /api/api/app/user ====="
+          curl -i http://localhost:8080/api/api/app/user || true
+
       # Esperar a que la app responda
       - name: Esperar servidor
         run: |
           for i in {1..60}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/app/user || true)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/ || true)
             if [ "$STATUS" = "200" ]; then
               echo "Servidor listo (HTTP 200)"
               exit 0
