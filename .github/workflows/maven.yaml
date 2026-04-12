@@ -82,7 +82,7 @@ jobs:
       - name: Esperar servidor
         run: |
           for i in {1..60}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/ || true)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/app/user || true)
             if [ "$STATUS" = "200" ]; then
               echo "Servidor listo (HTTP 200)"
               exit 0
@@ -91,6 +91,11 @@ jobs:
             sleep 2
           done
           echo "La app no respondió HTTP 200 a tiempo"
+          echo "===== Tomcat catalina.out ====="
+          tail -n 200 apache-tomcat-11.0.8/logs/catalina.out || true
+          echo "===== Tomcat localhost logs ====="
+          ls -lah apache-tomcat-11.0.8/logs || true
+          tail -n 200 apache-tomcat-11.0.8/logs/localhost*.log || true
           exit 1
 
       # Node para Playwright
