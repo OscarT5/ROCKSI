@@ -49,10 +49,6 @@ jobs:
         with:
           node-version: '18'
 
-      # Ejecutar pruebas de API (Postman/Newman)
-      - name: Ejecutar pruebas Postman
-        run: npx newman run ROCKSI_API_TEST.postman_collection.json --reporters cli,junit --reporter-junit-export newman-report.xml
-
       - name: Instalar dependencias
         run: npm install
 
@@ -67,6 +63,10 @@ jobs:
       - name: Ejecutar pruebas UI
         run: npx playwright test --reporter=html || true
       
+      # Ejecutar pruebas de API (Postman/Newman)
+      - name: Ejecutar pruebas Postman
+        run: npx newman run ROCKSI_API_TEST.postman_collection.json --reporters cli,junit --reporter-junit-export newman-report.xml
+
       # Guardar reportes
       - name: Guardar reporte pruebas unitarias
         uses: actions/upload-artifact@v4
