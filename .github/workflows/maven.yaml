@@ -82,7 +82,7 @@ jobs:
       - name: Esperar servidor
         run: |
           for i in {1..60}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/vista/api/app/user || true)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/vista/ || true)
             if [ "$STATUS" = "200" ]; then
               echo "Servidor listo (HTTP 200)"
               exit 0
