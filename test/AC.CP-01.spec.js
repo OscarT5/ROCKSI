@@ -2,20 +2,18 @@ const { test, expect } = require('@playwright/test');
 
 test('Alta cliente correcta', async ({ page }) => {
 
-    await page.goto('http://localhost:8080/vista/');
+    await page.goto('http://localhost:8080/');
 
-    // Esperar la carga
-    await page.waitForLoadState('networkidle');
     await page.waitForSelector('[id$="usuario"]', { timeout: 30000 });
 
-    // Login
     await page.fill('[id$="usuario"]', 'ADM1000');
     await page.fill('[id$="contrasena"]', '123');
+
     await page.click('input[value="Iniciar sesión"]');
 
     await page.waitForURL('**/home.xhtml', { timeout: 20000 });
 
-    await page.goto('http://localhost:8080/vista/clientes.xhtml');
+    await page.goto('http://localhost:8080/clientes.xhtml');
 
     await page.click('button:has-text("Registrar Cliente")');
 
