@@ -9,7 +9,7 @@ test('login ROCKSI', async ({ page }) => {
     await page.goto('http://localhost:8080/vista/');
 
     await page.fill('[id="loginForm:usuario"]', 'ADM1000');
-    await page.fill('[id="loginForm:contrasena"]', '1234');
+    await page.fill('[id="loginForm:contrasena"]', '123');
     await page.click('text=Iniciar sesión');
 
     await page.waitForTimeout(3000);
