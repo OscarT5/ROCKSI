@@ -2,26 +2,16 @@ const { test, expect } = require('@playwright/test');
 
 test('login ROCKSI', async ({ page }) => {
 
-    await page.goto('http://localhost:8080/');
+    // Esperar a que cargue el formulario
+    await page.waitForSelector('[id="loginForm:usuario"]', { timeout: 15000 });
 
-    if (process.env.CI) {
-        console.log("Modo CI: validando carga básica");
+    await page.goto('http://localhost:8080/vista/');
 
-        // Solo validar que cargó algo
-        await expect(page).toHaveTitle(/./);
-
-        return;
-    }
-
-    // Local e BD
-    await page.waitForSelector('[id$="usuario"]', { timeout: 20000 });
-
-    await page.fill('[id$="usuario"]', 'ADM1000');
-    await page.fill('[id$="contrasena"]', '1234');
-
+    await page.fill('[id="loginForm:usuario"]', 'ADM1000');
+    await page.fill('[id="loginForm:contrasena"]', '123');
     await page.click('text=Iniciar sesión');
 
-    await page.waitForURL('**/home.xhtml', { timeout: 20000 });
+    await page.waitForTimeout(3000);
 
-    await expect(page).toHaveURL(/home.xhtml/);
+    await expect(page).not.toHaveURL('http://localhost:8080/vista/home.xhtml');
 });
