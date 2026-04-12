@@ -10,7 +10,7 @@ test('login correcto', async ({ page }) => {
     await page.fill('[id="loginForm:usuario"]', 'ADM1000');
 
     // Ingresar contraseña
-    await page.fill('[id="loginForm:contrasena"]', '123');
+    await page.fill('[id="loginForm:contrasena"]', '1234');
 
     // Clic en boton para inicar sesion
     await page.click('text=Iniciar sesión');
