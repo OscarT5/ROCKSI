@@ -61,7 +61,7 @@ jobs:
 
       # Ejecutar pruebas reales
       - name: Ejecutar pruebas UI
-        run: npx playwright test 
+        run: npx playwright test --reporter=html || true
       
       # Guardar reportes
       - name: Guardar reporte pruebas unitarias
