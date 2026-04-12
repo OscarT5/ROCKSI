@@ -2,6 +2,9 @@ const { test, expect } = require('@playwright/test');
 
 test('login ROCKSI', async ({ page }) => {
 
+    // Esperar a que cargue el formulario
+    await page.waitForSelector('[id="loginForm:usuario"]', { timeout: 15000 });
+
     await page.goto('http://localhost:8080/vista/');
 
     await page.fill('[id="loginForm:usuario"]', 'ADM1000');
