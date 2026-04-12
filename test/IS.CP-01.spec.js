@@ -17,7 +17,7 @@ test('login ROCKSI', async ({ page }) => {
     await page.waitForSelector('[id$="usuario"]', { timeout: 20000 });
 
     await page.fill('[id$="usuario"]', 'ADM1000');
-    await page.fill('[id$="contrasena"]', '123');
+    await page.fill('[id$="contrasena"]', '1234');
 
     await page.click('text=Iniciar sesión');
 
