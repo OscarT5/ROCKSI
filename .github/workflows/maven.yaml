@@ -61,26 +61,37 @@ jobs:
       - name: Construir WAR
         run: mvn clean package -DskipTests
 
-      # Descargar Tomcat 9
-      - name: Descargar Tomcat 9
+      # Descargar Tomcat 11.0.8
+      - name: Descargar Tomcat 11.0.8
         run: |
-          wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz
-          tar -xzf apache-tomcat-9.0.89.tar.gz
+          wget https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.8/bin/apache-tomcat-11.0.8.tar.gz
+          tar -xzf apache-tomcat-11.0.8.tar.gz
 
       # Copiar WAR como ROOT
       - name: Copiar WAR
-        run: cp Vista/target/*.war apache-tomcat-9.0.89/webapps/ROOT.war
+        run: cp Vista/target/*.war apache-tomcat-11.0.8/webapps/ROOT.war
 
       # Iniciar servidor
       - name: Iniciar Tomcat
         run: |
-          cd apache-tomcat-9.0.89/bin
+          cd apache-tomcat-11.0.8/bin
           chmod +x startup.sh
           ./startup.sh
 
-      # Esperar que levante
+      # Esperar a que la app responda
       - name: Esperar servidor
-        run: sleep 40
+        run: |
+          for i in {1..60}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/vista/api/app/user || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "Servidor listo (HTTP 200)"
+              exit 0
+            fi
+            echo "Esperando servidor... intento $i, status=$STATUS"
+            sleep 2
+          done
+          echo "La app no respondió HTTP 200 a tiempo"
+          exit 1
 
       # Node para Playwright
       - name: Instalar Node
