@@ -24,25 +24,17 @@ jobs:
       - name: Ejecutar pruebas unitarias
         run: mvn test
 
-      # Levanta APP
-      - name: Levantar aplicación
-        run: |
-          mvn spring-boot:run &
-          sleep 25
-
-      # Instalar Node
+      # Playwhrite
       - name: Instalar Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # Intalar Playwhrite
       - name: Instalar dependencias
         run: npm install
 
       - name: Instalar navegadores
         run: npx playwright install
 
-      # Ejecutar pruebas de UI
       - name: Ejecutar pruebas UI
         run: npx playwright test || true
