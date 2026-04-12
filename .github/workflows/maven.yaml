@@ -1,0 +1,78 @@
+name: Prueba ROCKSI REAL
+
+on:
+  push:
+    branches: [ "Desarrollo" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repo
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Construir proyecto (WAR)
+      - name: Construir WAR
+        run: mvn clean package -DskipTests
+
+      # Descargar Tomcat 9
+      - name: Descargar Tomcat 9
+        run: |
+          wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz
+          tar -xzf apache-tomcat-9.0.89.tar.gz
+
+      # Copiar WAR como ROOT
+      - name: Copiar WAR
+        run: cp Vista/target/*.war apache-tomcat-9.0.89/webapps/ROOT.war
+
+      # Iniciar servidor
+      - name: Iniciar Tomcat
+        run: |
+          cd apache-tomcat-9.0.89/bin
+          chmod +x startup.sh
+          ./startup.sh
+
+      # Esperar que levante
+      - name: Esperar servidor
+        run: sleep 40
+
+      # Node para Playwright
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Instalar navegadores
+        run: npx playwright install
+
+        # Pruebas unitarias
+      - name: Ejecutar pruebas unitarias
+        run: mvn install -DskipTests && mvn test -pl persistencia
+
+      # Ejecutar pruebas reales
+      - name: Ejecutar pruebas UI
+        run: npx playwright test --reporter=html || true
+      
+      # Guardar reportes
+      - name: Guardar reporte pruebas unitarias
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-unitarias
+          path: persistencia/target/surefire-reports/
+      - name: Guardar reporte pruebas UI
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-ui
+          path: playwright-report/
