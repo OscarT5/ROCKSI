@@ -17,6 +17,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          
+      # Pruebas unitarias
+      - name: Ejecutar pruebas unitarias
+        run: mvn test -pl persistencia
 
       # Construir proyecto (WAR)
       - name: Construir WAR
