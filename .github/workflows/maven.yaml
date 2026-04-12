@@ -61,4 +61,18 @@ jobs:
 
       # Ejecutar pruebas reales
       - name: Ejecutar pruebas UI
-        run: npx playwright test
+        run: npx playwright test 
+      
+      # Guardar reportes
+      - name: Guardar reporte pruebas unitarias
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-unitarias
+          path: persistencia/target/surefire-reports/
+      - name: Guardar reporte pruebas UI
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-ui
+          path: playwright-report/
