@@ -22,20 +22,7 @@ public class MembresiaDAO extends AbstractDAO<Membresia> {
     }
 
     public List<Membresia> findAllWithMembresia() {
-        return execute(em -> {
-            //Limpia contexto antes de ejecutar la query
-            em.clear();
-
-            List<Membresia> result = em.createQuery(
-                            "SELECT DISTINCT m FROM Membresia m LEFT JOIN FETCH m.idItem",
-                            Membresia.class
-                    )
-                    .setHint("jakarta.persistence.cache.storeMode", "REFRESH") //forzar lectura desde la BD
-                    .setHint("org.hibernate.cacheable", false)
-                    .getResultList();
-
-            return result;
-        });
+        return findAll();
     }
 
     @Override

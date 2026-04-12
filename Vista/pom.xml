@@ -61,6 +61,38 @@
 
 
     <dependencies>
+
+        <!-- the REST API -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <!-- These next two are needed because we are using Tomcat, which  -->
+        <!-- is not a full JEE server - it's just a servlet container.     -->
+
+        <!-- the Jersey implementation -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <!-- also needed for dependency injection -->
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <!-- support for using Jackson (JSON) with Jersey -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
         <!-- Jakarta EE API -->
         <dependency>
             <groupId>jakarta.platform</groupId>

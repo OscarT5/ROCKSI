@@ -47,7 +47,7 @@ public class MembresiaFacade {
         return membresiaDelegate.obtenerMembresiaPorCliente(idCliente, membresia);
     }
 
-    public List<Membresia> listarMembresias() throws Exception {
+    public List<Membresia> listarMembresias() {
         return membresiaDelegate.listarMembresias();
     }
 }
