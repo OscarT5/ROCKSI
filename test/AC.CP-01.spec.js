@@ -4,6 +4,10 @@ test('Alta cliente correcta', async ({ page }) => {
 
     await page.goto('http://localhost:8080/vista/');
 
+    // Esperar la carga
+    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('[id$="usuario"]', { timeout: 30000 });
+
     // Login
     await page.fill('[id$="usuario"]', 'ADM1000');
     await page.fill('[id$="contrasena"]', '123');
@@ -11,29 +15,22 @@ test('Alta cliente correcta', async ({ page }) => {
 
     await page.waitForURL('**/home.xhtml', { timeout: 20000 });
 
-    // Ir a clientes
     await page.goto('http://localhost:8080/vista/clientes.xhtml');
 
-    // Abrir formulario
     await page.click('button:has-text("Registrar Cliente")');
 
-    // Esperar form
     await page.waitForSelector('[id$="nombreAlta"]');
 
-    // Llenar datos
     await page.fill('[id$="nombreAlta"]', 'Juan');
     await page.fill('[id$="apellidoAlta"]', 'Perez');
     await page.fill('[id$="telefonoAlta"]', '1234567890');
-    await page.fill('[id$="segundoTelefonoAlta"]', '0987654321');
 
-    // Seleccionar sexo
     await page.click('[id$="sexoAlta_label"]');
     await page.click('li:has-text("Masculino")');
 
-    // Registrar
     await page.click('[id$="registrarBtn"]');
 
-    // Validación
-    await page.waitForURL('**/pagos.xhtml', { timeout: 10000 });
+    await page.waitForURL('**/pagos.xhtml');
+
     await expect(page).toHaveURL(/pagos.xhtml/);
 });
