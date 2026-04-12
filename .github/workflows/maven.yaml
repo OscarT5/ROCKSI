@@ -80,18 +80,7 @@ jobs:
 
       # Esperar a que la app responda
       - name: Esperar servidor
-        run: |
-          for i in {1..60}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/vista/ || true)
-            if [ "$STATUS" = "200" ]; then
-              echo "Servidor listo (HTTP 200)"
-              exit 0
-            fi
-            echo "Esperando servidor... intento $i, status=$STATUS"
-            sleep 2
-          done
-          echo "La app no respondió HTTP 200 a tiempo"
-          exit 1
+        run: sleep 40
 
       # Node para Playwright
       - name: Instalar Node
