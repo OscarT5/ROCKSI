@@ -1,4 +1,4 @@
-name: Prueba básica ROCKSI
+name: Prueba ROCKSI REAL
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositorio
+      - name: Clonar repo
         uses: actions/checkout@v4
 
       - name: Configurar Java
@@ -18,13 +18,15 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Compilar proyecto
+      - name: Compilar
         run: mvn clean install -DskipTests
 
-      - name: Ejecutar pruebas unitarias
-        run: mvn test
+      - name: Levantar servidor (Jetty)
+        run: mvn jetty:run &
 
-      # Playwhrite
+      - name: Esperar servidor
+        run: sleep 15
+
       - name: Instalar Node
         uses: actions/setup-node@v4
         with:
@@ -37,4 +39,4 @@ jobs:
         run: npx playwright install
 
       - name: Ejecutar pruebas UI
-        run: npx playwright test || true
+        run: npx playwright test
