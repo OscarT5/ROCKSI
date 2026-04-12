@@ -8,7 +8,7 @@ test('Eliminación cliente correcta', async ({ page }) => {
         return;
     }
 
-    await page.goto('http://localhost:8080/vista/');
+    await page.goto('http://localhost:8080/');
 
     // Login
     await page.fill('[id$="usuario"]', 'ADM1000');
@@ -18,7 +18,7 @@ test('Eliminación cliente correcta', async ({ page }) => {
     await page.waitForURL('**/home.xhtml');
 
     // Ir a clientes
-    await page.goto('http://localhost:8080/vista/clientes.xhtml');
+    await page.goto('http://localhost:8080/clientes.xhtml');
 
     await page.click('button:has-text("Baja de Cliente")');
 

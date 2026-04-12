@@ -5,7 +5,7 @@
 const { test, expect } = require('@playwright/test');
 
 // ── Datos de prueba ──────────────────────────────────────────────────────────
-const BASE_URL    = 'http://localhost:8080/vista';
+const BASE_URL    = 'http://localhost:8080';
 const USUARIO     = 'ADM1000';
 const PASSWORD    = '123';
 

@@ -36,14 +36,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/user/UR1000",
+          "raw": "http://localhost:8080/api/app/user/UR1000",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "user",
@@ -75,14 +74,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/user/UR1003",
+          "raw": "http://localhost:8080/api/app/user/UR1003",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "user",
@@ -124,14 +122,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/product",
+          "raw": "http://localhost:8080/api/app/product",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "product"
@@ -170,14 +167,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/user",
+          "raw": "http://localhost:8080/api/app/user",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "user"
@@ -215,14 +211,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/user?filter=ur",
+          "raw": "http://localhost:8080/api/app/user?filter=ur",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "user"
@@ -266,14 +261,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/user?filter=ua",
+          "raw": "http://localhost:8080/api/app/user?filter=ua",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "user"
@@ -317,14 +311,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/vista/api/app/user?filter=abc",
+          "raw": "http://localhost:8080/api/app/user?filter=abc",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "8080",
           "path": [
-            "vista",
             "api",
             "app",
             "user"
@@ -371,3 +364,4 @@
     }
   ]
 }
+
