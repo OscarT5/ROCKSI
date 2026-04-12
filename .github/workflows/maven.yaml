@@ -18,15 +18,32 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Compilar
-        run: mvn clean install -DskipTests
+      # Construir proyecto (WAR)
+      - name: Construir WAR
+        run: mvn clean package -DskipTests
 
-      - name: Levantar servidor (Jetty)
-        run: mvn jetty:run &
+      # Descargar Tomcat 9
+      - name: Descargar Tomcat 9
+        run: |
+          wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.89/bin/apache-tomcat-9.0.89.tar.gz
+          tar -xzf apache-tomcat-9.0.89.tar.gz
 
+      # Copiar WAR como ROOT
+      - name: Copiar WAR
+        run: cp Vista/target/*.war apache-tomcat-9.0.89/webapps/ROOT.war
+
+      # Iniciar servidor
+      - name: Iniciar Tomcat
+        run: |
+          cd apache-tomcat-9.0.89/bin
+          chmod +x startup.sh
+          ./startup.sh
+
+      # Esperar que levante
       - name: Esperar servidor
-        run: sleep 15
+        run: sleep 40
 
+      # Node para Playwright
       - name: Instalar Node
         uses: actions/setup-node@v4
         with:
@@ -38,5 +55,6 @@ jobs:
       - name: Instalar navegadores
         run: npx playwright install
 
+      # Ejecutar pruebas reales
       - name: Ejecutar pruebas UI
         run: npx playwright test
