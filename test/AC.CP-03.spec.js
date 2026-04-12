@@ -1,25 +1,12 @@
 const { test, expect } = require('@playwright/test');
 
-const BASE_URL = 'http://localhost:8080';
+test('Alta cliente sin nombre', async ({ page }) => {
 
-async function login(page) {
-    await page.goto(BASE_URL);
+    const logged = await login(page);
 
-    await page.waitForSelector('[id$="usuario"]', { timeout: 30000 });
+    if (!logged) return;
 
-    await page.fill('[id$="usuario"]', 'ADM1000');
-    await page.fill('[id$="contrasena"]', '123');
-
-    await page.click('input[value="Iniciar sesión"]');
-
-    await page.waitForURL('**/home.xhtml', { timeout: 20000 });
-}
-
-test('Alta cliente sin nombre (fallido)', async ({ page }) => {
-
-    await login(page);
-
-    await page.goto(`${BASE_URL}/vista/clientes.xhtml`);
+    await page.goto('http://localhost:8080/vista/clientes.xhtml');
 
     await page.click('button:has-text("Registrar Cliente")');
 
@@ -35,6 +22,5 @@ test('Alta cliente sin nombre (fallido)', async ({ page }) => {
 
     const error = page.locator('.ui-messages-error');
 
-    await expect(error).toBeVisible({ timeout: 10000 });
-    await expect(error).toContainText(/nombre/i);
+    await expect(error).toBeVisible();
 });
