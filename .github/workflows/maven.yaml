@@ -133,7 +133,7 @@ jobs:
         run: npx playwright test --reporter=html || true
       
       # Ejecutar pruebas de API (Postman/Newman)
-      - name: Ejecutar pruebas Postman
+      - name: Ejecutar pruebas API
         run: npx newman run ROCKSI_API_TEST.postman_collection.json --reporters cli,junit --reporter-junit-export newman-report.xml
 
       # Guardar reportes
